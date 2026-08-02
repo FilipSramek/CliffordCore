@@ -1,7 +1,12 @@
 #pragma once
 
+#include <type_traits>
+
 namespace CliffordCore
 {
+
+template<typename T>
+class Scalar;
 
 template<typename T>
 
@@ -54,18 +59,14 @@ public:
      * @param scalar The scalar to multiply with.
      * @return The resulting bivector.
      */
-    constexpr Bivector3 operator*(const Scalar<T>& scalar) const {                              
-        return Bivector3(xy * scalar.value, xz * scalar.value, yz * scalar.value);
-    }
+    constexpr Bivector3 operator*(const Scalar<T>& scalar) const;
 
     /**
      * @brief Scalar division operator overload.
      * @param scalar The scalar to divide by.
      * @return The resulting bivector.
      */
-    constexpr Bivector3 operator/(const Scalar<T>& scalar) const {                             
-        return Bivector3(xy / scalar.value, xz / scalar.value, yz / scalar.value);
-    }
+    constexpr Bivector3 operator/(const Scalar<T>& scalar) const;
 
     /**
      * @brief Unary negation operator overload.
@@ -75,4 +76,20 @@ public:
         return Bivector3(-xy, -xz, -yz);
     }
 };
+} // namespace CliffordCore
+
+#include "scalar.hpp"
+
+namespace CliffordCore
+{
+
+template<typename T>
+constexpr Bivector3<T> Bivector3<T>::operator*(const Scalar<T>& scalar) const {                              
+    return Bivector3<T>(xy * scalar.value, xz * scalar.value, yz * scalar.value);
+}
+
+template<typename T>
+constexpr Bivector3<T> Bivector3<T>::operator/(const Scalar<T>& scalar) const {                             
+    return Bivector3<T>(xy / scalar.value, xz / scalar.value, yz / scalar.value);
+}
 } // namespace CliffordCore

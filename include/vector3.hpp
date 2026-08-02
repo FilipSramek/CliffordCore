@@ -1,11 +1,12 @@
 #pragma once
 
 #include <type_traits>
-#include "scalar.hpp"
-
 
 namespace CliffordCore
 {
+
+template<typename T>
+class Scalar;
 
 template<typename T>
 
@@ -58,18 +59,14 @@ public:
      * @param scalar The scalar to multiply with.
      * @return The resulting vector.
      */
-    constexpr Vector3 operator*(const Scalar<T>& scalar) const {                    
-        return Vector3(x * scalar.value, y * scalar.value, z * scalar.value);
-    }
+    constexpr Vector3 operator*(const Scalar<T>& scalar) const;
 
     /**
      * @brief Scalar division operator overload.
      * @param scalar The scalar to divide by.
      * @return The resulting vector.
      */
-    constexpr Vector3 operator/(const Scalar<T>& scalar) const {                    
-        return Vector3(x / scalar.value, y / scalar.value, z / scalar.value);
-    }
+    constexpr Vector3 operator/(const Scalar<T>& scalar) const;
 
     /**
      * @brief Unary negation operator overload.
@@ -80,4 +77,20 @@ public:
     }
 
 };
+} // namespace CliffordCore
+
+#include "scalar.hpp"
+
+namespace CliffordCore
+{
+
+template<typename T>
+constexpr Vector3<T> Vector3<T>::operator*(const Scalar<T>& scalar) const {                    
+    return Vector3<T>(x * scalar.value, y * scalar.value, z * scalar.value);
+}
+
+template<typename T>
+constexpr Vector3<T> Vector3<T>::operator/(const Scalar<T>& scalar) const {                    
+    return Vector3<T>(x / scalar.value, y / scalar.value, z / scalar.value);
+}
 } // namespace CliffordCore
