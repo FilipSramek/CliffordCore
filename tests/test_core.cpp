@@ -3,14 +3,14 @@
 #include <iostream>
 #include <string>
 
-#include "vector3.hpp"
-#include "operations/dot_product.hpp"
-#include "operations/wedge_product.hpp"
-#include "operations/geometric_product.hpp"
-#include "operations/norm.hpp"
-#include "operations/inverse.hpp"
-#include "operations/reverse.hpp"
-#include "operations/dual.hpp"
+#include "../include/vector3.hpp"
+#include "../include/operations/dot_product.hpp"
+#include "../include/operations/wedge_product.hpp"
+#include "../include/operations/geometric_product.hpp"
+#include "../include/operations/norm.hpp"
+#include "../include/operations/inverse.hpp"
+#include "../include/operations/reverse.hpp"
+#include "../include/operations/dual.hpp"
 
 using CliffordCore::Bivector3;
 using CliffordCore::Vector3;
