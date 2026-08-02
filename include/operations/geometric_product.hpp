@@ -3,6 +3,7 @@
 #include <type_traits>
 #include "../vector3.hpp"
 #include "../multivector3.hpp"
+#include "../rotor3.hpp"
 #include "dot_product.hpp"
 #include "wedge_product.hpp"
 
@@ -17,10 +18,24 @@ namespace CliffordCore
      */
     constexpr Multivector3<T> geometric_product(const Vector3<T>& a, const Vector3<T>& b) {
         return Multivector3<T>(
-            dot_product(a, b),
+            a | b,
             vector3<T>(0, 0, 0),
-            wedge_product(a, b),
+            a ^ b,
             trivector3<T>(0)
+        );
+    }
+
+    /**
+     * @brief Computes the geometric product of two 3D vectors, resulting in a rotor.
+     * @param a The first vector.
+     * @param b The second vector.
+     * @return The resulting rotor from the geometric product.
+     */
+    template<typename T>
+    constexpr Rotor3<T> geometric_product(const Vector3<T>& a, const Vector3<T>& b) {
+        return Rotor3<T>(
+            a | b,
+            a ^ b
         );
     }
 } // namespace CliffordCore
