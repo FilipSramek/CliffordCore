@@ -73,6 +73,29 @@ public:
     }
 
     /**
+     * @brief Multiplication of scaler by trivector operator overload.
+     * @param other The trivector to multiply with.
+     * @return The resulting trivector.
+     */
+    constexpr Trivector3<T> operator*(const Trivector3<T>& other) const { 
+        return Trivector3<T>(value * other.e123);
+    }
+
+    /**
+     * @brief Multiplication of scaler by multivector operator overload.
+     * @param other The multivector to multiply with.
+     * @return The resulting multivector.
+     */
+    constexpr Multivector3<T> operator*(const Multivector3<T>& other) const { 
+        return Multivector3<T>(
+            value * other.scalar,
+            value * other.vector,
+            value * other.bivector,
+            value * other.trivector
+        );
+    }
+
+    /**
      * @brief Division operator overload.
      * @param other The scalar to divide by.
      * @return The resulting scalar.
