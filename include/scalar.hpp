@@ -2,6 +2,10 @@
 
 #include <type_traits>
 #include "vector3.hpp"
+#include "bivector3.hpp"
+#include "trivector3.hpp"
+#include "multivector3.hpp"
+#include "rotor3.hpp"
 
 namespace CliffordCore {
 
@@ -92,6 +96,18 @@ public:
             value * other.vector,
             value * other.bivector,
             value * other.trivector
+        );
+    }
+
+    /**
+     * @brief Multiplication of scaler by rotor operator overload.
+     * @param other The rotor to multiply with.
+     * @return The resulting rotor.
+     */
+    constexpr Rotor3<T> operator*(const Rotor3<T>& other) const { 
+        return Rotor3<T>(
+            value * other.scalar,
+            value * other.bivector
         );
     }
 
