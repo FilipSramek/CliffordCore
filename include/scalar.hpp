@@ -6,33 +6,68 @@ namespace CliffordCore {
 
 template <typename T>
 
+/**
+ * @brief A class representing a scalar value of type T.
+ * @property value The scalar value.
+ */
 class Scalar {    
     static_assert(std::is_arithmetic<T>::value, "Scalar can only be instantiated with numeric types.");
 
 public:
     T value;
 
-    constexpr Scalar() : value(0) {}                            // Default constructor initializes value to zero
-    constexpr Scalar(T val) : value(val) {}                     // Constructor initializes value to the provided argument
+    /**
+     * @brief Default constructor initializes the scalar value to zero.
+     */
+    constexpr Scalar() : value(0) {}                            
+    /**
+     * @brief Constructor initializes the scalar value to the provided argument.
+     * @param val The scalar value.
+     */
+    constexpr Scalar(T val) : value(val) {}                     
 
-    constexpr Scalar operator+(const Scalar& other) const {     // Addition operator overload
+    /**
+     * @brief Addition operator overload.
+     * @param other The scalar to add.
+     * @return The resulting scalar.
+     */
+    constexpr Scalar operator+(const Scalar& other) const {     
         return Scalar(value + other.value);
     }
 
-    constexpr Scalar operator-(const Scalar& other) const {     // Subtraction operator overload
+    /**
+     * @brief Subtraction operator overload.
+     * @param other The scalar to subtract.
+     * @return The resulting scalar.
+     */
+    constexpr Scalar operator-(const Scalar& other) const {     
         return Scalar(value - other.value);
     }
 
-    constexpr Scalar operator*(const Scalar& other) const {     // Multiplication operator overload
+    /**
+     * @brief Multiplication operator overload.
+     * @param other The scalar to multiply with.
+     * @return The resulting scalar.
+     */
+    constexpr Scalar operator*(const Scalar& other) const {     
         return Scalar(value * other.value);
     }
 
-    constexpr Scalar operator/(const Scalar& other) const {     // Division operator overload
+    /**
+     * @brief Division operator overload.
+     * @param other The scalar to divide by.
+     * @return The resulting scalar.
+     */
+    constexpr Scalar operator/(const Scalar& other) const {     
         return Scalar(value / other.value);                     
     }
 
-    constexpr Scalar operator-() const {                        // Unary negation operator overload 
+    /**
+     * @brief Unary negation operator overload.
+     * @return The resulting scalar.
+     */
+    constexpr Scalar operator-() const {                         
         return Scalar(-value);
     }
 };
-}
+} // namespace CliffordCore

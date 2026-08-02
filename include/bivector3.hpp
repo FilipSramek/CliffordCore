@@ -4,6 +4,13 @@ namespace CliffordCore
 {
 
 template<typename T>
+
+/**
+ * @brief A class representing a bivector in 3D space.
+ * @property xy The xy-component of the bivector.
+ * @property xz The xz-component of the bivector.
+ * @property yz The yz-component of the bivector.
+ */
 class Bivector3
 {
     static_assert(std::is_arithmetic<T>::value, "Bivector3 can only be instantiated with numeric types.");
@@ -11,27 +18,61 @@ class Bivector3
 public:
     T xy, xz, yz;
 
-    constexpr Bivector3() : xy(0), xz(0), yz(0) {}                                              // Default constructor initializes components to zero
-    constexpr Bivector3(T xy_val, T xz_val, T yz_val) : xy(xy_val), xz(xz_val), yz(yz_val) {}   // Constructor initializes components to the provided arguments
+    /**
+     * @brief Default constructor initializes the bivector components to zero.
+     */
+    constexpr Bivector3() : xy(0), xz(0), yz(0) {}                                             
+    
+    /**
+     * @brief Constructor initializes the bivector components to the provided values.
+     * @param xy_val The xy-component of the bivector.
+     * @param xz_val The xz-component of the bivector.
+     * @param yz_val The yz-component of the bivector.
+     */
+    constexpr Bivector3(T xy_val, T xz_val, T yz_val) : xy(xy_val), xz(xz_val), yz(yz_val) {}   
 
-    constexpr Bivector3 operator+(const Bivector3& other) const {                               // Addition operator overload
+    /**
+     * @brief Addition operator overload.
+     * @param other The bivector to add.
+     * @return The resulting bivector.
+     */
+    constexpr Bivector3 operator+(const Bivector3& other) const {                               
         return Bivector3(xy + other.xy, xz + other.xz, yz + other.yz);
     }
 
-    constexpr Bivector3 operator-(const Bivector3& other) const {                               // Subtraction operator overload
+    /**
+     * @brief Subtraction operator overload.
+     * @param other The bivector to subtract.
+     * @return The resulting bivector.
+     */
+    constexpr Bivector3 operator-(const Bivector3& other) const {                             
         return Bivector3(xy - other.xy, xz - other.xz, yz - other.yz);
     }
 
-    constexpr Bivector3 operator*(const Scalar<T>& scalar) const {                              // Scalar multiplication operator overload
+    /**
+     * @brief Scalar multiplication operator overload.
+     * @param scalar The scalar to multiply with.
+     * @return The resulting bivector.
+     */
+    constexpr Bivector3 operator*(const Scalar<T>& scalar) const {                              
         return Bivector3(xy * scalar.value, xz * scalar.value, yz * scalar.value);
     }
 
-    constexpr Bivector3 operator/(const Scalar<T>& scalar) const {                              // Scalar division operator overload
+    /**
+     * @brief Scalar division operator overload.
+     * @param scalar The scalar to divide by.
+     * @return The resulting bivector.
+     */
+    constexpr Bivector3 operator/(const Scalar<T>& scalar) const {                             
         return Bivector3(xy / scalar.value, xz / scalar.value, yz / scalar.value);
     }
 
-    constexpr Bivector3 operator-() const {                                                     // Unary negation operator overload 
+    /**
+     * @brief Unary negation operator overload.
+     * @return The resulting bivector.
+     */
+    constexpr Bivector3 operator-() const {                                                     
         return Bivector3(-xy, -xz, -yz);
     }
 };
-}
+} // namespace CliffordCore
