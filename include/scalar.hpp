@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include "vector3.hpp"
 
 namespace CliffordCore {
 
@@ -51,6 +52,24 @@ public:
      */
     constexpr Scalar operator*(const Scalar& other) const {     
         return Scalar(value * other.value);
+    }
+
+    /**
+     * @brief Multiplication of scaler by vector operator overload.
+     * @param other The vector to multiply with.
+     * @return The resulting vector.
+     */
+    constexpr Vector3<T> operator*(const Vector3<T>& other) const { 
+        return Vector3<T>(value * other.x, value * other.y, value * other.z);
+    }
+
+    /**
+     * @brief Multiplication of scaler by bivector operator overload.
+     * @param other The bivector to multiply with.
+     * @return The resulting bivector.
+     */
+    constexpr Bivector3<T> operator*(const Bivector3<T>& other) const { 
+        return Bivector3<T>(value * other.xy, value * other.xz, value * other.yz);
     }
 
     /**
