@@ -37,4 +37,14 @@ constexpr Scalar<T> squared_norm(const Vector3<T>& v) {
     return Scalar<T>(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
+template<typename T>
+/**
+ * @brief Computes the squared euclidian norm (magnitude) of a bivector in 3D space.
+ * @param b The bivector for which to compute the squared norm.
+ * @return The squared euclidian norm (magnitude) of the bivector b.
+ */
+constexpr Scalar<T> squared_norm(const Bivector3<T>& b) {
+    return Scalar<T>(b.xy * b.xy + b.xz * b.xz + b.yz * b.yz);
+}
+
 } // namespace CliffordCore
