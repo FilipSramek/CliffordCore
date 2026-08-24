@@ -24,4 +24,15 @@ namespace CliffordCore
     constexpr Bivector3<T> reverse(const Bivector3<T>& b) {
         return Bivector3<T>(-b.xy, -b.xz, -b.yz);
     }
+
+    template<typename T>
+    /**
+     * @brief Computes the geometric reverse of a rotor in 3D space.
+     * @param r The rotor for which to compute the reverse.
+     * @return The reverse of the rotor r. (reverse(r) = scalar(r) - bivector(r))
+     */
+
+    constexpr Rotor3<T> reverse(const Rotor3<T>& r) {
+        return Rotor3<T>(r.scalar, Bivector3<T>(-r.bivector.xy, -r.bivector.xz, -r.bivector.yz));
+    }
 } // namespace CliffordCore
