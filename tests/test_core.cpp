@@ -142,6 +142,21 @@ void test_scalar()
     check_vector(two * Vector3<double>(1.0, 2.0, 3.0), 2.0, 4.0, 6.0, "Scalar * Vector3");
     check_bivector(two * Bivector3<double>(1.0, 2.0, 3.0), 2.0, 4.0, 6.0, "Scalar * Bivector3");
     check_trivector(two * Trivector3<double>(5.0), 10.0, "Scalar * Trivector3");
+
+    // Composite types: the scalar must distribute over every grade.
+    const Multivector3<double> mv(
+        Scalar<double>(1.0), Vector3<double>(2.0, 3.0, 4.0),
+        Bivector3<double>(5.0, 6.0, 7.0), Trivector3<double>(8.0));
+    const Multivector3<double> scaledMv = two * mv;
+    check_scalar(scaledMv.scalar, 2.0, "Scalar * Multivector3 scalar");
+    check_vector(scaledMv.vector, 4.0, 6.0, 8.0, "Scalar * Multivector3 vector");
+    check_bivector(scaledMv.bivector, 10.0, 12.0, 14.0, "Scalar * Multivector3 bivector");
+    check_trivector(scaledMv.trivector, 16.0, "Scalar * Multivector3 trivector");
+
+    const Rotor3<double> rot(Scalar<double>(1.0), Bivector3<double>(2.0, 3.0, 4.0));
+    const Rotor3<double> scaledRot = two * rot;
+    check_scalar(scaledRot.scalar, 2.0, "Scalar * Rotor3 scalar");
+    check_bivector(scaledRot.bivector, 4.0, 6.0, 8.0, "Scalar * Rotor3 bivector");
 }
 
 void test_vector3()
@@ -201,8 +216,22 @@ void test_trivector3()
 
     check_trivector(a + b, 9.0, "operator+");
     check_trivector(a - b, 3.0, "operator-");
-    check_trivector(a * b, 18.0, "operator*");
-    check_trivector(a / b, 2.0, "operator/");
+    check_trivector(a * b, 18.0, "operator* (Trivector3)");
+    check_trivector(a / b, 2.0, "operator/ (Trivector3)");
+    check_trivector(-a, -6.0, "unary operator-");
+
+    check_trivector(a * Scalar<double>(2.0), 12.0, "operator* (Scalar)");
+    check_trivector(a / Scalar<double>(2.0), 3.0, "operator/ (Scalar)");
+
+    // Raw numeric overloads exist so `t * 2.0` stays unambiguous now that both
+    // Trivector3 and Scalar are constructible from one T. They must agree with
+    // the Scalar spelling.
+    check_trivector(a * 2.0, 12.0, "operator* (raw T)");
+    check_trivector(a / 2.0, 3.0, "operator/ (raw T)");
+    check_close((a * 2.0).e123, (a * Scalar<double>(2.0)).e123, "raw T == Scalar overload");
+
+    check_scalar(a.magnitude(), 6.0, "magnitude");
+    check_scalar(Trivector3<double>(-6.0).magnitude(), 6.0, "magnitude is non-negative");
 }
 
 void test_multivector3()
@@ -233,6 +262,36 @@ void test_multivector3()
     check_vector(diff.vector, 18.0, 27.0, 36.0, "operator- vector");
     check_bivector(diff.bivector, 45.0, 54.0, 63.0, "operator- bivector");
     check_trivector(diff.trivector, 72.0, "operator- trivector");
+
+    const Multivector3<double> negated = -a;
+    check_scalar(negated.scalar, -1.0, "unary operator- scalar");
+    check_vector(negated.vector, -2.0, -3.0, -4.0, "unary operator- vector");
+    check_bivector(negated.bivector, -5.0, -6.0, -7.0, "unary operator- bivector");
+    check_trivector(negated.trivector, -8.0, "unary operator- trivector");
+
+    const Multivector3<double> scaled = a * Scalar<double>(2.0);
+    check_scalar(scaled.scalar, 2.0, "operator* (Scalar) scalar");
+    check_vector(scaled.vector, 4.0, 6.0, 8.0, "operator* (Scalar) vector");
+    check_bivector(scaled.bivector, 10.0, 12.0, 14.0, "operator* (Scalar) bivector");
+    check_trivector(scaled.trivector, 16.0, "operator* (Scalar) trivector");
+
+    const Multivector3<double> halved = a / Scalar<double>(2.0);
+    check_scalar(halved.scalar, 0.5, "operator/ (Scalar) scalar");
+    check_vector(halved.vector, 1.0, 1.5, 2.0, "operator/ (Scalar) vector");
+    check_bivector(halved.bivector, 2.5, 3.0, 3.5, "operator/ (Scalar) bivector");
+    check_trivector(halved.trivector, 4.0, "operator/ (Scalar) trivector");
+
+    // Scaling agrees whichever side the scalar sits on.
+    const Multivector3<double> fromLeft = Scalar<double>(2.0) * a;
+    check_close(fromLeft.scalar.value, scaled.scalar.value, "Scalar*MV == MV*Scalar scalar");
+    check_vector(fromLeft.vector, scaled.vector.x, scaled.vector.y, scaled.vector.z,
+                 "Scalar*MV == MV*Scalar vector");
+    check_trivector(fromLeft.trivector, scaled.trivector.e123, "Scalar*MV == MV*Scalar trivector");
+
+    // Negation is subtraction from zero.
+    const Multivector3<double> viaSubtraction = Multivector3<double>() - a;
+    check_scalar(viaSubtraction.scalar, negated.scalar.value, "-a == 0 - a scalar");
+    check_trivector(viaSubtraction.trivector, negated.trivector.e123, "-a == 0 - a trivector");
 }
 
 void test_rotor3()
@@ -411,40 +470,6 @@ void test_dual()
     check_vector(roundTrip, v.x, v.y, v.z, "dual(dual(v)) == v");
 }
 
-// ---------------------------------------------------------------------------
-// Not yet testable: these six expressions do not compile today.
-//
-// Enabling this block reproduces each failure. Root causes:
-//
-//  1. Scalar::operator*(Multivector3) and Scalar::operator*(Rotor3) build their
-//     result with `value * other.scalar`, i.e. a raw T on the left of a class
-//     type. No operator*(T, Scalar<T>) exists. The same pattern works for
-//     Vector3/Bivector3/Trivector3 only because their members are raw T.
-//  2. Trivector3 has no unary operator-.
-//  3. Multivector3::operator-() needs (2), and Multivector3::operator*(Scalar)
-//     and operator/(Scalar) do `trivector * s`, but Trivector3's operator* and
-//     operator/ take a Trivector3, not a Scalar.
-//
-// Fixing means giving Trivector3 a unary minus plus Scalar multiply/divide, and
-// making Scalar's cross-type multiply delegate to each component's own operator
-// instead of multiplying by the raw T.
-// ---------------------------------------------------------------------------
-#if 0
-void test_known_broken()
-{
-    const Scalar<double> s(2.0);
-    const Trivector3<double> t(4.0);
-    const Multivector3<double> m(s, Vector3<double>(1, 2, 3), Bivector3<double>(1, 2, 3), t);
-    const Rotor3<double> r(s, Bivector3<double>(1, 2, 3));
-
-    auto a = s * m;   // no match for operator* (const double, const Scalar<double>)
-    auto b = s * r;   // same
-    auto c = -t;      // no match for operator- (Trivector3<double>)
-    auto d = -m;      // needs Trivector3 unary minus
-    auto e = m * s;   // no match for operator* (Trivector3<double>, Scalar<double>)
-    auto f = m / s;   // no match for operator/ (Trivector3<double>, Scalar<double>)
-}
-#endif
 
 } // namespace
 
