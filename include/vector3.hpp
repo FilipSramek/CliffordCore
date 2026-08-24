@@ -36,6 +36,10 @@ public:
      */
     constexpr Vector3(T x_val, T y_val, T z_val) : x(x_val), y(y_val), z(z_val) {} 
 
+    constexpr Scalar<T> magnitude() const {                                                                         
+        return Scalar<T>(std::sqrt(x * x + y * y + z * z));
+    }
+
     /**
      * @brief Addition operator overload.
      * @param other The vector to add.
