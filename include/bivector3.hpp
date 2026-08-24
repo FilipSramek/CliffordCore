@@ -36,6 +36,10 @@ public:
      */
     constexpr Bivector3(T xy_val, T xz_val, T yz_val) : xy(xy_val), xz(xz_val), yz(yz_val) {}   
 
+    constexpr Scalar<T> magnitude() const {                                                                         
+        return Scalar<T>(std::sqrt(xy * xy + xz * xz + yz * yz));
+    }
+
     /**
      * @brief Addition operator overload.
      * @param other The bivector to add.
