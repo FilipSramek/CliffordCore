@@ -28,6 +28,10 @@ public:
      */
     constexpr Trivector3(const T& value) : e123(value) {}
 
+    constexpr Scalar<T> magnitude() const {                                                                         
+        return Scalar<T>(std::sqrt(e123 * e123));
+    }
+
     /**
      * @brief Addition operator overload.
      * @param other The trivector to add.
