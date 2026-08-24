@@ -142,20 +142,23 @@ constexpr Trivector3<T> Scalar<T>::operator*(const Trivector3<T>& other) const {
 }
 
 template<typename T>
-constexpr Multivector3<T> Scalar<T>::operator*(const Multivector3<T>& other) const { 
+constexpr Multivector3<T> Scalar<T>::operator*(const Multivector3<T>& other) const {
+    // Delegate to the per-grade overloads above. Multiplying by the raw `value`
+    // would put a T on the left of a class type, for which no operator exists.
     return Multivector3<T>(
-        value * other.scalar,
-        value * other.vector,
-        value * other.bivector,
-        value * other.trivector
+        *this * other.scalar,
+        *this * other.vector,
+        *this * other.bivector,
+        *this * other.trivector
     );
 }
 
 template<typename T>
-constexpr Rotor3<T> Scalar<T>::operator*(const Rotor3<T>& other) const { 
+constexpr Rotor3<T> Scalar<T>::operator*(const Rotor3<T>& other) const {
+    // Same reasoning as the Multivector3 overload above.
     return Rotor3<T>(
-        value * other.scalar,
-        value * other.bivector
+        *this * other.scalar,
+        *this * other.bivector
     );
 }
 
