@@ -87,13 +87,13 @@ public:
 namespace CliffordCore
 {
 
-template<typename T>
-constexpr Bivector3<T> Bivector3<T>::operator*(const Scalar<T>& scalar) const {                              
-    return Bivector3<T>(xy * scalar.value, xz * scalar.value, yz * scalar.value);
-}
+    template<typename T>
+    constexpr Bivector3<T> Bivector3<T>::operator*(const Scalar<T>& scalar) const {                              
+        return Bivector3<T>(xy * scalar.value, xz * scalar.value, yz * scalar.value);
+    }
 
-template<typename T>
-constexpr Bivector3<T> Bivector3<T>::operator/(const Scalar<T>& scalar) const {                             
-    return Bivector3<T>(xy / scalar.value, xz / scalar.value, yz / scalar.value);
-}
+    template<typename T>
+    constexpr Bivector3<T> Bivector3<T>::operator/(const Scalar<T>& scalar) const {                             
+        return Bivector3<T>(xy / scalar.value, xz / scalar.value, yz / scalar.value);
+    }
 } // namespace CliffordCore

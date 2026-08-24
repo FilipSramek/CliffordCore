@@ -88,13 +88,13 @@ public:
 namespace CliffordCore
 {
 
-template<typename T>
-constexpr Vector3<T> Vector3<T>::operator*(const Scalar<T>& scalar) const {                    
-    return Vector3<T>(x * scalar.value, y * scalar.value, z * scalar.value);
-}
+    template<typename T>
+    constexpr Vector3<T> Vector3<T>::operator*(const Scalar<T>& scalar) const {                    
+        return Vector3<T>(x * scalar.value, y * scalar.value, z * scalar.value);
+    }
 
-template<typename T>
-constexpr Vector3<T> Vector3<T>::operator/(const Scalar<T>& scalar) const {                    
-    return Vector3<T>(x / scalar.value, y / scalar.value, z / scalar.value);
-}
+    template<typename T>
+    constexpr Vector3<T> Vector3<T>::operator/(const Scalar<T>& scalar) const {                    
+        return Vector3<T>(x / scalar.value, y / scalar.value, z / scalar.value);
+    }
 } // namespace CliffordCore
