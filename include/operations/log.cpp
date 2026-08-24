@@ -8,7 +8,11 @@
 namespace CliffordCore
 {
     template<typename T>
-    
+    /**
+     * @brief Computes the logarithm of a rotor in 3D space, resulting in a bivector.
+     * @param r The rotor for which to compute the logarithm.
+     * @return The resulting bivector from the logarithm of the rotor r.
+     */
     constexpr Bivector3<T> log(const Rotor3<T>& r) {
         Scalar<T> arccos_scalar = Scalar<T> (std::acos(r.scalar.value));
 

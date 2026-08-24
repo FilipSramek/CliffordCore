@@ -8,7 +8,11 @@
 namespace CliffordCore
 {
     template<typename T>
-    
+    /**
+     * @brief Computes the exponential of a bivector in 3D space, resulting in a rotor.
+     * @param b The bivector for which to compute the exponential.
+     * @return The resulting rotor from the exponential of the bivector b.
+     */
     constexpr Rotor3<T> exp(const Bivector3<T>& b) {
         Scalar<T> norm_bivector = norm(b);
 
