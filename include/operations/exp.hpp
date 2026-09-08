@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "../rotor3.hpp"
 #include "../bivector3.hpp"
 #include "../scalar.hpp"

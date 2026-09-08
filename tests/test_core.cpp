@@ -25,6 +25,8 @@
 #include "../include/operations/inverse.hpp"
 #include "../include/operations/reverse.hpp"
 #include "../include/operations/dual.hpp"
+#include "../include/operations/exp.hpp"
+#include "../include/operations/log.hpp"
 
 using CliffordCore::Bivector3;
 using CliffordCore::Multivector3;
@@ -470,6 +472,53 @@ void test_dual()
     check_vector(roundTrip, v.x, v.y, v.z, "dual(dual(v)) == v");
 }
 
+void test_exp_log()
+{
+    section("exp/log");
+
+    constexpr double kPi = 3.14159265358979323846;
+
+    // exp of the zero bivector is the identity rotor.
+    const Rotor3<double> identity = CliffordCore::exp(Bivector3<double>(0.0, 0.0, 0.0));
+    check_scalar(identity.scalar, 1.0, "exp(0) scalar");
+    check_bivector(identity.bivector, 0.0, 0.0, 0.0, "exp(0) bivector");
+
+    // A quarter turn in the xy plane: cos(pi/2) + sin(pi/2) * xy.
+    const Rotor3<double> quarter = CliffordCore::exp(Bivector3<double>(kPi / 2.0, 0.0, 0.0));
+    check_close(quarter.scalar.value, 0.0, "exp(pi/2 xy) scalar", 1e-15);
+    check_bivector(quarter.bivector, 1.0, 0.0, 0.0, "exp(pi/2 xy) bivector");
+
+    // exp must always produce a unit rotor: scalar^2 + |bivector|^2 == 1.
+    const Bivector3<double> b(0.3, 0.4, 0.5);
+    const Rotor3<double> r = CliffordCore::exp(b);
+    check_close(r.scalar.value * r.scalar.value + CliffordCore::squared_norm(r.bivector).value,
+                1.0, "exp produces a unit rotor", 1e-15);
+
+    // log of the identity rotor is the zero bivector.
+    const Bivector3<double> logIdentity =
+        CliffordCore::log(Rotor3<double>(Scalar<double>(1.0), Bivector3<double>(0.0, 0.0, 0.0)));
+    check_bivector(logIdentity, 0.0, 0.0, 0.0, "log(identity) is zero");
+
+    // log and exp are inverses. Trig costs precision, so allow a looser bound.
+    const Bivector3<double> there = CliffordCore::log(CliffordCore::exp(b));
+    check_bivector(there, b.xy, b.xz, b.yz, "log(exp(b)) == b");
+
+    const Rotor3<double> back = CliffordCore::exp(CliffordCore::log(r));
+    check_close(back.scalar.value, r.scalar.value, "exp(log(r)) scalar", 1e-14);
+    check_bivector(back.bivector, r.bivector.xy, r.bivector.xz, r.bivector.yz,
+                   "exp(log(r)) bivector");
+
+    // A rotor whose scalar has drifted just outside [-1, 1] must not yield NaN:
+    // std::acos would be out of domain without the clamp in log().
+    const Bivector3<double> drifted =
+        CliffordCore::log(Rotor3<double>(Scalar<double>(1.0 + 2e-16), Bivector3<double>(1.0, 0.0, 0.0)));
+    check(!std::isnan(drifted.xy) && !std::isnan(drifted.xz) && !std::isnan(drifted.yz),
+          "log clamps scalar drift above 1 instead of returning NaN");
+
+    const Bivector3<double> driftedLow =
+        CliffordCore::log(Rotor3<double>(Scalar<double>(-1.0 - 2e-16), Bivector3<double>(1.0, 0.0, 0.0)));
+    check(!std::isnan(driftedLow.xy), "log clamps scalar drift below -1");
+}
 
 } // namespace
 
@@ -489,6 +538,7 @@ int main()
     test_inverse();
     test_reverse();
     test_dual();
+    test_exp_log();
 
     std::cout << g_checks << " checks, " << g_failures << " failed.\n";
     if (g_failures != 0) {

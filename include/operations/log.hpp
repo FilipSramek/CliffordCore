@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "../rotor3.hpp"
 #include "../bivector3.hpp"
 #include "../scalar.hpp"
@@ -14,20 +15,27 @@ namespace CliffordCore
      * @return The resulting bivector from the logarithm of the rotor r.
      */
     constexpr Bivector3<T> log(const Rotor3<T>& r) {
-        Scalar<T> arccos_scalar = Scalar<T> (std::acos(r.scalar.value));
+        // A unit rotor has |scalar| <= 1, but rounding in exp() or in repeated
+        // composition can leave it a few ulps outside that range, and std::acos
+        // returns NaN off-domain. Clamp before the call.
+        const T clamped_scalar = r.scalar.value < T(-1) ? T(-1)
+                               : (r.scalar.value > T(1) ? T(1) : r.scalar.value);
 
-        Scalar<T> Magnitude_bivector = Bivector3<T>(r.bivector.xy, r.bivector.xz, r.bivector.yz).magnitude();
+        Scalar<T> arccos_scalar = Scalar<T> (std::acos(clamped_scalar));
+
+        Scalar<T> Magnitude_bivector = r.bivector.magnitude();
 
         if (Magnitude_bivector.value == 0) { // Handle the case when the bivector is zero
             return Bivector3<T>(0, 0, 0);
         }
 
-        log = Bivector3<T>(
-            (arccos_scalar.value / Magnitude_bivector.value) * r.bivector.xy,
-            (arccos_scalar.value / Magnitude_bivector.value) * r.bivector.xz,
-            (arccos_scalar.value / Magnitude_bivector.value) * r.bivector.yz
-        );
+        // The angle scaled onto the unit bivector that carries the rotation plane.
+        const T scale = arccos_scalar.value / Magnitude_bivector.value;
 
-        return log;
+        return Bivector3<T>(
+            scale * r.bivector.xy,
+            scale * r.bivector.xz,
+            scale * r.bivector.yz
+        );
     }
 } // namespace CliffordCore
