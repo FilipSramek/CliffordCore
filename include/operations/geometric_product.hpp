@@ -40,18 +40,4 @@ namespace CliffordCore
             Trivector3<T>(0)
         );
     }
-
-    /**
-     * @brief Computes the rotor product of two 3D vectors.
-     * @param a The first vector.
-     * @param b The second vector.
-     * @return The resulting rotor from the geometric product.
-     */
-    template<typename T>
-    constexpr Rotor3<T> rotor_product(const Vector3<T>& a, const Vector3<T>& b) {
-        return Rotor3<T>(
-            a | b,
-            a ^ b
-        );
-    }
 } // namespace CliffordCore
