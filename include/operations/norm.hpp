@@ -13,6 +13,16 @@ namespace CliffordCore
 
 template<typename T>
 /**
+ * @brief Computes the euclidian norm (magnitude) of a scalar.
+ * @param s The scalar for which to compute the norm.
+ * @return The euclidian norm (magnitude) of the scalar s.
+ */
+constexpr Scalar<T> norm(const Scalar<T>& s) {
+    return Scalar<T>(std::abs(s.value));
+}
+
+template<typename T>
+/**
  * @brief Computes the euclidian norm (magnitude) of a 3D vector.
  * @param v The vector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the vector v.
