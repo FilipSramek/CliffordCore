@@ -88,5 +88,56 @@ namespace CliffordCore
                 bivector / other
             );
         }
+
+        /**
+         * @brief Adds another rotor in place.
+         * @param other The rotor to add.
+         * @return A reference to this rotor.
+         */
+        constexpr Rotor3& operator+=(const Rotor3& other) {
+            *this = *this + other;
+            return *this;
+        }
+
+        /**
+         * @brief Subtracts another rotor in place.
+         * @param other The rotor to subtract.
+         * @return A reference to this rotor.
+         */
+        constexpr Rotor3& operator-=(const Rotor3& other) {
+            *this = *this - other;
+            return *this;
+        }
+
+        /**
+         * @brief Scales this rotor in place by a scalar.
+         * @param other The scalar to multiply by.
+         * @return A reference to this rotor.
+         */
+        constexpr Rotor3& operator*=(const Scalar<T>& other) {
+            *this = *this * other;
+            return *this;
+        }
+
+        /**
+         * @brief Divides this rotor in place by a scalar.
+         * @param other The scalar to divide by.
+         * @return A reference to this rotor.
+         */
+        constexpr Rotor3& operator/=(const Scalar<T>& other) {
+            *this = *this / other;
+            return *this;
+        }
     };
+
+    template<typename T>
+    /**
+     * @brief Scales a rotor with the raw numeric value on the left.
+     * @param value The value to multiply by.
+     * @param r The rotor to scale.
+     * @return The resulting rotor.
+     */
+    constexpr Rotor3<T> operator*(T value, const Rotor3<T>& r) {
+        return r * Scalar<T>(value);
+    }
 } // namespace CliffordCore
