@@ -35,7 +35,7 @@ namespace CliffordCore
      * @return The reverse of the trivector t. (reverse(t) = -t)
      */
     constexpr Trivector3<T> reverse(const Trivector3<T>& t) {
-        return Trivector3<T>(-t.value);
+        return Trivector3<T>(-t.e123);
     }
 
     template<typename T>
@@ -49,7 +49,7 @@ namespace CliffordCore
             m.scalar,
             m.vector,
             Bivector3<T>(-m.bivector.xy, -m.bivector.xz, -m.bivector.yz),
-            Trivector3<T>(-m.trivector.value)
+            Trivector3<T>(-m.trivector.e123)
         );
     }
 
