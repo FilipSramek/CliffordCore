@@ -77,5 +77,16 @@ namespace CliffordCore
             );
         }
 
+        /**
+         * @brief Division operator overload.
+         * @param other The scalar to divide.
+         * @return The resulting rotor.
+         */
+        constexpr Rotor3 operator/(const Scalar<T>& other) const {
+            return Rotor3(
+                scalar / other,
+                bivector / other
+            );
+        }
     };
 } // namespace CliffordCore
