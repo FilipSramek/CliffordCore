@@ -75,6 +75,6 @@ namespace CliffordCore
         + r.bivector.xz * s.bivector.xy
     );
 
-    return Rotor3<T>(scalar, bivector);
-}
+        return Rotor3<T>(scalar, bivector);
+    }
 } // namespace CliffordCore
