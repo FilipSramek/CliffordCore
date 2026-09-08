@@ -28,7 +28,7 @@
 #include "../include/operations/exp.hpp"
 #include "../include/operations/log.hpp"
 #include "../include/operations/normalize.hpp"
-#include "../include/operations/sendwich.hpp"
+#include "../include/operations/sandwich.hpp"
 #include "../include/operations/addition.hpp"
 
 using CliffordCore::Bivector3;
@@ -502,18 +502,48 @@ void test_dual()
 {
     section("dual");
 
-    // NOTE: dual() is currently a straight component copy, not multiplication by
-    // the pseudoscalar. These assertions pin the implemented behavior; if the
-    // definition changes to the algebraic dual, update them deliberately.
+    // dual(a) is a * e123. Checked here against the literal basis mapping, and
+    // below against the general multivector product.
     const Vector3<double> v(1.0, 2.0, 3.0);
-    check_bivector(CliffordCore::dual(v), 1.0, 2.0, 3.0, "dual(Vector3)");
+    check_bivector(CliffordCore::dual(v), 3.0, -2.0, 1.0, "dual(Vector3) maps x,y,z to yz,-xz,xy");
 
     const Bivector3<double> b(4.0, 5.0, 6.0);
-    check_vector(CliffordCore::dual(b), 4.0, 5.0, 6.0, "dual(Bivector3)");
+    check_vector(CliffordCore::dual(b), -6.0, 5.0, -4.0, "dual(Bivector3)");
 
-    // Round trip returns the original components.
-    const Vector3<double> roundTrip = CliffordCore::dual(CliffordCore::dual(v));
-    check_vector(roundTrip, v.x, v.y, v.z, "dual(dual(v)) == v");
+    // Grade 0 and grade 3 are dual to each other too.
+    check_trivector(CliffordCore::dual(Scalar<double>(7.0)), 7.0, "dual(Scalar) is the pseudoscalar");
+    check_scalar(CliffordCore::dual(Trivector3<double>(7.0)), -7.0, "dual(Trivector3) negates");
+
+    // Basis checks, pinning each individual mapping.
+    check_bivector(CliffordCore::dual(Vector3<double>(1, 0, 0)), 0.0, 0.0, 1.0, "dual(e1) = e23");
+    check_bivector(CliffordCore::dual(Vector3<double>(0, 1, 0)), 0.0, -1.0, 0.0, "dual(e2) = -e13");
+    check_bivector(CliffordCore::dual(Vector3<double>(0, 0, 1)), 1.0, 0.0, 0.0, "dual(e3) = e12");
+
+    // The pseudoscalar squares to -1, so the dual is an involution up to sign:
+    // applying it twice negates rather than returning the original.
+    const Vector3<double> twice = CliffordCore::dual(CliffordCore::dual(v));
+    check_vector(twice, -v.x, -v.y, -v.z, "dual(dual(v)) == -v");
+    check_scalar(CliffordCore::dual(CliffordCore::dual(Scalar<double>(7.0))), -7.0,
+                 "dual(dual(s)) == -s");
+
+    // The definition itself: dual(a) must equal a * e123 under the general
+    // product. This is what makes it the algebraic dual rather than a relabelling.
+    const Multivector3<double> I = make_mv(0, 0, 0, 0, 0, 0, 0, 1);
+    const Multivector3<double> vAsMv = make_mv(0, v.x, v.y, v.z, 0, 0, 0, 0);
+    const Bivector3<double> dualV = CliffordCore::dual(v);
+    check_close(mv_difference(vAsMv * I, make_mv(0, 0, 0, 0, dualV.xy, dualV.xz, dualV.yz, 0)), 0.0,
+                "dual(v) == v * e123");
+
+    const Multivector3<double> bAsMv = make_mv(0, 0, 0, 0, b.xy, b.xz, b.yz, 0);
+    const Vector3<double> dualB = CliffordCore::dual(b);
+    check_close(mv_difference(bAsMv * I, make_mv(0, dualB.x, dualB.y, dualB.z, 0, 0, 0, 0)), 0.0,
+                "dual(b) == b * e123");
+
+    // The dual of a wedge is the cross product, which is the classic reason to
+    // want a dual in 3D: e1 ^ e2 is the xy plane, whose dual is the e3 axis.
+    const Vector3<double> e1(1, 0, 0);
+    const Vector3<double> e2(0, 1, 0);
+    check_vector(CliffordCore::dual(e1 ^ e2), 0.0, 0.0, -1.0, "dual(e1 ^ e2) is along e3");
 }
 
 void test_exp_log()
