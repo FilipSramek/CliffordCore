@@ -58,6 +58,16 @@ namespace CliffordCore
     }
 
     template<typename T>
+    constexpr Multivector3<T> operator*(const Multivector3<T>& m, const Multivector3<T>& n) {
+        return Multivector3<T>(
+            m.scalar * n.scalar + m.vector | n.vector + m.bivector | n.bivector + m.trivector * n.trivector,
+            m.scalar * n.vector + m.vector * n.scalar + m.bivector ^ n.vector + m.vector ^ n.bivector,
+            m.scalar * n.bivector + m.bivector * n.scalar + m.vector ^ n.vector + m.trivector ^ n.vector,
+            m.scalar * n.trivector + m.trivector * n.scalar + m.bivector ^ n.bivector
+        );
+    }
+
+    template<typename T>
     /**
      * @brief Computes the geometric product of two 3D rotors, resulting in a 3D rotor. Analogous to two conecutive rotations.
      * @param r The first rotor.
