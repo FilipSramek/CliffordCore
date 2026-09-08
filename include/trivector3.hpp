@@ -59,22 +59,20 @@ public:
     }
 
     /**
-     * @brief Multiplication operator overload.
+     * @brief Geometric product of two trivectors.
      * @param other The trivector to multiply with.
-     * @return The resulting trivector.
+     * @return The resulting scalar. The pseudoscalar squares to -1, so
+     *         (a e123)(b e123) = -ab, a pure scalar rather than a trivector.
      */
-    constexpr Trivector3 operator*(const Trivector3& other) const {
-        return Trivector3(e123 * other.e123);
-    }
+    constexpr Scalar<T> operator*(const Trivector3& other) const;
 
-    /** 
-     * @brief Division operator overload.
+    /**
+     * @brief Geometric division of two trivectors.
      * @param other The trivector to divide by.
-     * @return The resulting trivector.
+     * @return The resulting scalar. This is a * inverse(other), and the two
+     *         minus signs cancel, so the result is simply a/b.
      */
-    constexpr Trivector3 operator/(const Trivector3& other) const {
-        return Trivector3(e123 / other.e123);
-    }
+    constexpr Scalar<T> operator/(const Trivector3& other) const;
 
     // Trivector3 is the one grade type with a single-argument converting
     // constructor, so a raw `T` could reach either operator*(Trivector3) or
@@ -183,6 +181,18 @@ public:
 
 namespace CliffordCore
 {
+
+template<typename T>
+constexpr Scalar<T> Trivector3<T>::operator*(const Trivector3<T>& other) const {
+    // e123 * e123 = -1, so the product of two pseudoscalars is a negative scalar.
+    return Scalar<T>(-(e123 * other.e123));
+}
+
+template<typename T>
+constexpr Scalar<T> Trivector3<T>::operator/(const Trivector3<T>& other) const {
+    // a/b = a * inverse(b), and inverse(b) = -b/|b|^2, so the minus signs cancel.
+    return Scalar<T>(e123 / other.e123);
+}
 
 template<typename T>
 constexpr Trivector3<T> Trivector3<T>::operator*(const Scalar<T>& scalar) const {

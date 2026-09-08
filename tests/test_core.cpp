@@ -266,9 +266,23 @@ void test_trivector3()
 
     check_trivector(a + b, 9.0, "operator+");
     check_trivector(a - b, 3.0, "operator-");
-    check_trivector(a * b, 18.0, "operator* (Trivector3)");
-    check_trivector(a / b, 2.0, "operator/ (Trivector3)");
     check_trivector(-a, -6.0, "unary operator-");
+
+    // The geometric product of two pseudoscalars is a SCALAR, not a trivector:
+    // e123 squares to -1, so (6 e123)(3 e123) = -18. Division is a * inverse(b),
+    // where the two minus signs cancel and leave a plain 6/3.
+    static_assert(std::is_same<decltype(a * b), Scalar<double>>::value,
+                  "Trivector3 * Trivector3 produces a Scalar");
+    static_assert(std::is_same<decltype(a / b), Scalar<double>>::value,
+                  "Trivector3 / Trivector3 produces a Scalar");
+    check_scalar(a * b, -18.0, "operator* (Trivector3) is -ab");
+    check_scalar(a / b, 2.0, "operator/ (Trivector3)");
+
+    // The defining case, and the one the old component-wise version got wrong.
+    check_scalar(Trivector3<double>(1.0) * Trivector3<double>(1.0), -1.0, "e123 * e123 == -1");
+
+    // Division must undo multiplication: (a/b) scaled back by b returns a.
+    check_trivector((a / b) * b, a.e123, "(a/b) * b == a");
 
     check_trivector(a * Scalar<double>(2.0), 12.0, "operator* (Scalar)");
     check_trivector(a / Scalar<double>(2.0), 3.0, "operator/ (Scalar)");
@@ -1123,6 +1137,16 @@ void test_mixed_products()
     // A bivector squares to minus its squared norm.
     check_close((b * b).scalar.value, -14.0, "b * b scalar part is -|b|^2");
     check_bivector((b * b).bivector, 0.0, 0.0, 0.0, "b * b has no bivector part");
+
+    // Trivector3 * Trivector3 is handled directly on the type rather than here,
+    // because the product is always a pure scalar. It must still agree with the
+    // general product's scalar part.
+    const Multivector3<double> tSquaredGeneral =
+        make_mv(0, 0, 0, 0, 0, 0, 0, t.e123) * make_mv(0, 0, 0, 0, 0, 0, 0, t.e123);
+    check_close((t * t).value, tSquaredGeneral.scalar.value,
+                "Trivector3 * Trivector3 matches the general product");
+    check_close(tSquaredGeneral.trivector.e123, 0.0,
+                "the general product of two trivectors has no trivector part");
 
     // Multiplying by the pseudoscalar is the dual, up to the definition.
     check_close(mv_difference(v * t, make_mv(0, v.x, v.y, v.z, 0, 0, 0, 0)

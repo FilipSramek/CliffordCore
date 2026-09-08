@@ -15,9 +15,9 @@
 // Rotor3 * Rotor3 have direct implementations in geometric_product.hpp, and the
 // Scalar pairings are members of the individual types.
 //
-// Note that Trivector3 * Trivector3 already exists as component-wise
-// multiplication on the type itself, which is NOT the geometric product
-// (e123 * e123 = -1). It is left alone rather than silently redefined.
+// Trivector3 * Trivector3 is not here either: two pseudoscalars always multiply
+// to a pure scalar, so Trivector3 defines it directly and returns Scalar<T>.
+// The tests assert it agrees with the general product's scalar part.
 
 namespace CliffordCore
 {
