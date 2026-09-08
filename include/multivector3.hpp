@@ -5,7 +5,7 @@
 #include "vector3.hpp"
 #include "bivector3.hpp"
 #include "trivector3.hpp"
-#include "rotor3.hpp
+#include "rotor3.hpp"
 
 namespace CliffordCore
 {
