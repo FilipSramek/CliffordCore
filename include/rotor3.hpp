@@ -4,6 +4,7 @@
 #include "scalar.hpp"
 #include "bivector3.hpp"
 #include "vector3.hpp"
+#include "multivector3.hpp"
 
 namespace CliffordCore
 {
@@ -32,6 +33,13 @@ namespace CliffordCore
          */
         constexpr Rotor3(const Scalar<T>& s, const Bivector3<T>& b)
             : scalar(s), bivector(b) {}
+
+        /**
+         * @brief Constructor initializes the rotor with a 3D multivector.
+         * @param m The multivector to initialize the rotor with.
+         */
+        constexpr Rotor3(const Multivector3<T>& m)
+            : scalar(m.scalar), bivector(m.bivector) {}
 
         /**
          * @brief Addition operator overload.
