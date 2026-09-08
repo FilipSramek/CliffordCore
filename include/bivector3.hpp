@@ -77,9 +77,63 @@ public:
      * @brief Unary negation operator overload.
      * @return The resulting bivector.
      */
-    constexpr Bivector3 operator-() const {                                                     
+    constexpr Bivector3 operator-() const {
         return Bivector3(-xy, -xz, -yz);
     }
+
+    /**
+     * @brief Adds another bivector in place.
+     * @param other The bivector to add.
+     * @return A reference to this bivector.
+     */
+    constexpr Bivector3& operator+=(const Bivector3& other) {
+        xy += other.xy; xz += other.xz; yz += other.yz;
+        return *this;
+    }
+
+    /**
+     * @brief Subtracts another bivector in place.
+     * @param other The bivector to subtract.
+     * @return A reference to this bivector.
+     */
+    constexpr Bivector3& operator-=(const Bivector3& other) {
+        xy -= other.xy; xz -= other.xz; yz -= other.yz;
+        return *this;
+    }
+
+    /**
+     * @brief Scales this bivector in place by a raw numeric value.
+     * @param value The value to multiply by.
+     * @return A reference to this bivector.
+     */
+    constexpr Bivector3& operator*=(T value) {
+        xy *= value; xz *= value; yz *= value;
+        return *this;
+    }
+
+    /**
+     * @brief Divides this bivector in place by a raw numeric value.
+     * @param value The value to divide by.
+     * @return A reference to this bivector.
+     */
+    constexpr Bivector3& operator/=(T value) {
+        xy /= value; xz /= value; yz /= value;
+        return *this;
+    }
+
+    /**
+     * @brief Scales this bivector in place by a scalar.
+     * @param scalar The scalar to multiply by.
+     * @return A reference to this bivector.
+     */
+    constexpr Bivector3& operator*=(const Scalar<T>& scalar);
+
+    /**
+     * @brief Divides this bivector in place by a scalar.
+     * @param scalar The scalar to divide by.
+     * @return A reference to this bivector.
+     */
+    constexpr Bivector3& operator/=(const Scalar<T>& scalar);
 };
 } // namespace CliffordCore
 
@@ -96,5 +150,26 @@ namespace CliffordCore
     template<typename T>
     constexpr Bivector3<T> Bivector3<T>::operator/(const Scalar<T>& scalar) const {                             
         return Bivector3<T>(xy / scalar.value, xz / scalar.value, yz / scalar.value);
+    }
+
+    template<typename T>
+    constexpr Bivector3<T>& Bivector3<T>::operator*=(const Scalar<T>& scalar) {
+        return *this *= scalar.value;
+    }
+
+    template<typename T>
+    constexpr Bivector3<T>& Bivector3<T>::operator/=(const Scalar<T>& scalar) {
+        return *this /= scalar.value;
+    }
+
+    template<typename T>
+    /**
+     * @brief Scales a bivector with the raw numeric value on the left.
+     * @param value The value to multiply by.
+     * @param b The bivector to scale.
+     * @return The resulting bivector.
+     */
+    constexpr Bivector3<T> operator*(T value, const Bivector3<T>& b) {
+        return Bivector3<T>(value * b.xy, value * b.xz, value * b.yz);
     }
 } // namespace CliffordCore
