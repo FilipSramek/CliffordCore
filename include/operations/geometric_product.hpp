@@ -29,6 +29,20 @@ namespace CliffordCore
 
     template<typename T>
     /**
+     * @brief Computes the geometric product of two 3D vectors, resulting in a rotor.
+     * @param a The first vector.
+     * @param b The second vector.
+     * @return The resulting rotor from the geometric product.
+     */
+    constexpr Rotor3<T> operator*(const Vector3<T>& a, const Vector3<T>& b) {
+        return Rotor3<T>(
+            a | b,
+            a ^ b
+        );
+    }
+
+    template<typename T>
+    /**
      * @brief Computes the geometric product of two 3D vectors, resulting in a multivector.
      * @param a The first vector.
      * @param b The second vector.
