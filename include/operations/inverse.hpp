@@ -9,6 +9,8 @@
 #include "../rotor3.hpp"
 #include "dot_product.hpp"
 #include "norm.hpp"
+#include "reverse.hpp"
+#include "geometric_product.hpp"
 
 namespace CliffordCore
 {
@@ -19,7 +21,7 @@ namespace CliffordCore
      * @return The inverse scalar to the input scalar.
      */
     constexpr Scalar<T> inverse(const Scalar<T>& s) {
-        return Scalar<T>(1.0 / s.value);
+        return Scalar<T>(T(1) / s.value);
     }
 
     template<typename T>
@@ -46,29 +48,76 @@ namespace CliffordCore
     /**
      * @brief Computes the inverse of a trivector in 3D space.
      * @param t The trivector for which to compute the inverse.
-     * @return The inverse trivector to the input trivector.
+     * @return The inverse trivector to the input trivector. The pseudoscalar
+     *         squares to -1, so the inverse carries a minus sign: t^-1 = -t/|t|^2.
      */
     constexpr Trivector3<T> inverse(const Trivector3<T>& t) {
-        return t/squared_norm(t);
+        return -t/squared_norm(t);
+    }
+
+    template<typename T>
+    /**
+     * @brief Applies Clifford conjugation to a multivector.
+     * @param m The multivector to conjugate.
+     * @return The conjugate: grade k is scaled by (-1)^(k(k+1)/2), so the scalar
+     *         and trivector parts keep their sign and the vector and bivector
+     *         parts are negated.
+     */
+    constexpr Multivector3<T> conjugate(const Multivector3<T>& m) {
+        return Multivector3<T>(
+            m.scalar,
+            Vector3<T>(-m.vector.x, -m.vector.y, -m.vector.z),
+            Bivector3<T>(-m.bivector.xy, -m.bivector.xz, -m.bivector.yz),
+            m.trivector
+        );
     }
 
     template<typename T>
     /**
      * @brief Computes the inverse of a multivector in 3D space.
      * @param m The multivector for which to compute the inverse.
-     * @return The inverse multivector to the input multivector.
+     * @return The inverse multivector, satisfying m * inverse(m) = 1.
+     *
+     * Dividing by the squared norm only works for a single grade. In general,
+     * m * conjugate(m) collapses to a scalar plus a pseudoscalar, a + b*e123.
+     * Because e123 squares to -1 that behaves like a complex number, so it
+     * inverts as (a - b*e123)/(a^2 + b^2), and
+     * inverse(m) = conjugate(m) * inverse(m * conjugate(m)).
+     *
+     * The multivector is not invertible when a^2 + b^2 is zero; this returns a
+     * zero multivector in that case rather than dividing by zero.
      */
     constexpr Multivector3<T> inverse(const Multivector3<T>& m) {
-        return m/squared_norm(m);
+        const Multivector3<T> conj = conjugate(m);
+        const Multivector3<T> collapsed = m * conj;
+
+        const T a = collapsed.scalar.value;
+        const T b = collapsed.trivector.e123;
+        const T denominator = a * a + b * b;
+
+        if (denominator == T(0)) {
+            return Multivector3<T>();
+        }
+
+        const Multivector3<T> collapsedInverse(
+            Scalar<T>(a / denominator),
+            Vector3<T>(),
+            Bivector3<T>(),
+            Trivector3<T>(-b / denominator)
+        );
+
+        return conj * collapsedInverse;
     }
 
     template<typename T>
     /**
      * @brief Computes the inverse of a rotor in 3D space.
      * @param r The rotor for which to compute the inverse.
-     * @return The inverse rotor to the input rotor.
+     * @return The inverse rotor to the input rotor: r^-1 = reverse(r)/|r|^2,
+     *         since r * reverse(r) = |r|^2. For a unit rotor this is just the
+     *         reverse, which is why rotations undo by reversing.
      */
     constexpr Rotor3<T> inverse(const Rotor3<T>& r) {
-        return r/squared_norm(r);
+        return reverse(r)/squared_norm(r);
     }
 } // namespace CliffordCore
