@@ -100,6 +100,46 @@ public:
      * @return The resulting scalar.
      */
     constexpr Scalar operator-() const;
+
+    /**
+     * @brief Adds another scalar in place.
+     * @param other The scalar to add.
+     * @return A reference to this scalar.
+     */
+    constexpr Scalar& operator+=(const Scalar& other) {
+        value += other.value;
+        return *this;
+    }
+
+    /**
+     * @brief Subtracts another scalar in place.
+     * @param other The scalar to subtract.
+     * @return A reference to this scalar.
+     */
+    constexpr Scalar& operator-=(const Scalar& other) {
+        value -= other.value;
+        return *this;
+    }
+
+    /**
+     * @brief Multiplies by another scalar in place.
+     * @param other The scalar to multiply by.
+     * @return A reference to this scalar.
+     */
+    constexpr Scalar& operator*=(const Scalar& other) {
+        value *= other.value;
+        return *this;
+    }
+
+    /**
+     * @brief Divides by another scalar in place.
+     * @param other The scalar to divide by.
+     * @return A reference to this scalar.
+     */
+    constexpr Scalar& operator/=(const Scalar& other) {
+        value /= other.value;
+        return *this;
+    }
 };
 } // namespace CliffordCore
 

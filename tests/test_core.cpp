@@ -30,6 +30,10 @@
 #include "../include/operations/normalize.hpp"
 #include "../include/operations/sandwich.hpp"
 #include "../include/operations/addition.hpp"
+#include "../include/operations/subtraction.hpp"
+#include "../include/operations/mixed_products.hpp"
+#include "../include/operations/rotor_construction.hpp"
+#include "../include/operations/grade.hpp"
 
 using CliffordCore::Bivector3;
 using CliffordCore::Multivector3;
@@ -908,6 +912,249 @@ void test_mixed_grade_addition()
     check_mv(CliffordCore::to_multivector(viaSum), 1, 0, 0, 0, 1, 0, 0, 0, "to_multivector(rotor)");
 }
 
+void test_mixed_grade_subtraction()
+{
+    section("mixed-grade subtraction");
+
+    const Scalar<double> s(2.0);
+    const Vector3<double> v(1, 2, 3);
+    const Bivector3<double> b(4, 5, 6);
+    const Trivector3<double> t(7.0);
+    const Multivector3<double> m = make_mv(1, 1, 2, 3, 1, 2, 3, 4);
+
+    check_mv(s - v, 2, -1, -2, -3, 0, 0, 0, 0, "Scalar - Vector3");
+    check_mv(v - s, -2, 1, 2, 3, 0, 0, 0, 0, "Vector3 - Scalar");
+    check_mv(s - b, 2, 0, 0, 0, -4, -5, -6, 0, "Scalar - Bivector3");
+    check_mv(s - t, 2, 0, 0, 0, 0, 0, 0, -7, "Scalar - Trivector3");
+    check_mv(v - b, 0, 1, 2, 3, -4, -5, -6, 0, "Vector3 - Bivector3");
+    check_mv(b - v, 0, -1, -2, -3, 4, 5, 6, 0, "Bivector3 - Vector3");
+    check_mv(v - t, 0, 1, 2, 3, 0, 0, 0, -7, "Vector3 - Trivector3");
+    check_mv(b - t, 0, 0, 0, 0, 4, 5, 6, -7, "Bivector3 - Trivector3");
+    check_mv(m - v, 1, 0, 0, 0, 1, 2, 3, 4, "Multivector3 - Vector3");
+    check_mv(v - m, -1, 0, 0, 0, -1, -2, -3, -4, "Vector3 - Multivector3");
+
+    // a - b must equal a + (-b), and a - a must vanish.
+    check_close(mv_difference(v - b, v + (-b)), 0.0, "a - b == a + (-b)");
+    check_close(mv_difference(m - m, Multivector3<double>()), 0.0, "m - m == 0");
+
+    // Same-grade differences must not widen.
+    static_assert(std::is_same<decltype(v - Vector3<double>()), Vector3<double>>::value,
+                  "Vector3 - Vector3 stays a Vector3");
+    static_assert(std::is_same<decltype(s - v), Multivector3<double>>::value,
+                  "Scalar - Vector3 widens to Multivector3");
+}
+
+void test_compound_assignment()
+{
+    section("compound assignment");
+
+    Vector3<double> v(1, 0, 0);
+    v += Vector3<double>(0, 1, 0);
+    check_vector(v, 1.0, 1.0, 0.0, "Vector3 +=");
+    v -= Vector3<double>(1, 0, 0);
+    check_vector(v, 0.0, 1.0, 0.0, "Vector3 -=");
+    v *= 3.0;
+    check_vector(v, 0.0, 3.0, 0.0, "Vector3 *= raw");
+    v /= Scalar<double>(3.0);
+    check_vector(v, 0.0, 1.0, 0.0, "Vector3 /= Scalar");
+
+    Bivector3<double> b(1, 2, 3);
+    b += Bivector3<double>(1, 1, 1);
+    check_bivector(b, 2.0, 3.0, 4.0, "Bivector3 +=");
+    b *= Scalar<double>(2.0);
+    check_bivector(b, 4.0, 6.0, 8.0, "Bivector3 *= Scalar");
+
+    Trivector3<double> t(4.0);
+    t += Trivector3<double>(2.0);
+    check_trivector(t, 6.0, "Trivector3 +=");
+    t /= 2.0;
+    check_trivector(t, 3.0, "Trivector3 /= raw");
+
+    Scalar<double> s(10.0);
+    s -= Scalar<double>(4.0);
+    check_scalar(s, 6.0, "Scalar -=");
+    s *= Scalar<double>(2.0);
+    check_scalar(s, 12.0, "Scalar *=");
+
+    Multivector3<double> m = make_mv(1, 1, 1, 1, 1, 1, 1, 1);
+    m += make_mv(1, 1, 1, 1, 1, 1, 1, 1);
+    check_mv(m, 2, 2, 2, 2, 2, 2, 2, 2, "Multivector3 +=");
+    m *= Scalar<double>(0.5);
+    check_mv(m, 1, 1, 1, 1, 1, 1, 1, 1, "Multivector3 *= Scalar");
+
+    Rotor3<double> r(Scalar<double>(1.0), Bivector3<double>(2.0, 0.0, 0.0));
+    r += Rotor3<double>(Scalar<double>(1.0), Bivector3<double>(2.0, 0.0, 0.0));
+    check_scalar(r.scalar, 2.0, "Rotor3 += scalar part");
+    check_bivector(r.bivector, 4.0, 0.0, 0.0, "Rotor3 += bivector part");
+}
+
+void test_scalar_on_the_left()
+{
+    section("raw scalar on the left");
+
+    // These used to work only with the number on the right.
+    check_vector(3.0 * Vector3<double>(1, 2, 3), 3.0, 6.0, 9.0, "raw * Vector3");
+    check_bivector(3.0 * Bivector3<double>(1, 2, 3), 3.0, 6.0, 9.0, "raw * Bivector3");
+    check_trivector(3.0 * Trivector3<double>(2.0), 6.0, "raw * Trivector3");
+
+    // Both spellings must agree.
+    const Vector3<double> v(1, 2, 3);
+    const Vector3<double> left = 2.0 * v;
+    const Vector3<double> right = v * 2.0;
+    check_vector(left, right.x, right.y, right.z, "2*v == v*2");
+
+    check_mv(2.0 * make_mv(1, 1, 1, 1, 1, 1, 1, 1), 2, 2, 2, 2, 2, 2, 2, 2, "raw * Multivector3");
+    const Rotor3<double> r = 2.0 * Rotor3<double>(Scalar<double>(1.0), Bivector3<double>(1, 0, 0));
+    check_scalar(r.scalar, 2.0, "raw * Rotor3");
+}
+
+void test_grade_projection()
+{
+    section("grade projection");
+
+    const Multivector3<double> m = make_mv(1, 2, 3, 4, 5, 6, 7, 8);
+    check_scalar(CliffordCore::grade0(m), 1.0, "grade0");
+    check_vector(CliffordCore::grade1(m), 2.0, 3.0, 4.0, "grade1");
+    check_bivector(CliffordCore::grade2(m), 5.0, 6.0, 7.0, "grade2");
+    check_trivector(CliffordCore::grade3(m), 8.0, "grade3");
+
+    const Rotor3<double> r(Scalar<double>(9.0), Bivector3<double>(1, 2, 3));
+    check_scalar(CliffordCore::grade0(r), 9.0, "grade0(Rotor3)");
+    check_bivector(CliffordCore::grade2(r), 1.0, 2.0, 3.0, "grade2(Rotor3)");
+
+    // Reassembling the grades must give the original back.
+    const Multivector3<double> rebuilt = CliffordCore::grade0(m) + CliffordCore::grade1(m)
+                                       + CliffordCore::grade2(m) + CliffordCore::grade3(m);
+    check_close(mv_difference(rebuilt, m), 0.0, "grades reassemble into the original");
+}
+
+void test_rotor_construction()
+{
+    section("rotor construction");
+
+    check_scalar(CliffordCore::identity_rotor<double>().scalar, 1.0, "identity rotor scalar");
+    check_bivector(CliffordCore::identity_rotor<double>().bivector, 0.0, 0.0, 0.0,
+                   "identity rotor bivector");
+
+    // Right-hand rule: +90 degrees about +z takes e1 to e2.
+    const Rotor3<double> aboutZ =
+        CliffordCore::rotor_from_axis_angle(Vector3<double>(0, 0, 1), kPi / 2.0);
+    check_vector(CliffordCore::rotate(Vector3<double>(1, 0, 0), aboutZ), 0.0, 1.0, 0.0,
+                 "+90 about z takes e1 to e2", 1e-15);
+    check_vector(CliffordCore::rotate(Vector3<double>(0, 1, 0), aboutZ), -1.0, 0.0, 0.0,
+                 "+90 about z takes e2 to -e1", 1e-15);
+    check_vector(CliffordCore::rotate(Vector3<double>(0, 0, 1), aboutZ), 0.0, 0.0, 1.0,
+                 "the axis is fixed", 1e-15);
+
+    // +90 about +x takes e2 to e3.
+    const Rotor3<double> aboutX =
+        CliffordCore::rotor_from_axis_angle(Vector3<double>(1, 0, 0), kPi / 2.0);
+    check_vector(CliffordCore::rotate(Vector3<double>(0, 1, 0), aboutX), 0.0, 0.0, 1.0,
+                 "+90 about x takes e2 to e3", 1e-15);
+
+    // The axis need not be unit length.
+    const Rotor3<double> unnormalised =
+        CliffordCore::rotor_from_axis_angle(Vector3<double>(0, 0, 5), kPi / 2.0);
+    check_vector(CliffordCore::rotate(Vector3<double>(1, 0, 0), unnormalised), 0.0, 1.0, 0.0,
+                 "axis is normalized internally", 1e-15);
+
+    // A zero angle is the identity; a zero axis degrades to the identity too.
+    check_vector(CliffordCore::rotate(Vector3<double>(1, 2, 3),
+                     CliffordCore::rotor_from_axis_angle(Vector3<double>(0, 0, 1), 0.0)),
+                 1.0, 2.0, 3.0, "zero angle is the identity");
+    check_scalar(CliffordCore::rotor_from_axis_angle(Vector3<double>(0, 0, 0), 1.0).scalar, 1.0,
+                 "zero axis degrades to the identity");
+
+    // rotor_between must actually carry one direction onto the other.
+    const Vector3<double> from(1, 2, 3);
+    const Vector3<double> to(-2, 1, 0.5);
+    const Rotor3<double> between = CliffordCore::rotor_between(from, to);
+    const Vector3<double> carried = CliffordCore::rotate(CliffordCore::normalize(from), between);
+    const Vector3<double> target = CliffordCore::normalize(to);
+    check_vector(carried, target.x, target.y, target.z, "rotor_between carries from onto to", 1e-14);
+    check_scalar(CliffordCore::norm(between), 1.0, "rotor_between returns a unit rotor");
+
+    // Identical directions give no rotation.
+    check_vector(CliffordCore::rotate(Vector3<double>(1, 0, 0),
+                     CliffordCore::rotor_between(Vector3<double>(1, 0, 0), Vector3<double>(2, 0, 0))),
+                 1.0, 0.0, 0.0, "rotor_between of parallel vectors is the identity", 1e-14);
+
+    // Opposite directions are the degenerate case: the plane is ambiguous, but
+    // the result must still be a genuine half turn rather than NaN.
+    const Rotor3<double> flip =
+        CliffordCore::rotor_between(Vector3<double>(1, 0, 0), Vector3<double>(-1, 0, 0));
+    check_vector(CliffordCore::rotate(Vector3<double>(1, 0, 0), flip), -1.0, 0.0, 0.0,
+                 "antiparallel gives a half turn", 1e-14);
+    check_scalar(CliffordCore::norm(flip), 1.0, "the half turn is a unit rotor");
+
+    // slerp interpolates: the endpoints are exact and the midpoint is halfway.
+    const Rotor3<double> identity = CliffordCore::identity_rotor<double>();
+    check_vector(CliffordCore::rotate(Vector3<double>(1, 0, 0),
+                     CliffordCore::slerp(identity, aboutZ, 0.0)),
+                 1.0, 0.0, 0.0, "slerp at t=0 is the start", 1e-14);
+    check_vector(CliffordCore::rotate(Vector3<double>(1, 0, 0),
+                     CliffordCore::slerp(identity, aboutZ, 1.0)),
+                 0.0, 1.0, 0.0, "slerp at t=1 is the end", 1e-14);
+    const double half = std::sqrt(0.5);
+    check_vector(CliffordCore::rotate(Vector3<double>(1, 0, 0),
+                     CliffordCore::slerp(identity, aboutZ, 0.5)),
+                 half, half, 0.0, "slerp at t=0.5 is a 45 degree turn", 1e-14);
+}
+
+void test_mixed_products()
+{
+    section("mixed products");
+
+    const Vector3<double> v(1, 2, 3);
+    const Bivector3<double> b(1, 2, 3);
+    const Trivector3<double> t(4.0);
+    const Multivector3<double> m = make_mv(1, 1, 2, 3, 1, 2, 3, 4);
+
+    // Every mixed product must agree with the general product on promoted operands.
+    check_close(mv_difference(v * b, make_mv(0, v.x, v.y, v.z, 0, 0, 0, 0)
+                                   * make_mv(0, 0, 0, 0, b.xy, b.xz, b.yz, 0)), 0.0,
+                "Vector3 * Bivector3 matches the general product");
+    check_close(mv_difference(b * v, make_mv(0, 0, 0, 0, b.xy, b.xz, b.yz, 0)
+                                   * make_mv(0, v.x, v.y, v.z, 0, 0, 0, 0)), 0.0,
+                "Bivector3 * Vector3 matches the general product");
+    check_close(mv_difference(m * v, m * make_mv(0, v.x, v.y, v.z, 0, 0, 0, 0)), 0.0,
+                "Multivector3 * Vector3 matches the general product");
+
+    // A bivector squares to minus its squared norm.
+    check_close((b * b).scalar.value, -14.0, "b * b scalar part is -|b|^2");
+    check_bivector((b * b).bivector, 0.0, 0.0, 0.0, "b * b has no bivector part");
+
+    // Multiplying by the pseudoscalar is the dual, up to the definition.
+    check_close(mv_difference(v * t, make_mv(0, v.x, v.y, v.z, 0, 0, 0, 0)
+                                   * make_mv(0, 0, 0, 0, 0, 0, 0, t.e123)), 0.0,
+                "Vector3 * Trivector3 matches the general product");
+
+    // Wedge with a bivector: a vector lying in the plane wedges to zero, one
+    // outside it gives the pseudoscalar.
+    check_trivector(Vector3<double>(1, 0, 0) ^ Bivector3<double>(1, 0, 0), 0.0,
+                    "e1 ^ e12 is zero, e1 lies in that plane");
+    check_trivector(Vector3<double>(0, 1, 0) ^ Bivector3<double>(1, 0, 0), 0.0,
+                    "e2 ^ e12 is zero too");
+    check_trivector(Vector3<double>(0, 0, 1) ^ Bivector3<double>(1, 0, 0), 1.0,
+                    "e3 ^ e12 is the pseudoscalar");
+    // The wedge is graded-commutative for grade 1 with grade 2.
+    check_trivector(Bivector3<double>(1, 0, 0) ^ Vector3<double>(0, 0, 1), 1.0,
+                    "e12 ^ e3 equals e3 ^ e12");
+    check_trivector(CliffordCore::wedge_product(v, b), (v ^ b).e123,
+                    "named wedge_product matches the operator");
+
+    // The payoff: a rotation can now be written the way the textbooks do.
+    const Rotor3<double> r =
+        CliffordCore::rotor_from_axis_angle(Vector3<double>(0, 0, 1), 1.0);
+    const Multivector3<double> spelled = r * v * CliffordCore::reverse(r);
+    const Vector3<double> viaSandwich = CliffordCore::sandwich(v, r);
+    check_vector(spelled.vector, viaSandwich.x, viaSandwich.y, viaSandwich.z,
+                 "r * v * reverse(r) matches sandwich()", 1e-14);
+    check_close(spelled.scalar.value, 0.0, "r * v * reverse(r) has no scalar part", 1e-14);
+    check_close(spelled.trivector.e123, 0.0, "r * v * reverse(r) has no trivector part", 1e-14);
+    check_bivector(spelled.bivector, 0.0, 0.0, 0.0, "r * v * reverse(r) has no bivector part", 1e-14);
+}
+
 } // namespace
 
 int main()
@@ -936,6 +1183,12 @@ int main()
     test_normalize();
     test_rotation();
     test_mixed_grade_addition();
+    test_mixed_grade_subtraction();
+    test_compound_assignment();
+    test_scalar_on_the_left();
+    test_grade_projection();
+    test_rotor_construction();
+    test_mixed_products();
 
     std::cout << g_checks << " checks, " << g_failures << " failed.\n";
     if (g_failures != 0) {

@@ -121,6 +121,60 @@ public:
         return Trivector3(-e123);
     }
 
+    /**
+     * @brief Adds another trivector in place.
+     * @param other The trivector to add.
+     * @return A reference to this trivector.
+     */
+    constexpr Trivector3& operator+=(const Trivector3& other) {
+        e123 += other.e123;
+        return *this;
+    }
+
+    /**
+     * @brief Subtracts another trivector in place.
+     * @param other The trivector to subtract.
+     * @return A reference to this trivector.
+     */
+    constexpr Trivector3& operator-=(const Trivector3& other) {
+        e123 -= other.e123;
+        return *this;
+    }
+
+    /**
+     * @brief Scales this trivector in place by a raw numeric value.
+     * @param value The value to multiply by.
+     * @return A reference to this trivector.
+     */
+    constexpr Trivector3& operator*=(T value) {
+        e123 *= value;
+        return *this;
+    }
+
+    /**
+     * @brief Divides this trivector in place by a raw numeric value.
+     * @param value The value to divide by.
+     * @return A reference to this trivector.
+     */
+    constexpr Trivector3& operator/=(T value) {
+        e123 /= value;
+        return *this;
+    }
+
+    /**
+     * @brief Scales this trivector in place by a scalar.
+     * @param scalar The scalar to multiply by.
+     * @return A reference to this trivector.
+     */
+    constexpr Trivector3& operator*=(const Scalar<T>& scalar);
+
+    /**
+     * @brief Divides this trivector in place by a scalar.
+     * @param scalar The scalar to divide by.
+     * @return A reference to this trivector.
+     */
+    constexpr Trivector3& operator/=(const Scalar<T>& scalar);
+
 };
 
 } // namespace CliffordCore
@@ -138,5 +192,26 @@ constexpr Trivector3<T> Trivector3<T>::operator*(const Scalar<T>& scalar) const 
 template<typename T>
 constexpr Trivector3<T> Trivector3<T>::operator/(const Scalar<T>& scalar) const {
     return Trivector3<T>(e123 / scalar.value);
+}
+
+template<typename T>
+constexpr Trivector3<T>& Trivector3<T>::operator*=(const Scalar<T>& scalar) {
+    return *this *= scalar.value;
+}
+
+template<typename T>
+constexpr Trivector3<T>& Trivector3<T>::operator/=(const Scalar<T>& scalar) {
+    return *this /= scalar.value;
+}
+
+template<typename T>
+/**
+ * @brief Scales a trivector with the raw numeric value on the left.
+ * @param value The value to multiply by.
+ * @param t The trivector to scale.
+ * @return The resulting trivector.
+ */
+constexpr Trivector3<T> operator*(T value, const Trivector3<T>& t) {
+    return Trivector3<T>(value * t.e123);
 }
 } // namespace CliffordCore
