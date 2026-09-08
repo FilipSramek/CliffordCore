@@ -116,5 +116,56 @@ namespace CliffordCore
                 trivector / s
             );
         }
+
+        /**
+         * @brief Adds another multivector in place.
+         * @param other The multivector to add.
+         * @return A reference to this multivector.
+         */
+        constexpr Multivector3& operator+=(const Multivector3& other) {
+            *this = *this + other;
+            return *this;
+        }
+
+        /**
+         * @brief Subtracts another multivector in place.
+         * @param other The multivector to subtract.
+         * @return A reference to this multivector.
+         */
+        constexpr Multivector3& operator-=(const Multivector3& other) {
+            *this = *this - other;
+            return *this;
+        }
+
+        /**
+         * @brief Scales this multivector in place by a scalar.
+         * @param s The scalar to multiply by.
+         * @return A reference to this multivector.
+         */
+        constexpr Multivector3& operator*=(const Scalar<T>& s) {
+            *this = *this * s;
+            return *this;
+        }
+
+        /**
+         * @brief Divides this multivector in place by a scalar.
+         * @param s The scalar to divide by.
+         * @return A reference to this multivector.
+         */
+        constexpr Multivector3& operator/=(const Scalar<T>& s) {
+            *this = *this / s;
+            return *this;
+        }
     };
+
+    template<typename T>
+    /**
+     * @brief Scales a multivector with the raw numeric value on the left.
+     * @param value The value to multiply by.
+     * @param m The multivector to scale.
+     * @return The resulting multivector.
+     */
+    constexpr Multivector3<T> operator*(T value, const Multivector3<T>& m) {
+        return m * Scalar<T>(value);
+    }
 } // namespace CliffordCore
