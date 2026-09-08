@@ -495,6 +495,6 @@ int main()
         std::cout << "TESTS FAILED\n";
         return 1;
     }
-    std::cout << "All CliffordCore tests passed.\n";
+    std::cout << "All CliffordCore tests passed\n";
     return 0;
 }
