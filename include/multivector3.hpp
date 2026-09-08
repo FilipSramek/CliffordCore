@@ -41,6 +41,13 @@ namespace CliffordCore
             : scalar(s), vector(v), bivector(b), trivector(t) {}
 
         /**
+         * @brief Constructor initializes the multivector with a 3D rotor.
+         * @param r The rotor to initialize the multivector with.
+         */
+        constexpr Multivector3(const Rotor3<T>& r)
+            : scalar(r.scalar), vector(Vector3<T>(0, 0, 0)), bivector(r.bivector), trivector(Trivector3<T>(0)) {}
+        
+            /**
          * @brief Addition operator overload.
          * @param other The multivector to add.
          * @return The resulting multivector.
