@@ -8,12 +8,20 @@
  * yields its sign. Rotors drift off unit length under repeated composition,
  * faster in float than in double, so renormalise periodically.
  *
+ * A zero argument has no direction to preserve, so normalizing one is a
+ * precondition violation rather than a value to compute: every overload
+ * asserts that the norm is non-zero. The assert compiles out under NDEBUG,
+ * so each overload also returns its argument unchanged in that case --
+ * a release build must not divide by zero and hand back NaN.
+ *
  * @author Filip Sramek
  * @version 0.1.0
  * @date 2026
  * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
  * @note Licensing is not settled yet; see README.md.
  */
+
+#include <cassert>
 
 #include "norm.hpp"
 #include "../scalar.hpp"
@@ -29,13 +37,15 @@ namespace CliffordCore
     /**
      * @brief Normalizes a scalar to unit magnitude.
      * @param s The scalar to normalize.
-     * @return +1 or -1, whichever matches the sign of s. A zero scalar is
-     *         returned unchanged, since it has no sign to preserve.
+     * @return +1 or -1, whichever matches the sign of s.
+     * @pre s is non-zero; a zero scalar has no sign to preserve and trips an
+     *      assert. Under NDEBUG it is returned unchanged instead.
      */
     constexpr Scalar<T> normalize(const Scalar<T>& s) {
         const T n = norm(s).value;
+        assert(n != T(0) && "normalize: the scalar is zero and has no unit direction");
         if (n == T(0)) {
-            return s;
+            return s;   // NDEBUG only; the assert above fires otherwise.
         }
         return Scalar<T>(s.value / n);
     }
@@ -44,13 +54,15 @@ namespace CliffordCore
     /**
      * @brief Normalizes a 3D vector to have a unit norm.
      * @param v The vector to normalize.
-     * @return The normalized vector with a unit norm. A zero vector is returned
-     *         unchanged, since it has no direction to preserve.
+     * @return The normalized vector with a unit norm.
+     * @pre v is non-zero; a zero vector has no direction to preserve and trips
+     *      an assert. Under NDEBUG it is returned unchanged instead.
      */
     constexpr Vector3<T> normalize(const Vector3<T>& v) {
         const T n = norm(v).value;
+        assert(n != T(0) && "normalize: the vector is zero and has no unit direction");
         if (n == T(0)) {
-            return v;
+            return v;   // NDEBUG only; the assert above fires otherwise.
         }
         return Vector3<T>(v.x / n, v.y / n, v.z / n);
     }
@@ -59,13 +71,15 @@ namespace CliffordCore
     /**
      * @brief Normalizes a bivector in 3D space to have a unit norm.
      * @param b The bivector to normalize.
-     * @return The normalized bivector with a unit norm. A zero bivector is
-     *         returned unchanged.
+     * @return The normalized bivector with a unit norm.
+     * @pre b is non-zero; a zero bivector trips an assert. Under NDEBUG it is
+     *      returned unchanged instead.
      */
     constexpr Bivector3<T> normalize(const Bivector3<T>& b) {
         const T n = norm(b).value;
+        assert(n != T(0) && "normalize: the bivector is zero and has no unit direction");
         if (n == T(0)) {
-            return b;
+            return b;   // NDEBUG only; the assert above fires otherwise.
         }
         return Bivector3<T>(b.xy / n, b.xz / n, b.yz / n);
     }
@@ -74,13 +88,15 @@ namespace CliffordCore
     /**
      * @brief Normalizes a trivector in 3D space to have a unit norm.
      * @param t The trivector to normalize.
-     * @return The normalized trivector with a unit norm. A zero trivector is
-     *         returned unchanged.
+     * @return The normalized trivector with a unit norm.
+     * @pre t is non-zero; a zero trivector trips an assert. Under NDEBUG it is
+     *      returned unchanged instead.
      */
     constexpr Trivector3<T> normalize(const Trivector3<T>& t) {
         const T n = norm(t).value;
+        assert(n != T(0) && "normalize: the trivector is zero and has no unit direction");
         if (n == T(0)) {
-            return t;
+            return t;   // NDEBUG only; the assert above fires otherwise.
         }
         return Trivector3<T>(t.e123 / n);
     }
@@ -89,13 +105,15 @@ namespace CliffordCore
     /**
      * @brief Normalizes a multivector in 3D space to have a unit norm.
      * @param m The multivector to normalize.
-     * @return The normalized multivector with a unit norm. A zero multivector is
-     *         returned unchanged.
+     * @return The normalized multivector with a unit norm.
+     * @pre m is non-zero; a zero multivector trips an assert. Under NDEBUG it is
+     *      returned unchanged instead.
      */
     constexpr Multivector3<T> normalize(const Multivector3<T>& m) {
         const T n = norm(m).value;
+        assert(n != T(0) && "normalize: the multivector is zero and has no unit direction");
         if (n == T(0)) {
-            return m;
+            return m;   // NDEBUG only; the assert above fires otherwise.
         }
         return Multivector3<T>(
             Scalar<T>(m.scalar.value / n),
@@ -109,14 +127,17 @@ namespace CliffordCore
     /**
      * @brief Normalizes a rotor in 3D space to have a unit norm.
      * @param r The rotor to normalize.
-     * @return The normalized rotor with a unit norm. A zero rotor is returned
-     *         unchanged. Rotors must be unit length to represent a rotation, so
-     *         this is the usual way to correct drift after repeated composition.
+     * @return The normalized rotor with a unit norm. Rotors must be unit length
+     *         to represent a rotation, so this is the usual way to correct
+     *         drift after repeated composition.
+     * @pre r is non-zero; a zero rotor trips an assert. Under NDEBUG it is
+     *      returned unchanged instead.
      */
     constexpr Rotor3<T> normalize(const Rotor3<T>& r) {
         const T n = norm(r).value;
+        assert(n != T(0) && "normalize: the rotor is zero and has no unit direction");
         if (n == T(0)) {
-            return r;
+            return r;   // NDEBUG only; the assert above fires otherwise.
         }
         return Rotor3<T>(
             Scalar<T>(r.scalar.value / n),

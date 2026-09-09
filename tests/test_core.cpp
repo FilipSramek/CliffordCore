@@ -831,12 +831,10 @@ void test_normalize()
                  "normalized rotor has unit norm");
     check_scalar(CliffordCore::normalize(drifted).scalar, 0.6, "normalize(Rotor3) scalar");
 
-    // Zero has no direction to preserve, so it is returned unchanged rather than
-    // producing NaN.
-    check_vector(CliffordCore::normalize(Vector3<double>()), 0.0, 0.0, 0.0,
-                 "normalize(zero vector) stays zero");
-    check_scalar(CliffordCore::normalize(Rotor3<double>()).scalar, 0.0,
-                 "normalize(zero rotor) stays zero");
+    // Normalizing a zero is a precondition violation, not a value: every
+    // normalize overload asserts on it. That cannot be checked from inside this
+    // harness, since a tripped assert aborts the process, so these cases are
+    // deliberately not exercised here.
 }
 
 void test_rotation()
@@ -1233,7 +1231,6 @@ void test_involutions()
     check_scalar(CliffordCore::reverse(Scalar<double>(3)), 3.0, "reverse(Scalar)");
     check_scalar(CliffordCore::squared_norm(Scalar<double>(3)), 9.0, "squared_norm(Scalar)");
     check_scalar(CliffordCore::normalize(Scalar<double>(-3)), -1.0, "normalize(Scalar) gives the sign");
-    check_scalar(CliffordCore::normalize(Scalar<double>()), 0.0, "normalize(zero Scalar) stays zero");
 }
 
 void test_contractions()
