@@ -6,5 +6,9 @@ BUILD_DIR="$ROOT_DIR/build"
 
 mkdir -p "$BUILD_DIR"
 
+# Every header must stand alone. Cheap, and it catches the "works only
+# because something else included <string> first" class of bug.
+"$ROOT_DIR/check_headers.sh"
+
 g++ -std=c++17 -I"$ROOT_DIR/include" "$ROOT_DIR/tests/test_core.cpp" -o "$BUILD_DIR/test_core"
 "$BUILD_DIR/test_core"
