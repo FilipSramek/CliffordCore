@@ -8,6 +8,12 @@
 #include <type_traits>
 #include "../vector3.hpp"
 #include "../rotor3.hpp"
+#include "../bivector3.hpp"
+#include "../trivector3.hpp"
+#include "../multivector3.hpp"
+#include "grade.hpp"
+#include "mixed_products.hpp"
+#include "reverse.hpp"
 
 namespace CliffordCore
 {
@@ -51,5 +57,77 @@ namespace CliffordCore
     template<typename T>
     constexpr Vector3<T> rotate(const Vector3<T>& v, const Rotor3<T>& r) {
         return sandwich(v, r);
+    }
+
+    template<typename T>
+    /**
+     * @brief Rotates a bivector by a rotor.
+     * @param b The bivector to rotate.
+     * @param r The rotor to rotate with.
+     * @return The rotated bivector, R b reverse(R).
+     *
+     * Rotating a plane rather than a direction. Needed whenever the thing being
+     * turned is an orientation, an angular velocity, or a surface element.
+     */
+    constexpr Bivector3<T> sandwich(const Bivector3<T>& b, const Rotor3<T>& r) {
+        return grade2(r * b * reverse(r));
+    }
+
+    template<typename T>
+    /**
+     * @brief Rotates a trivector by a rotor.
+     * @param t The trivector to rotate.
+     * @param r The rotor to rotate with.
+     * @return The trivector, scaled by the rotor's squared norm. The
+     *         pseudoscalar commutes with everything in 3D, so a unit rotor
+     *         leaves it exactly unchanged -- volume has no orientation to turn.
+     */
+    constexpr Trivector3<T> sandwich(const Trivector3<T>& t, const Rotor3<T>& r) {
+        return grade3(r * t * reverse(r));
+    }
+
+    template<typename T>
+    /**
+     * @brief Rotates a multivector by a rotor.
+     * @param m The multivector to rotate.
+     * @param r The rotor to rotate with.
+     * @return The rotated multivector. Every grade is carried along, so no
+     *         projection is needed here.
+     */
+    constexpr Multivector3<T> sandwich(const Multivector3<T>& m, const Rotor3<T>& r) {
+        return r * m * reverse(r);
+    }
+
+    template<typename T>
+    /**
+     * @brief Rotates a bivector by a rotor.
+     * @param b The bivector to rotate.
+     * @param r The rotor to rotate with.
+     * @return The rotated bivector.
+     */
+    constexpr Bivector3<T> rotate(const Bivector3<T>& b, const Rotor3<T>& r) {
+        return sandwich(b, r);
+    }
+
+    template<typename T>
+    /**
+     * @brief Rotates a trivector by a rotor.
+     * @param t The trivector to rotate.
+     * @param r The rotor to rotate with.
+     * @return The rotated trivector.
+     */
+    constexpr Trivector3<T> rotate(const Trivector3<T>& t, const Rotor3<T>& r) {
+        return sandwich(t, r);
+    }
+
+    template<typename T>
+    /**
+     * @brief Rotates a multivector by a rotor.
+     * @param m The multivector to rotate.
+     * @param r The rotor to rotate with.
+     * @return The rotated multivector.
+     */
+    constexpr Multivector3<T> rotate(const Multivector3<T>& m, const Rotor3<T>& r) {
+        return sandwich(m, r);
     }
 } // namespace CliffordCore
