@@ -227,6 +227,50 @@ namespace CliffordCore
         return geometric_product(detail::promote(r), m);
     }
 
+    template<typename T>
+    /**
+     * @brief Geometric product of a rotor and a bivector.
+     * @param r The rotor operand.
+     * @param b The bivector operand.
+     * @return The resulting multivector. Needed to sandwich a bivector.
+     */
+    constexpr Multivector3<T> operator*(const Rotor3<T>& r, const Bivector3<T>& b) {
+        return geometric_product(detail::promote(r), detail::promote(b));
+    }
+
+    template<typename T>
+    /**
+     * @brief Geometric product of a bivector and a rotor.
+     * @param b The bivector operand.
+     * @param r The rotor operand.
+     * @return The resulting multivector.
+     */
+    constexpr Multivector3<T> operator*(const Bivector3<T>& b, const Rotor3<T>& r) {
+        return geometric_product(detail::promote(b), detail::promote(r));
+    }
+
+    template<typename T>
+    /**
+     * @brief Geometric product of a rotor and a trivector.
+     * @param r The rotor operand.
+     * @param t The trivector operand.
+     * @return The resulting multivector.
+     */
+    constexpr Multivector3<T> operator*(const Rotor3<T>& r, const Trivector3<T>& t) {
+        return geometric_product(detail::promote(r), detail::promote(t));
+    }
+
+    template<typename T>
+    /**
+     * @brief Geometric product of a trivector and a rotor.
+     * @param t The trivector operand.
+     * @param r The rotor operand.
+     * @return The resulting multivector.
+     */
+    constexpr Multivector3<T> operator*(const Trivector3<T>& t, const Rotor3<T>& r) {
+        return geometric_product(detail::promote(t), detail::promote(r));
+    }
+
     // -----------------------------------------------------------------------
     // Wedge beyond grade 1 with grade 1
     // -----------------------------------------------------------------------
