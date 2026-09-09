@@ -83,7 +83,7 @@ Grades 0 + 2. Members: `scalar`, `bivector`. No `magnitude()` — use `norm(r)`.
 | Signature | Returns |
 | --- | --- |
 | `Rotor3()`, `Rotor3(Scalar, Bivector3)` | — |
-| `Rotor3(const Multivector3&)` | — (implicit, **drops grades 1 and 3**) |
+| `explicit Rotor3(const Multivector3&)` | — (**explicit**; drops grades 1 and 3) |
 | `operator+`, `operator-` `(Rotor3)` | `Rotor3` |
 | `operator*`, `operator/` `(Scalar)` | `Rotor3` |
 | `operator+=`, `-=`, `*=`, `/=` | `Rotor3&` |
@@ -98,7 +98,7 @@ Grades 0 + 2. Members: `scalar`, `bivector`. No `magnitude()` — use `norm(r)`.
 - `operator|(Vector3, Vector3)` → `Scalar`
 - `dot_product(Vector3, Vector3)` → `Scalar`
 
-Vector-vector only. There are no contractions for other grades.
+Vector-vector only; `contraction.hpp` extends `operator|` across grades.
 
 ### `wedge_product.hpp`
 
@@ -131,7 +131,8 @@ Also the wedge beyond grade 1:
 - `operator^(Bivector3, Vector3)` → `Trivector3`
 - `wedge_product(...)` for both
 
-See `cheatsheet.md` for the four undefined cells.
+With these, `operator*` is defined for **every** operand pair; see
+`cheatsheet.md` for the full matrix.
 
 ---
 
@@ -160,26 +161,24 @@ The same twenty pairs as `operator-`. Reuses `detail::promote`.
 
 - `norm(x)` → `Scalar`, for `Scalar`, `Vector3`, `Bivector3`, `Trivector3`,
   `Multivector3`, `Rotor3`
-- `squared_norm(x)` → `Scalar`, for all of those **except `Scalar`**
+- `squared_norm(x)` → `Scalar`, for all six types
 
 ### `normalize.hpp`
 
-- `normalize(x)` → same type, for `Vector3`, `Bivector3`, `Trivector3`,
-  `Multivector3`, `Rotor3`. Not defined for `Scalar`.
+- `normalize(x)` → same type, for all six types. `normalize(Scalar)` gives the
+  sign, +1 or -1.
 
 A zero input is returned unchanged rather than producing `NaN`.
 
 ### `reverse.hpp`
 
-- `reverse(x)` → same type, for `Vector3` (identity), `Bivector3` (negated),
-  `Trivector3` (negated), `Multivector3`, `Rotor3`. Not defined for `Scalar`.
+- `reverse(x)` → same type, for all six. Grades 0 and 1 keep their sign,
+  grades 2 and 3 are negated.
 
 ### `inverse.hpp`
 
 - `inverse(x)` → same type, for `Scalar`, `Vector3`, `Bivector3`, `Trivector3`,
   `Multivector3`, `Rotor3`
-- `conjugate(Multivector3)` → `Multivector3` — Clifford conjugation
-
 `inverse(Scalar)` does not guard against zero. `inverse(Multivector3)` returns a
 zero multivector when the input is not invertible. See `conventions.md` for the
 sign of each.
@@ -208,6 +207,48 @@ Not defined for `Multivector3` or `Rotor3`.
 
 Named per grade rather than `grade<N>()` because each returns a different type.
 
+### `involutions.hpp`
+
+- `involute(x)` → same type, all six — grade `k` scaled by `(-1)^k`
+- `conjugate(x)` → same type, all six — grade `k` scaled by `(-1)^(k(k+1)/2)`
+
+Together with `reverse` these are the three involutions; `conjugate` equals
+`reverse` composed with `involute`.
+
+### `contraction.hpp`
+
+- `left_contraction(a, b)`, also spelled `a | b` — for the blade pairs where the
+  result grade is non-negative: `V,V`→`Scalar`; `V,B`→`Vector3`;
+  `V,T`→`Bivector3`; `B,B`→`Scalar`; `B,T`→`Vector3`; `T,T`→`Scalar`
+- `right_contraction(a, b)` — the reverse-mirror, so the operands swap roles
+- `scalar_product(a, b)` → `Scalar` — the grade 0 part of any product
+
+`operator|` on two vectors is unchanged; this only extends it across grades.
+
+### `geometry.hpp`
+
+- `reflect(Vector3, Vector3)` → `Vector3` — reflect in the plane normal to the
+  second argument
+- `reflect(Vector3, Bivector3)` → `Vector3` — reflect in the plane itself
+- `project(Vector3, Vector3 | Bivector3)` → `Vector3`
+- `reject(Vector3, Vector3 | Bivector3)` → `Vector3`
+
+None require a unit second argument; each divides through by `inverse`.
+`project(v, x) + reject(v, x) == v`.
+
+### `comparison.hpp`
+
+- `operator==`, `operator!=` — **exact**, component by component, `constexpr`
+- `approx_equal(a, b, tolerance)` — tolerance defaults to 100 epsilons
+
+Separate on purpose: a tolerant `==` is not transitive.
+
+### `stream.hpp`
+
+- `operator<<(std::ostream&, x)` for all six, delegating to `to_string()`
+
+Kept apart so the type headers need not include `<ostream>`.
+
 ---
 
 ## Rotations
@@ -226,10 +267,12 @@ Both collide by name with `<cmath>`, so qualify them as `CliffordCore::exp` /
 
 ### `sandwich.hpp`
 
-- `sandwich(Vector3, Rotor3)` → `Vector3` — computes `R v reverse(R)`
-- `rotate(Vector3, Rotor3)` → `Vector3` — alias
+- `sandwich(x, Rotor3)` → same type as `x`, for `Vector3`, `Bivector3`,
+  `Trivector3` and `Multivector3` — computes `R x reverse(R)`
+- `rotate(x, Rotor3)` — alias for each
 
-**Vector first, rotor second.**
+**Object first, rotor second.** Rotating a `Trivector3` is the identity for a
+unit rotor: the pseudoscalar is central.
 
 ### `rotor_construction.hpp`
 

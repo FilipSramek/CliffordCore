@@ -18,17 +18,24 @@ free.
 
 **Operations**
 
-- Products: dot (`|`), wedge (`^`), and the geometric product (`*`) for every
-  operand pair, including the full 8x8 multiplication table on multivectors
+- Products: dot / left contraction (`|`), wedge (`^`), and the geometric product
+  (`*`) — defined for **every** operand pair, backed by the full 8x8
+  multiplication table on multivectors
+- The rest of the inner-product family: `right_contraction`, `scalar_product`
 - Mixed-grade addition and subtraction, plus compound assignment
 - `norm`, `squared_norm`, `normalize`
-- `reverse`, `conjugate`, `inverse`
+- All three involutions — `reverse`, `involute`, `conjugate` — and `inverse`
 - `dual` across all four grades, and `grade0`–`grade3` projection
-- Rotations: `exp`, `log`, `sandwich`/`rotate`, `identity_rotor`,
-  `rotor_from_axis_angle`, `rotor_between`, `slerp`
+- Geometry: `reflect`, `project`, `reject`, onto a line or a plane
+- Rotations: `exp`, `log`, `sandwich`/`rotate` (for vectors, bivectors,
+  trivectors and multivectors), `identity_rotor`, `rotor_from_axis_angle`,
+  `rotor_between`, `slerp`
+- Exact `==` / `!=`, a separate `approx_equal`, and `operator<<` / `to_string()`
+  at round-trip precision
 
-Header-only, `constexpr` throughout. Take everything with one umbrella header,
-or include only the pieces you need — every header stands alone.
+Header-only, `constexpr` throughout except the printing helpers. Take everything
+with one umbrella header, or include only the pieces you need — every header
+stands alone.
 
 ## Usage
 
@@ -93,5 +100,17 @@ rotates by `2*theta`. Nearly every surprise traces back to one of those.
 
 ## Status
 
-CliffordCore is an educational and experimental implementation. It is suitable
-for learning, prototyping, and exploring geometric algebra in C++.
+**Version 0.1.0. Pre-1.0: the API is not yet stable.**
+
+CliffordCore is an educational and experimental implementation, suitable for
+learning, prototyping, and exploring geometric algebra in C++. It implements
+Cl(3,0), 3D Euclidean geometric algebra, and the test suite covers it thoroughly.
+
+One change is already planned and will not be subtle: **the type names will
+change.** `Vector3`, `Rotor3` and friends name the dimension but not the metric,
+which stops working as soon as Cl(3,0,1) and Cl(2,0) arrive — a projective
+"3D" vector has four components. Expect a namespace and naming reorganisation
+before 1.0. Pin a commit if you depend on the current spelling.
+
+**No license yet.** Until a LICENSE file lands the code is all rights reserved,
+so this is not yet usable in your own project. That is being resolved.

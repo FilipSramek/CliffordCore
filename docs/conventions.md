@@ -81,6 +81,28 @@ carries extra raw-`T` overloads: without them a bare `2.0` could reach either
 `operator*(Trivector3)` or `operator*(Scalar<T>)` by one user-defined conversion
 each, and the call would be ambiguous.
 
+## The inner product
+
+**`operator|` is the left contraction.** For two vectors that is exactly the dot
+product it has always been, so nothing about `a | b` has changed; the contraction
+is simply what it generalises to across grades:
+
+```text
+A _| B  =  <A B>_(s-r)        for blades of grade r and s
+```
+
+Where the grade would go negative the result is zero, so `Bivector3 | Vector3` is
+not provided -- you almost always meant `Vector3 | Bivector3`.
+
+The left contraction is chosen over the symmetric "fat dot" deliberately. It is
+the product the projection formulas are written with -- `project(v, plane)` is
+`(v _| B) * inverse(B)` -- and it is the one that keeps working in a degenerate
+metric, which will matter when Cl(3,0,1) lands. Committing to that reading now
+means `|` will not quietly change meaning later.
+
+`scalar_product(a, b)` is the grade 0 part of any product, and
+`right_contraction` is the reverse-mirror of the left one.
+
 ## Duality
 
 `dual(A) = A * e123`. Working the basis through:
@@ -110,10 +132,21 @@ A plane and its normal axis are dual descriptions of the same thing.
 *(The other common convention, `A * inverse(e123)`, negates every result and
 makes `dual(a ^ b)` the cross product directly. This library uses `A * e123`.)*
 
-## Reverse and inverse
+## The three involutions
 
-**Reverse** flips grade `k` by `(-1)^(k(k-1)/2)`: grades 0 and 1 keep their sign,
-grades 2 and 3 are negated.
+They come as a set, and each scales grade `k` by a sign depending only on `k`:
+
+| | grade 0 | grade 1 | grade 2 | grade 3 |
+| --- | --- | --- | --- | --- |
+| `reverse` | + | + | - | - |
+| `involute` | + | - | + | - |
+| `conjugate` | + | - | - | + |
+
+So `conjugate == reverse` composed with `involute`, in either order -- an
+identity the test suite asserts rather than trusting the table. All three are
+defined for all six types.
+
+## Inverses
 
 **Inverses carry the minus signs the squares imply:**
 
@@ -156,34 +189,20 @@ side by side.
 
 ## Known gaps
 
-These are missing rather than deliberate; see `cheatsheet.md` for the full matrices.
+- **`operator+` and `operator-` are undefined for `Rotor3`** with anything but
+  another `Rotor3`, plus `Multivector3 + Rotor3` which widens losslessly. Use
+  `to_multivector(r)` first. `operator*`, by contrast, is defined for every pair.
+- **No contractions between a `Multivector3` and anything.** The contraction
+  family covers the blade types, which is where it is well defined.
+- **No general `exp`/`log`** for arbitrary multivectors -- only
+  `exp(Bivector3)` and `log(Rotor3)`. The series does not close cleanly once odd
+  grades are involved, and `log` becomes multivalued.
+- **No `meet` / `join`.** In Cl(3,0) everything passes through the origin, which
+  makes them much less interesting than they are in a projective algebra.
 
-- **`operator*` is undefined for** `Bivector3 x Rotor3`, `Rotor3 x Bivector3`,
-  `Trivector3 x Rotor3`, `Rotor3 x Trivector3`. Work around it with
-  `to_multivector(r)` on the rotor.
-- **`operator+` and `operator-` are undefined for** `Rotor3 +- Scalar`,
-  `Rotor3 +- Vector3`, `Rotor3 +- Bivector3`.
+### A conversion that used to bite
 
-### The one genuine footgun
-
-`Rotor3` has an **implicit** constructor from `Multivector3`, and `Multivector3`
-has one from `Rotor3`. That makes these two expressions do different things:
-
-```cpp
-auto a = r + m;   // Rotor3       -- grades 1 and 3 of m are SILENTLY DISCARDED
-auto b = m + r;   // Multivector3 -- everything preserved
-```
-
-`r + m` converts `m` down to a rotor before adding, throwing away the vector and
-trivector parts with no warning. Put the multivector on the left, or be explicit
-with `to_multivector(r)`.
-
-### Missing conveniences
-
-- **No `operator==` or `operator!=`** on any type. If these are added, `==`
-  should be exact and a separate `approx_equal(a, b, tolerance)` provided — a
-  fuzzy `==` breaks transitivity.
-- **No `operator<<`.** Print components by hand; see
-  `examples/print_helpers.hpp` for one way to do it.
-- **No contractions** beyond `Vector3 | Vector3`. Left contraction versus
-  symmetric inner product is a convention choice not yet made.
+`Rotor3`'s constructor from `Multivector3` is **explicit**. While it was
+implicit, `r + m` compiled, narrowed `m`, and discarded grades 1 and 3 silently,
+while `m + r` kept everything. Narrowing now has to be spelled out, with the
+constructor or with `to_rotor(m)`.

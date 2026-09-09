@@ -2921,3 +2921,4 @@ QUIET                  = YES
 # The mainpage lives in include/cliffordcore.hpp. Deliberately NOT setting
 # USE_MDFILE_AS_MAINPAGE: having both produces a duplicate-mainpage warning,
 # and the README targets GitHub readers while the mainpage targets API readers.
+PROJECT_NUMBER         = "0.1.0"

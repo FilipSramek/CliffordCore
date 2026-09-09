@@ -103,7 +103,23 @@ compile time there. They still work perfectly well at runtime.
 
 ## Printing
 
-The library has **no `operator<<`**. Print components directly:
+Every type has `to_string()` and an `operator<<`:
+
+```cpp
+std::cout << v << "\n";              // 1*e1 + 2*e2 + 3*e3
+std::cout << m << "\n";              // (1) + (2*e1 + ...) + (5*e12 + ...) + (8*e123)
+std::string s = r.to_string();
+```
+
+Numbers are formatted at round-trip precision, so what you read back parses to
+the same value and `float`, `double` and `long double` are distinguishable. That
+matters here: this library routinely produces residuals around 1e-16, and a
+fixed six-decimal format would print all of them as `0.000000`.
+
+`operator<<` lives in `operations/stream.hpp`, which the umbrella header
+includes; the type headers deliberately do not pull in `<ostream>`.
+
+To read components directly instead:
 
 | Type | Fields |
 | --- | --- |
@@ -114,8 +130,22 @@ The library has **no `operator<<`**. Print components directly:
 | `Rotor3<T>` | `.scalar` and `.bivector` |
 | `Multivector3<T>` | `.scalar` `.vector` `.bivector` `.trivector` |
 
-`examples/print_helpers.hpp` wraps these into `ex::print()` overloads if you
-want something ready-made to copy.
+`examples/print_helpers.hpp` adds a `clean()` that shows near-zero components as
+`0`, which keeps rotation output readable.
+
+## Comparing
+
+`operator==` is **exact**, component by component, and works in a constant
+expression. For anything that has been through a rotation or an inverse, use
+`approx_equal`:
+
+```cpp
+if (approx_equal(rotate(v, r), expected)) { ... }        // default tolerance
+if (approx_equal(a, b, 1e-9)) { ... }                    // or state your own
+```
+
+The two are separate on purpose: a tolerant `==` is not transitive, which breaks
+sorting and associative containers.
 
 ## Where next
 
