@@ -3,6 +3,16 @@
 /**
  * @file geometric_product.hpp
  * @brief Geometric products, including the full 8x8 multiplication table.
+ *
+ * The full 8x8 Cayley table lives here, as geometric_product(Multivector3,
+ * Multivector3). Every mixed-grade product in the library routes through
+ * it, so there is exactly one multiplication table to get right.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

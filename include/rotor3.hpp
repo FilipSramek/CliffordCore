@@ -3,6 +3,17 @@
 /**
  * @file rotor3.hpp
  * @brief Grades 0 and 2: the Rotor3 type, which represents a rotation.
+ *
+ * Rotor3<T> is the even subalgebra -- grades 0 and 2 -- and represents a
+ * rotation. Rotors compose by multiplication without widening, and apply
+ * via the sandwich product R v ~R. The constructor from Multivector3 is
+ * explicit, because narrowing silently discards grades 1 and 3.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

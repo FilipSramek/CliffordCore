@@ -3,6 +3,17 @@
 /**
  * @file bivector3.hpp
  * @brief Grade 2: the Bivector3 type, an oriented plane element.
+ *
+ * Bivector3<T> is the grade 2 element: an oriented plane with a magnitude.
+ * Components are stored as (xy, xz, yz) = (e1e2, e1e3, e2e3) -- note xz,
+ * not the more common zx. That single choice fixes every sign in the
+ * wedge, the dual and the rotation formulas.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

@@ -3,6 +3,16 @@
 /**
  * @file subtraction.hpp
  * @brief Mixed-grade subtraction.
+ *
+ * The mirror of addition.hpp, with the same widening rule: same-grade
+ * differences keep their type, mixed-grade differences become a
+ * Multivector3.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "addition.hpp"

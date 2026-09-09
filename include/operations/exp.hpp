@@ -3,6 +3,17 @@
 /**
  * @file exp.hpp
  * @brief Exponential of a bivector, producing a rotor.
+ *
+ * exp(theta * B) is the rotor rotating by 2 * theta in the plane B, so a
+ * quarter turn is exp(pi/4 * B). The unit bivector squares to -1, which
+ * makes the series collapse to cos + sin exactly as it does for complex
+ * numbers.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <cmath>

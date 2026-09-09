@@ -3,6 +3,17 @@
 /**
  * @file mixed_products.hpp
  * @brief Geometric and wedge products between differing grades.
+ *
+ * Products between differing grades: each promotes both operands to
+ * Multivector3, defers to the Cayley table, and returns the most general
+ * type the product can produce. operator* is defined for every one of the
+ * 36 operand pairs.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "addition.hpp"

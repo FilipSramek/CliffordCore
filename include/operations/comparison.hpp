@@ -3,6 +3,16 @@
 /**
  * @file comparison.hpp
  * @brief Exact equality, and a separate tolerant comparison.
+ *
+ * operator== is exact and usable in a constant expression. approx_equal is
+ * kept separate on purpose: a tolerant equality is not transitive, which
+ * breaks sorting and associative containers.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <cmath>

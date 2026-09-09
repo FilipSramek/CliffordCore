@@ -3,6 +3,16 @@
 /**
  * @file geometry.hpp
  * @brief Reflection, projection and rejection.
+ *
+ * reflect, project and reject, written with the contraction and the inverse
+ * rather than assuming unit-length arguments. Projection onto a plane is
+ * (v _| B) * inverse(B); the reflection is -n v n^-1.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "../scalar.hpp"

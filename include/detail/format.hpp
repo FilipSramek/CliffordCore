@@ -3,6 +3,17 @@
 /**
  * @file format.hpp
  * @brief Shared number formatting for the types' to_string() methods.
+ *
+ * Components are printed at std::numeric_limits<T>::max_digits10, so what
+ * is read back parses to the same value. std::to_string is deliberately not
+ * used: it is fixed six decimals, which renders every 1e-16 residual this
+ * library produces as 0.000000.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <limits>

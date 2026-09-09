@@ -3,6 +3,16 @@
 /**
  * @file inverse.hpp
  * @brief Multiplicative inverses, and Clifford conjugation.
+ *
+ * Inverses carry the minus signs the squares imply: v^-1 = v/|v|^2, but
+ * B^-1 = -B/|B|^2 and t^-1 = -t/|t|^2. A Multivector3 inverts through
+ * Clifford conjugation rather than by dividing by its norm.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

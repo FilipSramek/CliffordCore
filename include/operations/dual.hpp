@@ -3,6 +3,17 @@
 /**
  * @file dual.hpp
  * @brief Duality: multiplication by the pseudoscalar.
+ *
+ * dual(A) = A * e123, which exchanges grade k with grade 3-k. Because
+ * e123^2 = -1, applying the dual twice negates -- that sign is correct, not
+ * a defect. A plane and its normal axis are dual descriptions of the same
+ * thing.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "../scalar.hpp"

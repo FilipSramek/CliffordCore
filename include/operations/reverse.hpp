@@ -3,6 +3,16 @@
 /**
  * @file reverse.hpp
  * @brief The reverse involution, which flips grades 2 and 3.
+ *
+ * Reverse scales grade k by (-1)^(k(k-1)/2): grades 0 and 1 keep their
+ * sign, grades 2 and 3 are negated. It is the involution rotors are undone
+ * with, since inverse(r) is reverse(r) for a unit rotor.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "../scalar.hpp"

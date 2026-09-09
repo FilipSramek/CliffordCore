@@ -3,6 +3,17 @@
 /**
  * @file contraction.hpp
  * @brief Left and right contractions, and the scalar product.
+ *
+ * operator| is the left contraction. For two vectors that is exactly the
+ * dot product, so nothing familiar changes; the contraction is simply what
+ * it generalises to. It is chosen over the symmetric fat dot because it
+ * survives a degenerate metric, which will matter when Cl(3,0,1) lands.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "../scalar.hpp"

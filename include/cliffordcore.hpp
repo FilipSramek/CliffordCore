@@ -3,6 +3,17 @@
 /**
  * @file cliffordcore.hpp
  * @brief Umbrella header: includes every CliffordCore type and operation.
+ *
+ * Including this one header brings in all six types and every operation.
+ * It declares nothing itself; each individual header is also a valid
+ * standalone entry point, so include only what you need if compile time
+ * matters.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 /**

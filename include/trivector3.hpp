@@ -3,6 +3,17 @@
 /**
  * @file trivector3.hpp
  * @brief Grade 3: the Trivector3 pseudoscalar, an oriented volume element.
+ *
+ * Trivector3<T> is the grade 3 pseudoscalar e123: an oriented volume. Its
+ * sole member is e123, not value. Because e123^2 = -1, two trivectors
+ * multiply to a Scalar rather than to another Trivector3, and the inverse
+ * carries a minus sign.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

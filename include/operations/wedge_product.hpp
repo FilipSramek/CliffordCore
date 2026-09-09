@@ -3,6 +3,15 @@
 /**
  * @file wedge_product.hpp
  * @brief Wedge (outer) product of two vectors.
+ *
+ * The antisymmetric outer product, which raises grade: two vectors wedge to
+ * a Bivector3, and a vector with a bivector to a Trivector3.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

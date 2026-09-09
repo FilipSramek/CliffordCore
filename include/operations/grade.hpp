@@ -3,6 +3,16 @@
 /**
  * @file grade.hpp
  * @brief Grade projection: pulling one grade out of a mixed object.
+ *
+ * grade0 through grade3 pull a single grade out of a mixed object. They are
+ * how the closed-form operations extract their result after routing through
+ * the general product.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "../scalar.hpp"

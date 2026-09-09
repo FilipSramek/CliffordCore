@@ -3,6 +3,16 @@
 /**
  * @file dot_product.hpp
  * @brief Dot (inner) product of two vectors.
+ *
+ * The symmetric inner product of two vectors, equal to the grade 0 part of
+ * their geometric product. Across differing grades the generalisation lives
+ * in contraction.hpp.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "../scalar.hpp"

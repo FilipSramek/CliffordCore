@@ -3,6 +3,19 @@
 /**
  * @file scalar.hpp
  * @brief Grade 0: the Scalar type and its products with every other grade.
+ *
+ * Scalar<T> is the grade 0 element of Cl(3,0) -- a single number carrying
+ * the algebra's identity. It multiplies with every other grade, and every
+ * other grade multiplies back, so this header uses the two-phase
+ * declare-then-define layout: the cross-type operators are declared here,
+ * the other five headers are included after the namespace closes, and the
+ * operators are defined out-of-line below.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

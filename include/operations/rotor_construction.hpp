@@ -3,6 +3,16 @@
 /**
  * @file rotor_construction.hpp
  * @brief Building rotors from axes, angles, vector pairs, and interpolation.
+ *
+ * rotor_from_axis_angle follows the ordinary right-hand rule -- +90 degrees
+ * about +z takes e1 to e2. rotor_between builds the rotor carrying one
+ * vector to another, and slerp interpolates along the shortest arc.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <cmath>

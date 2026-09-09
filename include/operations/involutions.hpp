@@ -3,6 +3,16 @@
 /**
  * @file involutions.hpp
  * @brief The grade involution and Clifford conjugation.
+ *
+ * The grade involution negates the odd grades, 1 and 3; Clifford
+ * conjugation negates grades 1 and 2. Together with reverse they form the
+ * set of three, and conjugate is exactly reverse composed with involute.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "../scalar.hpp"

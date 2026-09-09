@@ -3,6 +3,16 @@
 /**
  * @file norm.hpp
  * @brief Magnitudes: norm and squared_norm for every type.
+ *
+ * norm is the square root of squared_norm, which is the sum of the squared
+ * components. squared_norm avoids the square root where the comparison does
+ * not need it.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <cmath>

@@ -3,6 +3,17 @@
 /**
  * @file vector3.hpp
  * @brief Grade 1: the Vector3 type.
+ *
+ * Vector3<T> is the grade 1 element: an oriented length along e1, e2, e3,
+ * with e_i^2 = +1. Its product with another vector splits into the dot part
+ * (a Scalar) and the wedge part (a Bivector3), which is why the geometric
+ * product of two vectors returns a Multivector3.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

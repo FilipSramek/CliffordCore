@@ -3,6 +3,15 @@
 /**
  * @file stream.hpp
  * @brief Stream insertion for every type, delegating to to_string().
+ *
+ * One-line operator<< for each type, delegating to its to_string(). Kept in
+ * its own header so the type headers do not have to pull in <ostream>.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <ostream>

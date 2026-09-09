@@ -3,6 +3,16 @@
 /**
  * @file multivector3.hpp
  * @brief All grades at once: the Multivector3 type.
+ *
+ * Multivector3<T> holds all four grades at once and is the return type of
+ * any product that can leave its operands' grades. Mixed-grade addition and
+ * subtraction always widen to it, so chaining stays predictable.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

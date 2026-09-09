@@ -3,6 +3,17 @@
 /**
  * @file sandwich.hpp
  * @brief Applying a rotor to a vector via the sandwich product.
+ *
+ * sandwich(x, r) applies R x ~R, with the object first and the rotor
+ * second; rotate is the same function under a friendlier name. Overloads
+ * cover vectors, bivectors, trivectors and multivectors -- the trivector
+ * case is the identity, since the pseudoscalar is central.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <type_traits>

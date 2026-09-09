@@ -3,6 +3,16 @@
 /**
  * @file normalize.hpp
  * @brief Unit-length versions of each type.
+ *
+ * Divides by the norm to give a unit-length version. Normalizing a Scalar
+ * yields its sign. Rotors drift off unit length under repeated composition,
+ * faster in float than in double, so renormalise periodically.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "norm.hpp"

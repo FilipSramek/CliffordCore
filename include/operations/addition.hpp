@@ -3,6 +3,16 @@
 /**
  * @file addition.hpp
  * @brief Mixed-grade addition, and the rotor-flavoured conversions.
+ *
+ * Same-grade sums keep their own type; any mixed-grade sum widens to a
+ * Multivector3 via detail::promote. Only binary pairs are defined, since
+ * left-associativity extends them to chains of any length.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include "../scalar.hpp"

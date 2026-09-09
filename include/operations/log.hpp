@@ -3,6 +3,15 @@
 /**
  * @file log.hpp
  * @brief Logarithm of a rotor, producing a bivector.
+ *
+ * The inverse of exp: recovers the bivector a rotor exponentiates from.
+ * Used by slerp to interpolate in the plane of rotation.
+ *
+ * @author Filip Sramek
+ * @version 0.1.0
+ * @date 2026
+ * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
+ * @note Licensing is not settled yet; see README.md.
  */
 
 #include <cmath>
