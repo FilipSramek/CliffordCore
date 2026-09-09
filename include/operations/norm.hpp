@@ -48,6 +48,16 @@ constexpr Scalar<T> norm(const Bivector3<T>& b) {
 
 template<typename T>
 /**
+ * @brief Computes the squared euclidian norm (magnitude) of a scalar.
+ * @param s The scalar for which to compute the squared norm.
+ * @return The squared magnitude of the scalar s.
+ */
+constexpr Scalar<T> squared_norm(const Scalar<T>& s) {
+    return Scalar<T>(s.value * s.value);
+}
+
+template<typename T>
+/**
  * @brief Computes the squared euclidian norm (magnitude) of a 3D vector.
  * @param v The vector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the vector v.
