@@ -1,4 +1,12 @@
 CLAUDE.md
-test_core.exe
 
+# Build output. build.sh/build.ps1 write here, and so does build_examples.*
 build/
+
+# Compiled binaries. The VS Code build task writes the .exe next to the source,
+# so example binaries can land in examples/ as well as build/.
+*.exe
+
+# Generated API reference (regenerate with: cd docs && doxygen Doxyfile)
+docs/api/
+docs/doxygen-warnings.log
