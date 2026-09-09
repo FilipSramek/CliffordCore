@@ -56,6 +56,18 @@
  * which has broken this codebase twice.
  */
 
+/**
+ * @name Version
+ * Header-only libraries get vendored by copy-paste, so the version has to
+ * travel with the source rather than living only in a tag.
+ * @{
+ */
+#define CLIFFORDCORE_VERSION_MAJOR 0
+#define CLIFFORDCORE_VERSION_MINOR 1
+#define CLIFFORDCORE_VERSION_PATCH 0
+#define CLIFFORDCORE_VERSION_STRING "0.1.0"
+/** @} */
+
 // Types, in grade order. (scalar.hpp alone already pulls in all six via its
 // declare-then-include pattern; the rest are listed for readability.)
 #include "scalar.hpp"
@@ -86,6 +98,9 @@
 // Structure.
 #include "operations/dual.hpp"
 #include "operations/grade.hpp"
+#include "operations/comparison.hpp"
+#include "operations/stream.hpp"
+#include "operations/geometry.hpp"
 
 // Rotations.
 #include "operations/exp.hpp"
