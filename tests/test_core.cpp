@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "../include/scalar.hpp"
@@ -34,6 +35,11 @@
 #include "../include/operations/mixed_products.hpp"
 #include "../include/operations/rotor_construction.hpp"
 #include "../include/operations/grade.hpp"
+#include "../include/operations/involutions.hpp"
+#include "../include/operations/contraction.hpp"
+#include "../include/operations/geometry.hpp"
+#include "../include/operations/comparison.hpp"
+#include "../include/operations/stream.hpp"
 
 using CliffordCore::Bivector3;
 using CliffordCore::Multivector3;
@@ -1179,6 +1185,446 @@ void test_mixed_products()
     check_bivector(spelled.bivector, 0.0, 0.0, 0.0, "r * v * reverse(r) has no bivector part", 1e-14);
 }
 
+
+// ---------------------------------------------------------------------------
+// The operations added for the initial release
+// ---------------------------------------------------------------------------
+
+void test_involutions()
+{
+    section("involutions");
+
+    const Multivector3<double> m = make_mv(1, 2, 3, 4, 5, 6, 7, 8);
+
+    // Grade involution scales grade k by (-1)^k: odd grades flip.
+    check_mv(CliffordCore::involute(m), 1, -2, -3, -4, 5, 6, 7, -8, "involute(m)");
+    check_scalar(CliffordCore::involute(Scalar<double>(3)), 3.0, "involute(Scalar) keeps sign");
+    check_vector(CliffordCore::involute(Vector3<double>(1, 2, 3)), -1.0, -2.0, -3.0,
+                 "involute(Vector3) flips");
+    check_bivector(CliffordCore::involute(Bivector3<double>(1, 2, 3)), 1.0, 2.0, 3.0,
+                   "involute(Bivector3) keeps sign");
+    check_trivector(CliffordCore::involute(Trivector3<double>(4)), -4.0, "involute(Trivector3) flips");
+
+    // A rotor is purely even, which is what makes it closed under the sandwich.
+    const Rotor3<double> r(Scalar<double>(1), Bivector3<double>(2, 3, 4));
+    check_scalar(CliffordCore::involute(r).scalar, 1.0, "involute(Rotor3) is the identity");
+    check_bivector(CliffordCore::involute(r).bivector, 2.0, 3.0, 4.0, "involute(Rotor3) bivector");
+
+    // An involution: twice is the identity.
+    check_close(mv_difference(CliffordCore::involute(CliffordCore::involute(m)), m), 0.0,
+                "involute twice is the identity");
+
+    // The identity that ties the three together, in both compositions.
+    check_close(mv_difference(CliffordCore::conjugate(m),
+                              CliffordCore::reverse(CliffordCore::involute(m))), 0.0,
+                "conjugate == reverse of involute");
+    check_close(mv_difference(CliffordCore::conjugate(m),
+                              CliffordCore::involute(CliffordCore::reverse(m))), 0.0,
+                "conjugate == involute of reverse");
+
+    // conjugate now covers every type, not just Multivector3.
+    check_vector(CliffordCore::conjugate(Vector3<double>(1, 2, 3)), -1.0, -2.0, -3.0,
+                 "conjugate(Vector3)");
+    check_trivector(CliffordCore::conjugate(Trivector3<double>(4)), 4.0,
+                    "conjugate(Trivector3) keeps sign");
+    check_bivector(CliffordCore::conjugate(r).bivector, -2.0, -3.0, -4.0, "conjugate(Rotor3)");
+
+    // The Scalar overloads the README claimed but that did not exist.
+    check_scalar(CliffordCore::reverse(Scalar<double>(3)), 3.0, "reverse(Scalar)");
+    check_scalar(CliffordCore::squared_norm(Scalar<double>(3)), 9.0, "squared_norm(Scalar)");
+    check_scalar(CliffordCore::normalize(Scalar<double>(-3)), -1.0, "normalize(Scalar) gives the sign");
+    check_scalar(CliffordCore::normalize(Scalar<double>()), 0.0, "normalize(zero Scalar) stays zero");
+}
+
+void test_contractions()
+{
+    section("contractions");
+
+    const Vector3<double> a(1, 2, 3);
+    const Vector3<double> b(4, 5, 6);
+    const Bivector3<double> B(1, 2, 3);
+    const Bivector3<double> C(4, 5, 6);
+    const Trivector3<double> t(2);
+    const Trivector3<double> u(3);
+
+    // For equal grades the left contraction IS the dot product, so operator|
+    // keeps the meaning it always had.
+    check_scalar(CliffordCore::left_contraction(a, b), 32.0, "V _| V is the dot product");
+    check_close((a | b).value, CliffordCore::left_contraction(a, b).value, "operator| agrees");
+
+    // Every contraction must equal the correspondingly-graded part of the
+    // general product -- that is the definition, so check it rather than
+    // restating a formula.
+    check_vector(CliffordCore::left_contraction(a, B), CliffordCore::grade1(a * B).x,
+                 CliffordCore::grade1(a * B).y, CliffordCore::grade1(a * B).z,
+                 "V _| B == grade1(a*B)");
+    check_bivector(CliffordCore::left_contraction(a, t), CliffordCore::grade2(a * t).xy,
+                   CliffordCore::grade2(a * t).xz, CliffordCore::grade2(a * t).yz,
+                   "V _| T == grade2(a*t)");
+    check_close(CliffordCore::left_contraction(B, C).value, CliffordCore::grade0(B * C).value,
+                "B _| B == grade0(B*C)");
+    check_close(CliffordCore::left_contraction(t, u).value, -6.0, "T _| T is -6, since e123^2 = -1");
+
+    // The defining geometric fact: contracting a vector into a plane it lies in
+    // gives the perpendicular direction within that plane.
+    const Vector3<double> e1(1, 0, 0);
+    const Vector3<double> e2(0, 1, 0);
+    const Vector3<double> e3(0, 0, 1);
+    check_vector(e1 | (e1 ^ e2), 0.0, 1.0, 0.0, "e1 _| (e1^e2) == e2");
+    check_vector(e3 | (e1 ^ e2), 0.0, 0.0, 0.0, "e3 _| (e1^e2) == 0, e3 is outside that plane");
+
+    // Scalar product: the grade 0 part of any product.
+    check_scalar(CliffordCore::scalar_product(a, b), 32.0, "scalar_product of two vectors");
+    check_close(CliffordCore::scalar_product(B, C).value, CliffordCore::grade0(B * C).value,
+                "scalar_product == grade0 of the product");
+
+    // Right contraction is the reverse-mirror of the left one.
+    check_vector(CliffordCore::right_contraction(B, a),
+                 CliffordCore::reverse(CliffordCore::left_contraction(
+                     CliffordCore::reverse(a), CliffordCore::reverse(B))).x,
+                 CliffordCore::reverse(CliffordCore::left_contraction(
+                     CliffordCore::reverse(a), CliffordCore::reverse(B))).y,
+                 CliffordCore::reverse(CliffordCore::left_contraction(
+                     CliffordCore::reverse(a), CliffordCore::reverse(B))).z,
+                 "B |_ a == reverse(reverse(a) _| reverse(B))");
+}
+
+void test_geometry()
+{
+    section("geometry");
+
+    const Vector3<double> v(2, 3, 4);
+    const Vector3<double> n(0, 1, 0);
+    const Bivector3<double> xy(1, 0, 0);
+
+    // Reflection matches the formula everyone already knows.
+    check_vector(CliffordCore::reflect(v, n), 2.0, -3.0, 4.0, "reflect in the plane normal to e2");
+    const Vector3<double> classical = v - 2.0 * (n * (v | n));
+    check_vector(CliffordCore::reflect(v, n), classical.x, classical.y, classical.z,
+                 "reflect matches v - 2(v.n)n");
+
+    // The normal need not be unit length -- reflect divides through by inverse(n).
+    check_vector(CliffordCore::reflect(v, Vector3<double>(0, 5, 0)), 2.0, -3.0, 4.0,
+                 "reflect normalizes the plane normal itself");
+
+    // Reflecting twice is the identity.
+    check_vector(CliffordCore::reflect(CliffordCore::reflect(v, n), n), v.x, v.y, v.z,
+                 "reflect twice returns the original");
+
+    // A plane can be given as a bivector rather than by its normal.
+    check_vector(CliffordCore::reflect(v, xy), 2.0, 3.0, -4.0, "reflect in the e12 plane");
+
+    // Projection and rejection split a vector in two, onto a line...
+    const Vector3<double> u(1, 1, 0);
+    const Vector3<double> par = CliffordCore::project(v, u);
+    const Vector3<double> perp = CliffordCore::reject(v, u);
+    check_vector(par, 2.5, 2.5, 0.0, "project onto a line");
+    check_vector(par + perp, v.x, v.y, v.z, "project + reject == v, for a line");
+    check_scalar(perp | u, 0.0, "the rejection is perpendicular to the line");
+
+    // ...and onto a plane, which is what needed the contraction.
+    const Vector3<double> inPlane = CliffordCore::project(v, xy);
+    const Vector3<double> outOfPlane = CliffordCore::reject(v, xy);
+    check_vector(inPlane, 2.0, 3.0, 0.0, "project onto the e12 plane drops the z part");
+    check_vector(outOfPlane, 0.0, 0.0, 4.0, "reject from the e12 plane keeps only z");
+    check_vector(inPlane + outOfPlane, v.x, v.y, v.z, "project + reject == v, for a plane");
+
+    // The same, on a plane that is not axis aligned.
+    const Bivector3<double> tilted(1, 2, 3);
+    const Vector3<double> tiltedSum = CliffordCore::project(v, tilted) + CliffordCore::reject(v, tilted);
+    check_vector(tiltedSum, v.x, v.y, v.z, "project + reject == v, tilted plane", 1e-14);
+    const Vector3<double> reprojected = CliffordCore::project(CliffordCore::reject(v, tilted), tilted);
+    check_vector(reprojected, 0.0, 0.0, 0.0, "the rejection has nothing left in the plane", 1e-14);
+}
+
+void test_sandwich_all_grades()
+{
+    section("sandwich (all grades)");
+
+    const Rotor3<double> r = CliffordCore::rotor_from_axis_angle(Vector3<double>(0, 0, 1), kPi / 2);
+
+    // Rotating a plane. The e13 plane, turned a quarter turn about z, is e23.
+    check_bivector(CliffordCore::rotate(Bivector3<double>(0, 1, 0), r), 0.0, 0.0, 1.0,
+                   "the e13 plane rotates to e23", 1e-15);
+
+    // The rotation plane itself is fixed, exactly as the axis vector is.
+    check_bivector(CliffordCore::rotate(Bivector3<double>(1, 0, 0), r), 1.0, 0.0, 0.0,
+                   "the e12 plane is the rotation plane and is fixed", 1e-15);
+
+    // The pseudoscalar commutes with everything, so it cannot be rotated.
+    check_trivector(CliffordCore::rotate(Trivector3<double>(5), r), 5.0,
+                    "the pseudoscalar is central and survives untouched", 1e-14);
+
+    // Rotating a multivector must agree grade by grade with rotating the parts.
+    const Multivector3<double> m(Scalar<double>(1), Vector3<double>(1, 0, 0),
+                                 Bivector3<double>(0, 1, 0), Trivector3<double>(5));
+    const Multivector3<double> rotated = CliffordCore::rotate(m, r);
+    check_scalar(rotated.scalar, 1.0, "the scalar part is untouched");
+    const Vector3<double> rv = CliffordCore::rotate(Vector3<double>(1, 0, 0), r);
+    check_vector(rotated.vector, rv.x, rv.y, rv.z, "grade 1 matches rotating the vector alone", 1e-15);
+    const Bivector3<double> rb = CliffordCore::rotate(Bivector3<double>(0, 1, 0), r);
+    check_bivector(rotated.bivector, rb.xy, rb.xz, rb.yz,
+                   "grade 2 matches rotating the bivector alone", 1e-15);
+
+    // The four operator* pairs that were missing, without which none of the
+    // above could be written.
+    const Bivector3<double> b(1, 2, 3);
+    const Trivector3<double> t(4);
+    check_close(mv_difference(r * b, CliffordCore::to_multivector(r) * b), 0.0, "Rotor3 * Bivector3");
+    check_close(mv_difference(b * r, b * CliffordCore::to_multivector(r)), 0.0, "Bivector3 * Rotor3");
+    check_close(mv_difference(r * t, CliffordCore::to_multivector(r) * t), 0.0, "Rotor3 * Trivector3");
+    check_close(mv_difference(t * r, t * CliffordCore::to_multivector(r)), 0.0, "Trivector3 * Rotor3");
+}
+
+void test_comparison()
+{
+    section("comparison");
+
+    const Vector3<double> a(1, 2, 3);
+    const Vector3<double> b(1, 2, 3);
+    const Vector3<double> c(1, 2, 4);
+
+    check(a == b, "identical vectors compare equal");
+    check(!(a == c), "differing vectors do not");
+    check(a != c, "operator!= is the negation");
+    check(!(a != b), "operator!= agrees with operator==");
+
+    check(Scalar<double>(2) == Scalar<double>(2), "Scalar equality");
+    check(Bivector3<double>(1, 2, 3) == Bivector3<double>(1, 2, 3), "Bivector3 equality");
+    check(Trivector3<double>(4) == Trivector3<double>(4), "Trivector3 equality");
+    check(make_mv(1, 2, 3, 4, 5, 6, 7, 8) == make_mv(1, 2, 3, 4, 5, 6, 7, 8), "Multivector3 equality");
+    check(!(make_mv(1, 2, 3, 4, 5, 6, 7, 8) == make_mv(1, 2, 3, 4, 5, 6, 7, 9)),
+          "Multivector3 inequality catches one differing component");
+
+    // Exact equality is too strict once trigonometry is involved -- which is
+    // exactly why approx_equal is a separate function rather than a fuzzy ==.
+    const Rotor3<double> r = CliffordCore::rotor_from_axis_angle(Vector3<double>(0, 0, 1), kPi / 2);
+    const Vector3<double> turned = CliffordCore::rotate(Vector3<double>(1, 0, 0), r);
+    const Vector3<double> expected(0, 1, 0);
+    check(!(turned == expected), "a rotation leaves residue, so exact == fails");
+    check(CliffordCore::approx_equal(turned, expected), "approx_equal accepts it");
+    check(CliffordCore::approx_equal(turned, expected, 1e-9), "approx_equal takes an explicit tolerance");
+    check(!CliffordCore::approx_equal(turned, expected, 1e-30), "and honours a strict one");
+
+    // A rotor and its negation are the same rotation but different values.
+    const Rotor3<double> negated(Scalar<double>(-r.scalar.value),
+                                 Bivector3<double>(-r.bivector.xy, -r.bivector.xz, -r.bivector.yz));
+    check(!(r == negated), "a rotor does not equal its negation");
+    check(CliffordCore::approx_equal(CliffordCore::rotate(Vector3<double>(1, 0, 0), r),
+                                     CliffordCore::rotate(Vector3<double>(1, 0, 0), negated)),
+          "...even though both describe the same rotation");
+}
+
+// Exact equality stays usable in a constant expression; a tolerant one could not.
+constexpr Vector3<double> kCmpA(1, 0, 0);
+constexpr Vector3<double> kCmpB(1, 0, 0);
+static_assert(kCmpA == kCmpB, "operator== is constexpr");
+static_assert(!(kCmpA != kCmpB), "operator!= is constexpr");
+
+// ---------------------------------------------------------------------------
+// Instantiation sweep
+//
+// Every check above runs on double and asserts about VALUES. That leaves a
+// blind spot: a member of a class template is only compiled when it is called,
+// so an entry point nothing calls can be syntactically broken and still ship
+// green. That is exactly how to_string() reached main() broken on five of the
+// six types while this suite reported "779 checks, 0 failed".
+//
+// This section closes it. It asserts little -- its job is to CALL every public
+// entry point, for float, double and long double, so a compile failure
+// anywhere in the API stops the build.
+// ---------------------------------------------------------------------------
+
+template <typename T>
+void instantiate_every_entry_point()
+{
+    CliffordCore::Scalar<T> s(2);
+    CliffordCore::Vector3<T> v(1, 2, 3);
+    CliffordCore::Bivector3<T> b(1, 2, 3);
+    CliffordCore::Trivector3<T> t(4);
+    CliffordCore::Multivector3<T> m(s, v, b, t);
+    CliffordCore::Rotor3<T> r(CliffordCore::Scalar<T>(1), CliffordCore::Bivector3<T>(0, 0, 0));
+
+    // Same-type arithmetic and unary minus.
+    (void)(s + s); (void)(s - s); (void)(s * s); (void)(s / s); (void)(-s);
+    (void)(v + v); (void)(v - v); (void)(-v);
+    (void)(b + b); (void)(b - b); (void)(-b);
+    (void)(t + t); (void)(t - t); (void)(-t); (void)(t * t); (void)(t / t);
+    (void)(m + m); (void)(m - m); (void)(-m);
+    (void)(r + r); (void)(r - r);
+
+    // Scalar mixing, both spellings and both sides.
+    (void)(s * v); (void)(s * b); (void)(s * t); (void)(s * m); (void)(s * r);
+    (void)(v * s); (void)(b * s); (void)(t * s); (void)(m * s); (void)(r * s);
+    (void)(v / s); (void)(b / s); (void)(t / s); (void)(m / s); (void)(r / s);
+    (void)(t * T(2)); (void)(t / T(2));
+    (void)(T(2) * v); (void)(T(2) * b); (void)(T(2) * t); (void)(T(2) * m); (void)(T(2) * r);
+
+    // Compound assignment, every operator on every type.
+    { CliffordCore::Scalar<T> q = s; q += s; q -= s; q *= s; q /= s; }
+    { CliffordCore::Vector3<T> q = v; q += v; q -= v; q *= T(2); q /= T(2); q *= s; q /= s; }
+    { CliffordCore::Bivector3<T> q = b; q += b; q -= b; q *= T(2); q /= T(2); q *= s; q /= s; }
+    { CliffordCore::Trivector3<T> q = t; q += t; q -= t; q *= T(2); q /= T(2); q *= s; q /= s; }
+    { CliffordCore::Multivector3<T> q = m; q += m; q -= m; q *= s; q /= s; }
+    { CliffordCore::Rotor3<T> q = r; q += r; q -= r; q *= s; q /= s; }
+
+    // Products.
+    (void)(v | v); (void)CliffordCore::dot_product(v, v);
+    (void)(v ^ v); (void)CliffordCore::wedge_product(v, v);
+    (void)(v ^ b); (void)(b ^ v); (void)CliffordCore::wedge_product(v, b);
+    (void)(v * v); (void)(m * m); (void)(r * r);
+    (void)CliffordCore::geometric_product(v, v);
+    (void)CliffordCore::geometric_product(m, m);
+    (void)CliffordCore::rotor_product(v, v);
+    (void)CliffordCore::rotor_product(r, r);
+
+    // Every mixed_products.hpp overload, in both orders.
+    (void)(v * b); (void)(b * v);
+    (void)(b * b);
+    (void)(v * t); (void)(t * v);
+    (void)(b * t); (void)(t * b);
+    (void)(r * v); (void)(v * r);
+    (void)(m * v); (void)(v * m);
+    (void)(m * b); (void)(b * m);
+    (void)(m * t); (void)(t * m);
+    (void)(m * r); (void)(r * m);
+
+    // Mixed-grade sums and differences, both orders.
+    (void)(s + v); (void)(v + s); (void)(s + b); (void)(b + s); (void)(s + t); (void)(t + s);
+    (void)(v + b); (void)(b + v); (void)(v + t); (void)(t + v); (void)(b + t); (void)(t + b);
+    (void)(m + s); (void)(s + m); (void)(m + v); (void)(v + m);
+    (void)(m + b); (void)(b + m); (void)(m + t); (void)(t + m);
+    (void)(s - v); (void)(v - s); (void)(s - b); (void)(b - s); (void)(s - t); (void)(t - s);
+    (void)(v - b); (void)(b - v); (void)(v - t); (void)(t - v); (void)(b - t); (void)(t - b);
+    (void)(m - s); (void)(s - m); (void)(m - v); (void)(v - m);
+    (void)(m - b); (void)(b - m); (void)(m - t); (void)(t - m);
+
+    // Magnitudes, involutions, structure.
+    (void)CliffordCore::norm(s); (void)CliffordCore::norm(v); (void)CliffordCore::norm(b);
+    (void)CliffordCore::norm(t); (void)CliffordCore::norm(m); (void)CliffordCore::norm(r);
+    (void)CliffordCore::squared_norm(v); (void)CliffordCore::squared_norm(b);
+    (void)CliffordCore::squared_norm(t); (void)CliffordCore::squared_norm(m);
+    (void)CliffordCore::squared_norm(r);
+    (void)CliffordCore::normalize(v); (void)CliffordCore::normalize(b);
+    (void)CliffordCore::normalize(t); (void)CliffordCore::normalize(m);
+    (void)CliffordCore::normalize(r);
+    (void)CliffordCore::reverse(v); (void)CliffordCore::reverse(b);
+    (void)CliffordCore::reverse(t); (void)CliffordCore::reverse(m);
+    (void)CliffordCore::reverse(r);
+    (void)CliffordCore::inverse(s); (void)CliffordCore::inverse(v);
+    (void)CliffordCore::inverse(b); (void)CliffordCore::inverse(t);
+    (void)CliffordCore::inverse(m); (void)CliffordCore::inverse(r);
+    (void)CliffordCore::conjugate(m);
+    (void)CliffordCore::dual(s); (void)CliffordCore::dual(v);
+    (void)CliffordCore::dual(b); (void)CliffordCore::dual(t);
+    (void)CliffordCore::grade0(m); (void)CliffordCore::grade1(m);
+    (void)CliffordCore::grade2(m); (void)CliffordCore::grade3(m);
+    (void)CliffordCore::grade0(r); (void)CliffordCore::grade2(r);
+    (void)CliffordCore::to_rotor(m); (void)CliffordCore::to_multivector(r);
+    (void)CliffordCore::rotor_sum(s, b);
+    (void)v.magnitude(); (void)b.magnitude(); (void)t.magnitude();
+
+    // Rotations.
+    (void)CliffordCore::exp(b);
+    (void)CliffordCore::log(r);
+    (void)CliffordCore::sandwich(v, r); (void)CliffordCore::rotate(v, r);
+    (void)CliffordCore::identity_rotor<T>();
+    (void)CliffordCore::rotor_from_axis_angle(v, T(1));
+    (void)CliffordCore::rotor_between(v, v);
+    (void)CliffordCore::slerp(r, r, T(0.5));
+
+    // Printing -- the entry points that shipped broken because nothing called them.
+    (void)s.to_string(); (void)v.to_string(); (void)b.to_string();
+    (void)t.to_string(); (void)m.to_string(); (void)r.to_string();
+
+    // The four operator* pairs added for the bivector sandwich.
+    (void)(r * b); (void)(b * r); (void)(r * t); (void)(t * r);
+
+    // Involutions, on every type.
+    (void)CliffordCore::involute(s); (void)CliffordCore::involute(v);
+    (void)CliffordCore::involute(b); (void)CliffordCore::involute(t);
+    (void)CliffordCore::involute(m); (void)CliffordCore::involute(r);
+    (void)CliffordCore::conjugate(s); (void)CliffordCore::conjugate(v);
+    (void)CliffordCore::conjugate(b); (void)CliffordCore::conjugate(t);
+    (void)CliffordCore::conjugate(m); (void)CliffordCore::conjugate(r);
+    (void)CliffordCore::reverse(s);
+    (void)CliffordCore::squared_norm(s); (void)CliffordCore::normalize(s);
+
+    // Contractions and the scalar product.
+    (void)CliffordCore::left_contraction(v, v); (void)CliffordCore::left_contraction(v, b);
+    (void)CliffordCore::left_contraction(v, t); (void)CliffordCore::left_contraction(b, b);
+    (void)CliffordCore::left_contraction(b, t); (void)CliffordCore::left_contraction(t, t);
+    (void)CliffordCore::right_contraction(v, v); (void)CliffordCore::right_contraction(b, v);
+    (void)CliffordCore::right_contraction(t, v); (void)CliffordCore::right_contraction(b, b);
+    (void)CliffordCore::right_contraction(t, b); (void)CliffordCore::right_contraction(t, t);
+    (void)(v | b); (void)(v | t); (void)(b | b); (void)(b | t);
+    (void)CliffordCore::scalar_product(v, v); (void)CliffordCore::scalar_product(b, b);
+
+    // Geometry.
+    (void)CliffordCore::reflect(v, v); (void)CliffordCore::reflect(v, b);
+    (void)CliffordCore::project(v, v); (void)CliffordCore::project(v, b);
+    (void)CliffordCore::reject(v, v); (void)CliffordCore::reject(v, b);
+
+    // Sandwich, on every grade it accepts.
+    (void)CliffordCore::sandwich(b, r); (void)CliffordCore::sandwich(t, r);
+    (void)CliffordCore::sandwich(m, r);
+    (void)CliffordCore::rotate(b, r); (void)CliffordCore::rotate(t, r);
+    (void)CliffordCore::rotate(m, r);
+
+    // Comparison, exact and tolerant.
+    (void)(s == s); (void)(v == v); (void)(b == b);
+    (void)(t == t); (void)(m == m); (void)(r == r);
+    (void)(s != s); (void)(v != v); (void)(b != b);
+    (void)(t != t); (void)(m != m); (void)(r != r);
+    (void)CliffordCore::approx_equal(s, s); (void)CliffordCore::approx_equal(v, v);
+    (void)CliffordCore::approx_equal(b, b); (void)CliffordCore::approx_equal(t, t);
+    (void)CliffordCore::approx_equal(m, m); (void)CliffordCore::approx_equal(r, r);
+
+    // Stream insertion, for all six.
+    {
+        std::ostringstream os;
+        os << s << v << b << t << m << r;
+        (void)os;
+    }
+}
+
+void test_instantiation_sweep()
+{
+    section("instantiation sweep");
+
+    instantiate_every_entry_point<float>();
+    instantiate_every_entry_point<double>();
+    instantiate_every_entry_point<long double>();
+    check(true, "every public entry point instantiates for float, double and long double");
+
+    const Scalar<double> s(1.5);
+    const Vector3<double> v(1, 2, 3);
+    const Bivector3<double> b(1, 2, 3);
+    const Trivector3<double> t(4);
+    const Multivector3<double> m(s, v, b, t);
+    const Rotor3<double> r(s, b);
+
+    check(!s.to_string().empty(), "Scalar::to_string is non-empty");
+    check(!v.to_string().empty(), "Vector3::to_string is non-empty");
+    check(!b.to_string().empty(), "Bivector3::to_string is non-empty");
+    check(!t.to_string().empty(), "Trivector3::to_string is non-empty");
+    check(!m.to_string().empty(), "Multivector3::to_string is non-empty");
+    check(!r.to_string().empty(), "Rotor3::to_string is non-empty");
+
+    // The basis labels must match the component names in docs/conventions.md,
+    // or the output misleads about which grade is which.
+    check(v.to_string().find("e1") != std::string::npos, "Vector3 labels its e1 component");
+    check(b.to_string().find("e12") != std::string::npos, "Bivector3 labels its e12 component");
+    check(t.to_string().find("e123") != std::string::npos, "Trivector3 labels its e123 component");
+
+    // Round-trip precision. std::to_string renders this as "0.000000", which is
+    // useless for the residuals this library actually produces.
+    check(Scalar<double>(1e-17).to_string() != "0.000000",
+          "to_string keeps small values instead of flattening them to zero");
+    check(Scalar<double>(1e-17).to_string().find("e-17") != std::string::npos,
+          "to_string uses scientific notation where it is needed");
+}
+
 } // namespace
 
 int main()
@@ -1213,6 +1659,13 @@ int main()
     test_grade_projection();
     test_rotor_construction();
     test_mixed_products();
+    test_involutions();
+    test_contractions();
+    test_geometry();
+    test_sandwich_all_grades();
+    test_comparison();
+
+    test_instantiation_sweep();
 
     std::cout << g_checks << " checks, " << g_failures << " failed.\n";
     if (g_failures != 0) {
