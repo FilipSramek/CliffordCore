@@ -17,6 +17,21 @@ namespace CliffordCore
 {
     template<typename T>
     /**
+     * @brief Normalizes a scalar to unit magnitude.
+     * @param s The scalar to normalize.
+     * @return +1 or -1, whichever matches the sign of s. A zero scalar is
+     *         returned unchanged, since it has no sign to preserve.
+     */
+    constexpr Scalar<T> normalize(const Scalar<T>& s) {
+        const T n = norm(s).value;
+        if (n == T(0)) {
+            return s;
+        }
+        return Scalar<T>(s.value / n);
+    }
+
+    template<typename T>
+    /**
      * @brief Normalizes a 3D vector to have a unit norm.
      * @param v The vector to normalize.
      * @return The normalized vector with a unit norm. A zero vector is returned
