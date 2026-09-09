@@ -132,6 +132,14 @@ namespace CliffordCore
             *this = *this / other;
             return *this;
         }
+
+        /**
+         * @brief Returns a string representation of the rotor.
+         * @return A string representing the rotor.
+         */
+        std::string to_string() const {
+            return std::to_string(scalar) + " + " + std::to_string(bivector);
+        }
     };
 
     template<typename T>

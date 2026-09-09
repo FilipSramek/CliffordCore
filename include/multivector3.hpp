@@ -158,7 +158,16 @@ namespace CliffordCore
             *this = *this / s;
             return *this;
         }
+
+        /**
+         * @brief Returns a string representation of the multivector.
+         * @return A string representing the multivector.
+         */
+        std::string to_string() const {
+            return to_string(scalar) + " + " + to_string(vector) + " + " + to_string(bivector) + " + " + to_string(trivector);
+        }
     };
+
 
     template<typename T>
     /**

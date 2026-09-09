@@ -178,6 +178,13 @@ public:
      */
     constexpr Trivector3& operator/=(const Scalar<T>& scalar);
 
+    /**
+     * @brief Returns a string representation of the trivector.
+     * @return A string representing the trivector.
+     */
+    std::string to_string() const {
+        return std::to_string(e123) * "e123";
+    }
 };
 
 } // namespace CliffordCore

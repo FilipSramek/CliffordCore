@@ -7,6 +7,7 @@
 
 #include <type_traits>
 #include <cmath>
+#include <string>
 
 namespace CliffordCore
 {
@@ -143,6 +144,14 @@ public:
      * @return A reference to this bivector.
      */
     constexpr Bivector3& operator/=(const Scalar<T>& scalar);
+
+    /**
+     * @brief Returns a string representation of the bivector.
+     * @return A string representing the bivector.
+     */
+    std::string to_string() const {
+        return std::to_string(xy) * "e12 + " + std::to_string(xz) * "e13 + " + std::to_string(yz) * "e23";
+    }
 };
 } // namespace CliffordCore
 

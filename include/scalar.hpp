@@ -6,6 +6,8 @@
  */
 
 #include <type_traits>
+#include <cmath>
+#include <string>
 
 namespace CliffordCore {
 
@@ -144,6 +146,14 @@ public:
     constexpr Scalar& operator/=(const Scalar& other) {
         value /= other.value;
         return *this;
+    }
+
+    /**
+     * @brief Returns a string representation of the scalar.
+     * @return A string representing the scalar.
+     */
+    std::string to_string() const {
+        return std::to_string(value);
     }
 };
 } // namespace CliffordCore

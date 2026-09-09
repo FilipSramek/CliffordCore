@@ -144,6 +144,13 @@ public:
      */
     constexpr Vector3& operator/=(const Scalar<T>& scalar);
 
+    /**
+     * @brief Returns a string representation of the vector.
+     * @return A string representing the vector.
+     */
+    std::string to_string() const {
+        return std::to_string(x) * "e1 + " + std::to_string(y) * "e2 + " + std::to_string(z) * "e3";
+    }
 };
 } // namespace CliffordCore
 
