@@ -6,6 +6,7 @@
  */
 
 #include <type_traits>
+#include <string>
 #include "scalar.hpp"
 #include "vector3.hpp"
 #include "bivector3.hpp"
@@ -164,7 +165,10 @@ namespace CliffordCore
          * @return A string representing the multivector.
          */
         std::string to_string() const {
-            return to_string(scalar) + " + " + to_string(vector) + " + " + to_string(bivector) + " + " + to_string(trivector);
+            // Parenthesised so the joining " + " is distinguishable from the
+            // "+" inside each component.
+            return "(" + scalar.to_string() + ") + (" + vector.to_string()
+                 + ") + (" + bivector.to_string() + ") + (" + trivector.to_string() + ")";
         }
     };
 

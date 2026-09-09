@@ -7,6 +7,9 @@
 
 #include <type_traits>
 #include <cmath>
+#include <string>
+
+#include "detail/format.hpp"
 
 namespace CliffordCore
 {
@@ -183,7 +186,7 @@ public:
      * @return A string representing the trivector.
      */
     std::string to_string() const {
-        return std::to_string(e123) * "e123";
+        return detail::format_component(e123) + "*e123";
     }
 };
 

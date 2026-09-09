@@ -9,6 +9,8 @@
 #include <cmath>
 #include <string>
 
+#include "detail/format.hpp"
+
 namespace CliffordCore {
 
 template<typename T> class Vector3;
@@ -153,7 +155,7 @@ public:
      * @return A string representing the scalar.
      */
     std::string to_string() const {
-        return std::to_string(value);
+        return detail::format_component(value);
     }
 };
 } // namespace CliffordCore

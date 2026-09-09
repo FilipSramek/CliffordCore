@@ -9,6 +9,8 @@
 #include <cmath>
 #include <string>
 
+#include "detail/format.hpp"
+
 namespace CliffordCore
 {
 
@@ -150,7 +152,9 @@ public:
      * @return A string representing the bivector.
      */
     std::string to_string() const {
-        return std::to_string(xy) * "e12 + " + std::to_string(xz) * "e13 + " + std::to_string(yz) * "e23";
+        return detail::format_component(xy) + "*e12 + "
+             + detail::format_component(xz) + "*e13 + "
+             + detail::format_component(yz) + "*e23";
     }
 };
 } // namespace CliffordCore

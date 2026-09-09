@@ -7,6 +7,9 @@
 
 #include <type_traits>
 #include <cmath>
+#include <string>
+
+#include "detail/format.hpp"
 
 namespace CliffordCore
 {
@@ -149,7 +152,9 @@ public:
      * @return A string representing the vector.
      */
     std::string to_string() const {
-        return std::to_string(x) * "e1 + " + std::to_string(y) * "e2 + " + std::to_string(z) * "e3";
+        return detail::format_component(x) + "*e1 + "
+             + detail::format_component(y) + "*e2 + "
+             + detail::format_component(z) + "*e3";
     }
 };
 } // namespace CliffordCore

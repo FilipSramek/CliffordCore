@@ -6,6 +6,7 @@
  */
 
 #include <type_traits>
+#include <string>
 #include "scalar.hpp"
 #include "bivector3.hpp"
 #include "vector3.hpp"
@@ -39,10 +40,16 @@ namespace CliffordCore
             : scalar(s), bivector(b) {}
 
         /**
-         * @brief Constructor initializes the rotor with a 3D multivector.
-         * @param m The multivector to initialize the rotor with.
+         * @brief Constructor initializes the rotor from a 3D multivector.
+         * @param m The multivector to narrow.
+         *
+         * EXPLICIT on purpose: this discards the vector and trivector parts of
+         * m. While it was implicit, `rotor + multivector` silently resolved to
+         * this conversion and threw grades 1 and 3 away with no diagnostic,
+         * while `multivector + rotor` kept everything. Spell the narrowing out,
+         * or use to_rotor(m), which does the same thing by name.
          */
-        constexpr Rotor3(const Multivector3<T>& m)
+        constexpr explicit Rotor3(const Multivector3<T>& m)
             : scalar(m.scalar), bivector(m.bivector) {}
 
         /**
@@ -138,7 +145,7 @@ namespace CliffordCore
          * @return A string representing the rotor.
          */
         std::string to_string() const {
-            return std::to_string(scalar) + " + " + std::to_string(bivector);
+            return "(" + scalar.to_string() + ") + (" + bivector.to_string() + ")";
         }
     };
 
