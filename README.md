@@ -1,57 +1,97 @@
 # CliffordCore
 
-CliffordCore is a small, header-only C++ library for working with elements of 3D Clifford algebra. It provides basic types for scalars, vectors, bivectors, trivectors, multivectors, and rotors, along with common operations such as dot products, wedge products, geometric products, norms, inverses, duality, and reversals.
+CliffordCore is a small, header-only C++17 library for 3D Clifford (geometric)
+algebra, Cl(3,0). It provides the full grade ladder — scalars, vectors,
+bivectors, trivectors, multivectors and rotors — with the products, involutions
+and rotation machinery that go with them.
+
+Everything is `constexpr`, templated over any arithmetic type, and dependency
+free.
 
 ## Features
 
-- 3D vector, bivector, trivector, multivector, and rotor types
-- Arithmetic operators for the core algebraic objects
-- Support for:
-  - dot product
-  - wedge product
-  - geometric product
-  - norm and squared norm
-  - inverse
-  - reverse
-  - dual
-- Header-only design for straightforward integration into C++ projects
+**Types**
 
-## Project structure
+- `Scalar`, `Vector3`, `Bivector3`, `Trivector3` — the four grades
+- `Multivector3` — all grades at once
+- `Rotor3` — a rotation, as a scalar plus a bivector
 
-- include/ — core headers and operation headers
-- examples/ — example usage files
-- tests/ — test cases and validation code
-- docs/ — documentation and notes
+**Operations**
+
+- Products: dot (`|`), wedge (`^`), and the geometric product (`*`) for every
+  operand pair, including the full 8x8 multiplication table on multivectors
+- Mixed-grade addition and subtraction, plus compound assignment
+- `norm`, `squared_norm`, `normalize`
+- `reverse`, `conjugate`, `inverse`
+- `dual` across all four grades, and `grade0`–`grade3` projection
+- Rotations: `exp`, `log`, `sandwich`/`rotate`, `identity_rotor`,
+  `rotor_from_axis_angle`, `rotor_between`, `slerp`
+
+Header-only, `constexpr` throughout. Take everything with one umbrella header,
+or include only the pieces you need — every header stands alone.
 
 ## Usage
 
-Include the headers you need from the include directory.
-
 ```cpp
 #include <iostream>
-#include "include/vector3.hpp"
-#include "include/operations/dot_product.hpp"
-#include "include/operations/wedge_product.hpp"
-#include "include/operations/geometric_product.hpp"
+#include <cliffordcore.hpp>
 
-int main() {
-    CliffordCore::Vector3<double> a(1.0, 0.0, 0.0);
-    CliffordCore::Vector3<double> b(0.0, 1.0, 0.0);
+int main()
+{
+    CliffordCore::Vector3<double> a(1, 2, 3);
+    CliffordCore::Vector3<double> b(4, 5, 6);
 
-    auto dot = CliffordCore::dot_product(a, b);
-    auto wedge = CliffordCore::wedge_product(a, b);
-    auto product = CliffordCore::geometric_product(a, b);
+    // The geometric product keeps both the dot and the wedge.
+    auto product = a * b;
+    std::cout << "dot:   " << product.scalar.value << "\n";
+    std::cout << "wedge: " << product.bivector.xy << ", "
+              << product.bivector.xz << ", " << product.bivector.yz << "\n";
 
-    std::cout << "dot: " << dot.value << "\n";
-    std::cout << "wedge: " << wedge.xy << ", " << wedge.xz << ", " << wedge.yz << "\n";
-    return 0;
+    // A quarter turn about +z, applied to the x axis. Rotors compose by
+    // multiplication and interpolate with slerp.
+    auto turn = CliffordCore::rotor_from_axis_angle(
+        CliffordCore::Vector3<double>(0, 0, 1), 1.5707963);
+    auto spun = CliffordCore::rotate(CliffordCore::Vector3<double>(1, 0, 0), turn);
+    std::cout << "e1 turned: (" << spun.x << ", " << spun.y << ", " << spun.z << ")\n";
 }
 ```
 
-## Build and usage notes
+Compile from the repository root:
 
-This project is currently implemented as a set of header files, so it can be used directly by adding the repository's include directory to your compiler include path.
+```bash
+g++ -std=c++17 -Iinclude your_file.cpp -o your_file
+```
+
+## Project structure
+
+- `include/` — the library. `cliffordcore.hpp` pulls in everything; the six type
+  headers and `operations/` can also be included individually
+- `examples/` — five runnable programs, from the basic products through
+  rotations to a small geometry toolkit
+- `tests/` — the test suite, a single translation unit
+- `docs/` — guides, a conventions reference, and a Doxyfile
+
+## Building
+
+```bash
+./build.sh                      # run the tests
+./build_examples.sh             # build and run every example
+cd docs && doxygen Doxyfile     # generate the API reference
+```
+
+PowerShell equivalents: `.\build.ps1` and `.\build_examples.ps1`.
+
+`./build_examples.sh 03` builds just the matching example; `--no-run` compiles
+without executing.
+
+## Documentation
+
+Start with [docs/README.md](docs/README.md). The page worth reading before
+anything else is [docs/conventions.md](docs/conventions.md) — the bivector basis
+is `(xy, xz, yz)`, the dual negates when applied twice, and `exp(theta*B)`
+rotates by `2*theta`. Nearly every surprise traces back to one of those.
 
 ## Status
 
-CliffordCore is an educational and experimental implementation of basic 3D Clifford algebra concepts. It is suitable for learning, prototyping, and exploring geometric algebra in C++.
+CliffordCore is an educational and experimental implementation. It is suitable
+for learning, prototyping, and exploring geometric algebra in C++.
