@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file dot_product.hpp
+ * @brief Dot (inner) product of two vectors.
+ */
+
 #include "../scalar.hpp"
 #include "../vector3.hpp"
 
@@ -7,6 +12,12 @@ namespace CliffordCore
 {
 
 template<typename T>
+/**
+ * @brief Computes the dot product (inner product) of two 3D vectors.
+ * @param a The first vector.
+ * @param b The second vector.
+ * @return The resulting scalar from the dot product of vectors a and b.
+ */
 constexpr Scalar<T> operator|(const Vector3<T>& a, const Vector3<T>& b) {
     return Scalar<T>(a.x * b.x + a.y * b.y + a.z * b.z);
 }

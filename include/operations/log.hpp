@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file log.hpp
+ * @brief Logarithm of a rotor, producing a bivector.
+ */
+
 #include <cmath>
 #include "../rotor3.hpp"
 #include "../bivector3.hpp"

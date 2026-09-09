@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file trivector3.hpp
+ * @brief Grade 3: the Trivector3 pseudoscalar, an oriented volume element.
+ */
+
 #include <type_traits>
 #include <cmath>
 
@@ -12,14 +17,14 @@ class Scalar;
 template<typename T>
 /**
  * @brief A class representing a trivector in 3D space. Also known as a pseudoscalar, it represents the oriented volume element in 3D space.
- * @property e123 The trivector component.
+ * @tparam T The arithmetic component type.
  */
 class Trivector3
 {
     static_assert(std::is_arithmetic<T>::value, "Trivector3 can only be instantiated with numeric types.");
 
 public:
-    T e123;
+    T e123;   ///< The pseudoscalar component (e1e2e3).
 
     /**
      * @brief Default constructor initializes the trivector to zero.

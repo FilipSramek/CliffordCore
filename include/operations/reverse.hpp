@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file reverse.hpp
+ * @brief The reverse involution, which flips grades 2 and 3.
+ */
+
 #include "../vector3.hpp"
 #include "../bivector3.hpp"
 #include "../trivector3.hpp"

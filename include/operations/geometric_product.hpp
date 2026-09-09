@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file geometric_product.hpp
+ * @brief Geometric products, including the full 8x8 multiplication table.
+ */
+
 #include <type_traits>
 #include "../vector3.hpp"
 #include "../multivector3.hpp"

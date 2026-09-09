@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file norm.hpp
+ * @brief Magnitudes: norm and squared_norm for every type.
+ */
+
 #include <cmath>
 #include "../scalar.hpp"
 #include "../vector3.hpp"

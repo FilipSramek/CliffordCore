@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file dual.hpp
+ * @brief Duality: multiplication by the pseudoscalar.
+ */
+
 #include "../scalar.hpp"
 #include "../vector3.hpp"
 #include "../bivector3.hpp"

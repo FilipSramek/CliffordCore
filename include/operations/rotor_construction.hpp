@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file rotor_construction.hpp
+ * @brief Building rotors from axes, angles, vector pairs, and interpolation.
+ */
+
 #include <cmath>
 #include <limits>
 #include "../scalar.hpp"

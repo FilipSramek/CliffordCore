@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file mixed_products.hpp
+ * @brief Geometric and wedge products between differing grades.
+ */
+
 #include "addition.hpp"
 #include "geometric_product.hpp"
 

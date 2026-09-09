@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file scalar.hpp
+ * @brief Grade 0: the Scalar type and its products with every other grade.
+ */
+
 #include <type_traits>
 
 namespace CliffordCore {
@@ -14,13 +19,13 @@ template <typename T>
 
 /**
  * @brief A class representing a scalar value of type T.
- * @property value The scalar value.
+ * @tparam T The arithmetic component type.
  */
 class Scalar {    
     static_assert(std::is_arithmetic<T>::value, "Scalar can only be instantiated with numeric types.");
 
 public:
-    T value;
+    T value;   ///< The scalar value.
 
     /**
      * @brief Default constructor initializes the scalar value to zero.

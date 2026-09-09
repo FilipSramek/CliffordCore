@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file normalize.hpp
+ * @brief Unit-length versions of each type.
+ */
+
 #include "norm.hpp"
 #include "../scalar.hpp"
 #include "../vector3.hpp"

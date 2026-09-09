@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file subtraction.hpp
+ * @brief Mixed-grade subtraction.
+ */
+
 #include "addition.hpp"
 
 // Mixed-grade subtraction, the counterpart to addition.hpp.

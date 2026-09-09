@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file multivector3.hpp
+ * @brief All grades at once: the Multivector3 type.
+ */
+
 #include <type_traits>
 #include "scalar.hpp"
 #include "vector3.hpp"
@@ -12,19 +17,16 @@ namespace CliffordCore
     template<typename T>
     /**
      * @brief A class representing a multivector in 3D space.
-     * @property scalar The scalar component of the multivector.
-     * @property vector The vector component of the multivector.
-     * @property bivector The bivector component of the multivector.
-     * @property trivector The trivector component of the multivector.
+     * @tparam T The arithmetic component type.
      */
     class Multivector3
     {
         static_assert(std::is_arithmetic<T>::value, "Multivector3 can only be instantiated with numeric types.");
     public:
-        Scalar<T> scalar;
-        Vector3<T> vector;
-        Bivector3<T> bivector;
-        Trivector3<T> trivector;
+        Scalar<T> scalar;         ///< The grade 0 part.
+        Vector3<T> vector;        ///< The grade 1 part.
+        Bivector3<T> bivector;    ///< The grade 2 part.
+        Trivector3<T> trivector;  ///< The grade 3 part.
 
         /**
          * @brief Default constructor initializes all components to zero.

@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file grade.hpp
+ * @brief Grade projection: pulling one grade out of a mixed object.
+ */
+
 #include "../scalar.hpp"
 #include "../vector3.hpp"
 #include "../bivector3.hpp"

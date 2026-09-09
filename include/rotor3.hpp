@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file rotor3.hpp
+ * @brief Grades 0 and 2: the Rotor3 type, which represents a rotation.
+ */
+
 #include <type_traits>
 #include "scalar.hpp"
 #include "bivector3.hpp"
@@ -11,15 +16,14 @@ namespace CliffordCore
     template<typename T>
     /**
      * @brief A class representing a rotor in 3D space.
-     * @property scalar The scalar component of the rotor.
-     * @property bivector The bivector component of the rotor.
+     * @tparam T The arithmetic component type.
      */
     class Rotor3
     {
         static_assert(std::is_arithmetic<T>::value, "Rotor3 can only be instantiated with numeric types.");
     public:
-        Scalar<T> scalar;
-        Bivector3<T> bivector;
+        Scalar<T> scalar;      ///< The grade 0 part.
+        Bivector3<T> bivector; ///< The grade 2 part, the rotation plane.
 
         /**
          * @brief Default constructor initializes all components to zero.

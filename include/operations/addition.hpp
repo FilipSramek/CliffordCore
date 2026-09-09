@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file addition.hpp
+ * @brief Mixed-grade addition, and the rotor-flavoured conversions.
+ */
+
 #include "../scalar.hpp"
 #include "../vector3.hpp"
 #include "../bivector3.hpp"

@@ -3,7 +3,9 @@
 /**
  * @file cliffordcore.hpp
  * @brief Umbrella header: includes every CliffordCore type and operation.
- *
+ */
+
+/**
  * @mainpage CliffordCore
  *
  * CliffordCore is a header-only C++17 library for 3D Clifford (geometric)

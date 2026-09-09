@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file bivector3.hpp
+ * @brief Grade 2: the Bivector3 type, an oriented plane element.
+ */
+
 #include <type_traits>
 #include <cmath>
 
@@ -13,16 +18,16 @@ template<typename T>
 
 /**
  * @brief A class representing a bivector in 3D space.
- * @property xy The xy-component of the bivector.
- * @property xz The xz-component of the bivector.
- * @property yz The yz-component of the bivector.
+ * @tparam T The arithmetic component type.
  */
 class Bivector3
 {
     static_assert(std::is_arithmetic<T>::value, "Bivector3 can only be instantiated with numeric types.");
 
 public:
-    T xy, xz, yz;
+    T xy;   ///< The xy-component (e1e2).
+    T xz;   ///< The xz-component (e1e3).
+    T yz;   ///< The yz-component (e2e3).
 
     /**
      * @brief Default constructor initializes the bivector components to zero.
@@ -37,6 +42,10 @@ public:
      */
     constexpr Bivector3(T xy_val, T xz_val, T yz_val) : xy(xy_val), xz(xz_val), yz(yz_val) {}   
 
+    /**
+     * @brief Computes the magnitude of the bivector.
+     * @return The magnitude as a scalar.
+     */
     constexpr Scalar<T> magnitude() const {                                                                         
         return Scalar<T>(std::sqrt(xy * xy + xz * xz + yz * yz));
     }

@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file vector3.hpp
+ * @brief Grade 1: the Vector3 type.
+ */
+
 #include <type_traits>
 #include <cmath>
 
@@ -13,16 +18,16 @@ template<typename T>
 
 /**
  * @brief A class representing a 3D vector with components of type T.
- * @property x The x-component of the vector.
- * @property y The y-component of the vector.
- * @property z The z-component of the vector.
+ * @tparam T The arithmetic component type.
  */
 class Vector3
 {
     static_assert(std::is_arithmetic<T>::value, "Vector3 can only be instantiated with numeric types.");
 
 public:
-    T x, y, z;
+    T x;   ///< The x-component of the vector.
+    T y;   ///< The y-component of the vector.
+    T z;   ///< The z-component of the vector.
     
     /**
      * @brief Default constructor initializes the vector components to zero.
@@ -37,6 +42,10 @@ public:
      */
     constexpr Vector3(T x_val, T y_val, T z_val) : x(x_val), y(y_val), z(z_val) {} 
 
+    /**
+     * @brief Computes the magnitude (length) of the vector.
+     * @return The magnitude as a scalar.
+     */
     constexpr Scalar<T> magnitude() const {                                                                         
         return Scalar<T>(std::sqrt(x * x + y * y + z * z));
     }

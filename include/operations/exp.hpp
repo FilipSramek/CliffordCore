@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file exp.hpp
+ * @brief Exponential of a bivector, producing a rotor.
+ */
+
 #include <cmath>
 #include "../rotor3.hpp"
 #include "../bivector3.hpp"

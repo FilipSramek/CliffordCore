@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file inverse.hpp
+ * @brief Multiplicative inverses, and Clifford conjugation.
+ */
+
 #include <type_traits>
 #include "../scalar.hpp"
 #include "../vector3.hpp"

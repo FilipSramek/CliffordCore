@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file sandwich.hpp
+ * @brief Applying a rotor to a vector via the sandwich product.
+ */
+
 #include <type_traits>
 #include "../vector3.hpp"
 #include "../rotor3.hpp"

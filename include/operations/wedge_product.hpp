@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * @file wedge_product.hpp
+ * @brief Wedge (outer) product of two vectors.
+ */
+
 #include <type_traits>
 #include "../vector3.hpp"
 #include "../bivector3.hpp"
