@@ -5,6 +5,7 @@
  * @brief The reverse involution, which flips grades 2 and 3.
  */
 
+#include "../scalar.hpp"
 #include "../vector3.hpp"
 #include "../bivector3.hpp"
 #include "../trivector3.hpp"
@@ -13,6 +14,16 @@
 
 namespace CliffordCore
 {
+    template<typename T>
+    /**
+     * @brief Computes the geometric reverse of a scalar.
+     * @param s The scalar for which to compute the reverse.
+     * @return The scalar unchanged. Grade 0 keeps its sign under reverse.
+     */
+    constexpr Scalar<T> reverse(const Scalar<T>& s) {
+        return s;
+    }
+
     template<typename T>
     /**
      * @brief Computes the geometric reverse of a 3D vector.
