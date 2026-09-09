@@ -15,6 +15,7 @@
 #include "dot_product.hpp"
 #include "norm.hpp"
 #include "reverse.hpp"
+#include "involutions.hpp"
 #include "geometric_product.hpp"
 
 namespace CliffordCore
@@ -58,23 +59,6 @@ namespace CliffordCore
      */
     constexpr Trivector3<T> inverse(const Trivector3<T>& t) {
         return -t/squared_norm(t);
-    }
-
-    template<typename T>
-    /**
-     * @brief Applies Clifford conjugation to a multivector.
-     * @param m The multivector to conjugate.
-     * @return The conjugate: grade k is scaled by (-1)^(k(k+1)/2), so the scalar
-     *         and trivector parts keep their sign and the vector and bivector
-     *         parts are negated.
-     */
-    constexpr Multivector3<T> conjugate(const Multivector3<T>& m) {
-        return Multivector3<T>(
-            m.scalar,
-            Vector3<T>(-m.vector.x, -m.vector.y, -m.vector.z),
-            Bivector3<T>(-m.bivector.xy, -m.bivector.xz, -m.bivector.yz),
-            m.trivector
-        );
     }
 
     template<typename T>

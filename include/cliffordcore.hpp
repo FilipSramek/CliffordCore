@@ -68,6 +68,7 @@
 // Products.
 #include "operations/dot_product.hpp"
 #include "operations/wedge_product.hpp"
+#include "operations/contraction.hpp"
 #include "operations/geometric_product.hpp"
 #include "operations/mixed_products.hpp"
 
@@ -79,6 +80,7 @@
 #include "operations/norm.hpp"
 #include "operations/normalize.hpp"
 #include "operations/reverse.hpp"
+#include "operations/involutions.hpp"
 #include "operations/inverse.hpp"
 
 // Structure.
