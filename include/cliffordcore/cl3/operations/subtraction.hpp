@@ -1,12 +1,12 @@
 #pragma once
 
 /**
- * @file subtraction.hpp
+ * @file cliffordcore/cl3/operations/subtraction.hpp
  * @brief Mixed-grade subtraction.
  *
  * The mirror of addition.hpp, with the same widening rule: same-grade
  * differences keep their type, mixed-grade differences become a
- * Multivector3.
+ * Multivector.
  *
  * @author Filip Sramek
  * @version 0.1.0
@@ -20,15 +20,15 @@
 // Mixed-grade subtraction, the counterpart to addition.hpp.
 //
 // Same rule as addition: subtracting two different grades cannot stay in either
-// grade, so every mixed difference widens to a Multivector3, and only binary
+// grade, so every mixed difference widens to a Multivector, and only binary
 // pairs are defined -- a - b - c parses as ((a - b) - c).
 //
-// Same-grade differences (Vector3 - Vector3) keep their own type and live in the
-// type headers. Multivector3 - Multivector3 is a member of Multivector3.
+// Same-grade differences (Vector - Vector) keep their own type and live in the
+// type headers. Multivector - Multivector is a member of Multivector.
 //
 // These reuse detail::promote from addition.hpp.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     // -----------------------------------------------------------------------
     // Scalar with the higher grades
@@ -41,7 +41,7 @@ namespace CliffordCore
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Scalar<T>& a, const Vector3<T>& b) {
+    constexpr Multivector<T> operator-(const Scalar<T>& a, const Vector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -52,7 +52,7 @@ namespace CliffordCore
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Vector3<T>& a, const Scalar<T>& b) {
+    constexpr Multivector<T> operator-(const Vector<T>& a, const Scalar<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -63,7 +63,7 @@ namespace CliffordCore
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Scalar<T>& a, const Bivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Scalar<T>& a, const Bivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -74,7 +74,7 @@ namespace CliffordCore
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Bivector3<T>& a, const Scalar<T>& b) {
+    constexpr Multivector<T> operator-(const Bivector<T>& a, const Scalar<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -85,7 +85,7 @@ namespace CliffordCore
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Scalar<T>& a, const Trivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Scalar<T>& a, const Trivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -96,7 +96,7 @@ namespace CliffordCore
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Trivector3<T>& a, const Scalar<T>& b) {
+    constexpr Multivector<T> operator-(const Trivector<T>& a, const Scalar<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -111,7 +111,7 @@ namespace CliffordCore
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Vector3<T>& a, const Bivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Vector<T>& a, const Bivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -122,7 +122,7 @@ namespace CliffordCore
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Bivector3<T>& a, const Vector3<T>& b) {
+    constexpr Multivector<T> operator-(const Bivector<T>& a, const Vector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -133,7 +133,7 @@ namespace CliffordCore
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Vector3<T>& a, const Trivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Vector<T>& a, const Trivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -144,7 +144,7 @@ namespace CliffordCore
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Trivector3<T>& a, const Vector3<T>& b) {
+    constexpr Multivector<T> operator-(const Trivector<T>& a, const Vector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -159,7 +159,7 @@ namespace CliffordCore
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Bivector3<T>& a, const Trivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Bivector<T>& a, const Trivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -170,7 +170,7 @@ namespace CliffordCore
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector3<T> operator-(const Trivector3<T>& a, const Bivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Trivector<T>& a, const Bivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -185,7 +185,7 @@ namespace CliffordCore
      * @param b The scalar operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator-(const Multivector3<T>& a, const Scalar<T>& b) {
+    constexpr Multivector<T> operator-(const Multivector<T>& a, const Scalar<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -196,7 +196,7 @@ namespace CliffordCore
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator-(const Scalar<T>& a, const Multivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Scalar<T>& a, const Multivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -207,7 +207,7 @@ namespace CliffordCore
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator-(const Multivector3<T>& a, const Vector3<T>& b) {
+    constexpr Multivector<T> operator-(const Multivector<T>& a, const Vector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -218,7 +218,7 @@ namespace CliffordCore
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator-(const Vector3<T>& a, const Multivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Vector<T>& a, const Multivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -229,7 +229,7 @@ namespace CliffordCore
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator-(const Multivector3<T>& a, const Bivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Multivector<T>& a, const Bivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -240,7 +240,7 @@ namespace CliffordCore
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator-(const Bivector3<T>& a, const Multivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Bivector<T>& a, const Multivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -251,7 +251,7 @@ namespace CliffordCore
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator-(const Multivector3<T>& a, const Trivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Multivector<T>& a, const Trivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -262,7 +262,7 @@ namespace CliffordCore
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator-(const Trivector3<T>& a, const Multivector3<T>& b) {
+    constexpr Multivector<T> operator-(const Trivector<T>& a, const Multivector<T>& b) {
         return detail::promote(a) - detail::promote(b);
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

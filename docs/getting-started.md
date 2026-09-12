@@ -17,7 +17,7 @@ Add `include/` to your include path. Then either take everything:
 ...or include only the pieces you need:
 
 ```cpp
-#include <vector3.hpp>
+#include <vector.hpp>
 #include <operations/geometric_product.hpp>
 ```
 
@@ -33,8 +33,8 @@ for convenience; use individual headers if compile time matters.
 
 int main()
 {
-    CliffordCore::Vector3<double> a(1, 2, 3);
-    CliffordCore::Vector3<double> b(4, 5, 6);
+    CliffordCore::Vector<double> a(1, 2, 3);
+    CliffordCore::Vector<double> b(4, 5, 6);
 
     // The geometric product keeps both the dot and the wedge.
     auto product = a * b;
@@ -43,8 +43,8 @@ int main()
               << product.bivector.xz << ", " << product.bivector.yz << "\n";
 
     // A quarter turn about +z, applied to the x axis.
-    auto turn = CliffordCore::rotor_from_axis_angle(CliffordCore::Vector3<double>(0, 0, 1), 1.5707963);
-    auto spun = CliffordCore::rotate(CliffordCore::Vector3<double>(1, 0, 0), turn);
+    auto turn = CliffordCore::rotor_from_axis_angle(CliffordCore::Vector<double>(0, 0, 1), 1.5707963);
+    auto spun = CliffordCore::rotate(CliffordCore::Vector<double>(1, 0, 0), turn);
     std::cout << "e1 turned:  (" << spun.x << ", " << spun.y << ", " << spun.z << ")\n";
 }
 ```
@@ -91,7 +91,7 @@ compiler: the dot, wedge and geometric products, `dual`, `reverse`, the grade
 projections, `sandwich`, and mixed-grade `+` and `-`.
 
 ```cpp
-constexpr CliffordCore::Vector3<double> e1(1, 0, 0), e2(0, 1, 0);
+constexpr CliffordCore::Vector<double> e1(1, 0, 0), e2(0, 1, 0);
 static_assert((e1 ^ e2).xy == 1.0, "checked at compile time");
 ```
 
@@ -124,11 +124,11 @@ To read components directly instead:
 | Type | Fields |
 | --- | --- |
 | `Scalar<T>` | `.value` |
-| `Vector3<T>` | `.x` `.y` `.z` |
-| `Bivector3<T>` | `.xy` `.xz` `.yz` |
-| `Trivector3<T>` | `.e123` (not `.value`) |
-| `Rotor3<T>` | `.scalar` and `.bivector` |
-| `Multivector3<T>` | `.scalar` `.vector` `.bivector` `.trivector` |
+| `Vector<T>` | `.x` `.y` `.z` |
+| `Bivector<T>` | `.xy` `.xz` `.yz` |
+| `Trivector<T>` | `.e123` (not `.value`) |
+| `Rotor<T>` | `.scalar` and `.bivector` |
+| `Multivector<T>` | `.scalar` `.vector` `.bivector` `.trivector` |
 
 `examples/print_helpers.hpp` adds a `clean()` that shows near-zero components as
 `0`, which keeps rotation output readable.

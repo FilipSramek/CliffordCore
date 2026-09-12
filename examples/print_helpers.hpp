@@ -63,33 +63,33 @@ inline void line(const std::string& label, const std::string& value)
     std::cout << "  " << std::left << std::setw(30) << label << std::right << value << "\n";
 }
 
-inline void print(const std::string& label, const CliffordCore::Scalar<double>& s)
+inline void print(const std::string& label, const ga::Scalar<double>& s)
 {
     line(label, fmt(s.value));
 }
 
-inline void print(const std::string& label, const CliffordCore::Vector3<double>& v)
+inline void print(const std::string& label, const ga::Vector<double>& v)
 {
     line(label, "(" + fmt(v.x) + ", " + fmt(v.y) + ", " + fmt(v.z) + ")");
 }
 
-inline void print(const std::string& label, const CliffordCore::Bivector3<double>& b)
+inline void print(const std::string& label, const ga::Bivector<double>& b)
 {
     line(label, fmt(b.xy) + "*e12  " + fmt(b.xz) + "*e13  " + fmt(b.yz) + "*e23");
 }
 
-inline void print(const std::string& label, const CliffordCore::Trivector3<double>& t)
+inline void print(const std::string& label, const ga::Trivector<double>& t)
 {
     line(label, fmt(t.e123) + "*e123");
 }
 
-inline void print(const std::string& label, const CliffordCore::Rotor3<double>& r)
+inline void print(const std::string& label, const ga::Rotor<double>& r)
 {
     line(label, fmt(r.scalar.value) + " + " + fmt(r.bivector.xy) + "*e12  "
                 + fmt(r.bivector.xz) + "*e13  " + fmt(r.bivector.yz) + "*e23");
 }
 
-inline void print(const std::string& label, const CliffordCore::Multivector3<double>& m)
+inline void print(const std::string& label, const ga::Multivector<double>& m)
 {
     line(label, fmt(m.scalar.value)
                 + " | (" + fmt(m.vector.x) + ", " + fmt(m.vector.y) + ", " + fmt(m.vector.z) + ")"
@@ -97,7 +97,7 @@ inline void print(const std::string& label, const CliffordCore::Multivector3<dou
                 + " | " + fmt(m.trivector.e123));
 }
 
-/// Column header matching the Multivector3 layout above.
+/// Column header matching the Multivector layout above.
 inline void multivector_legend()
 {
     line("(multivector layout)", "scalar | vector (x,y,z) | bivector xy xz yz | trivector");

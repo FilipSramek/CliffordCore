@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file log.hpp
+ * @file cliffordcore/cl3/operations/log.hpp
  * @brief Logarithm of a rotor, producing a bivector.
  *
  * The inverse of exp: recovers the bivector a rotor exponentiates from.
@@ -15,12 +15,12 @@
  */
 
 #include <cmath>
-#include "../rotor3.hpp"
-#include "../bivector3.hpp"
+#include "../rotor.hpp"
+#include "../bivector.hpp"
 #include "../scalar.hpp"
 #include "../operations/norm.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -28,7 +28,7 @@ namespace CliffordCore
      * @param r The rotor for which to compute the logarithm.
      * @return The resulting bivector from the logarithm of the rotor r.
      */
-    constexpr Bivector3<T> log(const Rotor3<T>& r) {
+    constexpr Bivector<T> log(const Rotor<T>& r) {
         // A unit rotor has |scalar| <= 1, but rounding in exp() or in repeated
         // composition can leave it a few ulps outside that range, and std::acos
         // returns NaN off-domain. Clamp before the call.
@@ -40,16 +40,16 @@ namespace CliffordCore
         Scalar<T> Magnitude_bivector = r.bivector.magnitude();
 
         if (Magnitude_bivector.value == 0) { // Handle the case when the bivector is zero
-            return Bivector3<T>(0, 0, 0);
+            return Bivector<T>(0, 0, 0);
         }
 
         // The angle scaled onto the unit bivector that carries the rotation plane.
         const T scale = arccos_scalar.value / Magnitude_bivector.value;
 
-        return Bivector3<T>(
+        return Bivector<T>(
             scale * r.bivector.xy,
             scale * r.bivector.xz,
             scale * r.bivector.yz
         );
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

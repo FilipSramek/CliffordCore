@@ -1,11 +1,11 @@
 #pragma once
 
 /**
- * @file wedge_product.hpp
+ * @file cliffordcore/cl3/operations/wedge_product.hpp
  * @brief Wedge (outer) product of two vectors.
  *
  * The antisymmetric outer product, which raises grade: two vectors wedge to
- * a Bivector3, and a vector with a bivector to a Trivector3.
+ * a Bivector, and a vector with a bivector to a Trivector.
  *
  * @author Filip Sramek
  * @version 0.1.0
@@ -15,10 +15,10 @@
  */
 
 #include <type_traits>
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
 
 template<typename T>
@@ -29,8 +29,8 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting bivector from the wedge product of vectors a and b.
  */
-constexpr Bivector3<T> operator^(const Vector3<T>& a, const Vector3<T>& b) {
-    return Bivector3<T>(
+constexpr Bivector<T> operator^(const Vector<T>& a, const Vector<T>& b) {
+    return Bivector<T>(
         a.x * b.y - a.y * b.x,  // xy component
         a.x * b.z - a.z * b.x,  // xz component
         a.y * b.z - a.z * b.y   // yz component
@@ -44,7 +44,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting bivector from the wedge product of vectors a and b.
  */
-constexpr Bivector3<T> wedge_product(const Vector3<T>& a, const Vector3<T>& b) {
+constexpr Bivector<T> wedge_product(const Vector<T>& a, const Vector<T>& b) {
     return a ^ b;
 }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

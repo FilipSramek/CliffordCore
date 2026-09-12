@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file comparison.hpp
+ * @file cliffordcore/cl3/operations/comparison.hpp
  * @brief Exact equality, and a separate tolerant comparison.
  *
  * operator== is exact and usable in a constant expression. approx_equal is
@@ -19,11 +19,11 @@
 #include <limits>
 
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
 
 // operator== is EXACT, component by component. approx_equal() is separate and
 // takes a tolerance.
@@ -39,7 +39,7 @@
 // are bit-identical. Anything that has been through a rotation or an inverse
 // wants approx_equal.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -59,7 +59,7 @@ namespace CliffordCore
      * @param b The right vector.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Vector3<T>& a, const Vector3<T>& b) {
+    constexpr bool operator==(const Vector<T>& a, const Vector<T>& b) {
         return a.x == b.x && a.y == b.y && a.z == b.z;
     }
 
@@ -70,7 +70,7 @@ namespace CliffordCore
      * @param b The right bivector.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Bivector3<T>& a, const Bivector3<T>& b) {
+    constexpr bool operator==(const Bivector<T>& a, const Bivector<T>& b) {
         return a.xy == b.xy && a.xz == b.xz && a.yz == b.yz;
     }
 
@@ -81,7 +81,7 @@ namespace CliffordCore
      * @param b The right trivector.
      * @return True if the components are bit-identical.
      */
-    constexpr bool operator==(const Trivector3<T>& a, const Trivector3<T>& b) {
+    constexpr bool operator==(const Trivector<T>& a, const Trivector<T>& b) {
         return a.e123 == b.e123;
     }
 
@@ -92,7 +92,7 @@ namespace CliffordCore
      * @param b The right multivector.
      * @return True if every grade is bit-identical.
      */
-    constexpr bool operator==(const Multivector3<T>& a, const Multivector3<T>& b) {
+    constexpr bool operator==(const Multivector<T>& a, const Multivector<T>& b) {
         return a.scalar == b.scalar && a.vector == b.vector
             && a.bivector == b.bivector && a.trivector == b.trivector;
     }
@@ -105,7 +105,7 @@ namespace CliffordCore
      * @return True if both parts are bit-identical. Note that a rotor and its
      *         negation describe the same rotation but are NOT equal here.
      */
-    constexpr bool operator==(const Rotor3<T>& a, const Rotor3<T>& b) {
+    constexpr bool operator==(const Rotor<T>& a, const Rotor<T>& b) {
         return a.scalar == b.scalar && a.bivector == b.bivector;
     }
 
@@ -115,23 +115,23 @@ namespace CliffordCore
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Vector3<T>& a, const Vector3<T>& b) { return !(a == b); }
+    constexpr bool operator!=(const Vector<T>& a, const Vector<T>& b) { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Bivector3<T>& a, const Bivector3<T>& b) { return !(a == b); }
+    constexpr bool operator!=(const Bivector<T>& a, const Bivector<T>& b) { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Trivector3<T>& a, const Trivector3<T>& b) { return !(a == b); }
+    constexpr bool operator!=(const Trivector<T>& a, const Trivector<T>& b) { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Multivector3<T>& a, const Multivector3<T>& b) { return !(a == b); }
+    constexpr bool operator!=(const Multivector<T>& a, const Multivector<T>& b) { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Rotor3<T>& a, const Rotor3<T>& b) { return !(a == b); }
+    constexpr bool operator!=(const Rotor<T>& a, const Rotor<T>& b) { return !(a == b); }
 
     // -----------------------------------------------------------------------
     // Tolerant comparison
@@ -183,7 +183,7 @@ namespace CliffordCore
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Vector3<T>& a, const Vector3<T>& b,
+    inline bool approx_equal(const Vector<T>& a, const Vector<T>& b,
                              T tolerance = detail::default_tolerance<T>()) {
         return detail::close(a.x, b.x, tolerance)
             && detail::close(a.y, b.y, tolerance)
@@ -198,7 +198,7 @@ namespace CliffordCore
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Bivector3<T>& a, const Bivector3<T>& b,
+    inline bool approx_equal(const Bivector<T>& a, const Bivector<T>& b,
                              T tolerance = detail::default_tolerance<T>()) {
         return detail::close(a.xy, b.xy, tolerance)
             && detail::close(a.xz, b.xz, tolerance)
@@ -213,7 +213,7 @@ namespace CliffordCore
      * @param tolerance The largest difference still considered equal.
      * @return True if they agree to within the tolerance.
      */
-    inline bool approx_equal(const Trivector3<T>& a, const Trivector3<T>& b,
+    inline bool approx_equal(const Trivector<T>& a, const Trivector<T>& b,
                              T tolerance = detail::default_tolerance<T>()) {
         return detail::close(a.e123, b.e123, tolerance);
     }
@@ -226,7 +226,7 @@ namespace CliffordCore
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every grade agrees to within the tolerance.
      */
-    inline bool approx_equal(const Multivector3<T>& a, const Multivector3<T>& b,
+    inline bool approx_equal(const Multivector<T>& a, const Multivector<T>& b,
                              T tolerance = detail::default_tolerance<T>()) {
         return approx_equal(a.scalar, b.scalar, tolerance)
             && approx_equal(a.vector, b.vector, tolerance)
@@ -243,9 +243,9 @@ namespace CliffordCore
      * @return True if both parts agree to within the tolerance. A rotor and its
      *         negation are the same rotation but are not approx_equal.
      */
-    inline bool approx_equal(const Rotor3<T>& a, const Rotor3<T>& b,
+    inline bool approx_equal(const Rotor<T>& a, const Rotor<T>& b,
                              T tolerance = detail::default_tolerance<T>()) {
         return approx_equal(a.scalar, b.scalar, tolerance)
             && approx_equal(a.bivector, b.bivector, tolerance);
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

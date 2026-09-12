@@ -1,12 +1,12 @@
 #pragma once
 
 /**
- * @file rotor3.hpp
- * @brief Grades 0 and 2: the Rotor3 type, which represents a rotation.
+ * @file cliffordcore/cl3/rotor.hpp
+ * @brief Grades 0 and 2: the Rotor type, which represents a rotation.
  *
- * Rotor3<T> is the even subalgebra -- grades 0 and 2 -- and represents a
+ * Rotor<T> is the even subalgebra -- grades 0 and 2 -- and represents a
  * rotation. Rotors compose by multiplication without widening, and apply
- * via the sandwich product R v ~R. The constructor from Multivector3 is
+ * via the sandwich product R v ~R. The constructor from Multivector is
  * explicit, because narrowing silently discards grades 1 and 3.
  *
  * @author Filip Sramek
@@ -19,35 +19,35 @@
 #include <type_traits>
 #include <string>
 #include "scalar.hpp"
-#include "bivector3.hpp"
-#include "vector3.hpp"
-#include "multivector3.hpp"
+#include "bivector.hpp"
+#include "vector.hpp"
+#include "multivector.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
      * @brief A class representing a rotor in 3D space.
      * @tparam T The arithmetic component type.
      */
-    class Rotor3
+    class Rotor
     {
-        static_assert(std::is_arithmetic<T>::value, "Rotor3 can only be instantiated with numeric types.");
+        static_assert(std::is_arithmetic<T>::value, "Rotor can only be instantiated with numeric types.");
     public:
         Scalar<T> scalar;      ///< The grade 0 part.
-        Bivector3<T> bivector; ///< The grade 2 part, the rotation plane.
+        Bivector<T> bivector; ///< The grade 2 part, the rotation plane.
 
         /**
          * @brief Default constructor initializes all components to zero.
          */
-        constexpr Rotor3() : scalar(), bivector() {}
+        constexpr Rotor() : scalar(), bivector() {}
 
         /**
          * @brief Constructor initializes the rotor with the provided components.
          * @param s The scalar component.
          * @param b The bivector component.
          */
-        constexpr Rotor3(const Scalar<T>& s, const Bivector3<T>& b)
+        constexpr Rotor(const Scalar<T>& s, const Bivector<T>& b)
             : scalar(s), bivector(b) {}
 
         /**
@@ -60,7 +60,7 @@ namespace CliffordCore
          * while `multivector + rotor` kept everything. Spell the narrowing out,
          * or use to_rotor(m), which does the same thing by name.
          */
-        constexpr explicit Rotor3(const Multivector3<T>& m)
+        constexpr explicit Rotor(const Multivector<T>& m)
             : scalar(m.scalar), bivector(m.bivector) {}
 
         /**
@@ -68,8 +68,8 @@ namespace CliffordCore
          * @param other The rotor to add.
          * @return The resulting rotor.
          */
-        constexpr Rotor3 operator+(const Rotor3& other) const {
-            return Rotor3(
+        constexpr Rotor operator+(const Rotor& other) const {
+            return Rotor(
                 scalar + other.scalar,
                 bivector + other.bivector
             );
@@ -80,8 +80,8 @@ namespace CliffordCore
          * @param other The rotor to subtract.
          * @return The resulting rotor.
          */
-        constexpr Rotor3 operator-(const Rotor3& other) const {
-            return Rotor3(
+        constexpr Rotor operator-(const Rotor& other) const {
+            return Rotor(
                 scalar - other.scalar,
                 bivector - other.bivector
             );
@@ -92,8 +92,8 @@ namespace CliffordCore
          * @param other The scalar to multiply.
          * @return The resulting rotor.
          */
-        constexpr Rotor3 operator*(const Scalar<T>& other) const {
-            return Rotor3(
+        constexpr Rotor operator*(const Scalar<T>& other) const {
+            return Rotor(
                 scalar * other,
                 bivector * other
             );
@@ -104,8 +104,8 @@ namespace CliffordCore
          * @param other The scalar to divide.
          * @return The resulting rotor.
          */
-        constexpr Rotor3 operator/(const Scalar<T>& other) const {
-            return Rotor3(
+        constexpr Rotor operator/(const Scalar<T>& other) const {
+            return Rotor(
                 scalar / other,
                 bivector / other
             );
@@ -116,7 +116,7 @@ namespace CliffordCore
          * @param other The rotor to add.
          * @return A reference to this rotor.
          */
-        constexpr Rotor3& operator+=(const Rotor3& other) {
+        constexpr Rotor& operator+=(const Rotor& other) {
             *this = *this + other;
             return *this;
         }
@@ -126,7 +126,7 @@ namespace CliffordCore
          * @param other The rotor to subtract.
          * @return A reference to this rotor.
          */
-        constexpr Rotor3& operator-=(const Rotor3& other) {
+        constexpr Rotor& operator-=(const Rotor& other) {
             *this = *this - other;
             return *this;
         }
@@ -136,7 +136,7 @@ namespace CliffordCore
          * @param other The scalar to multiply by.
          * @return A reference to this rotor.
          */
-        constexpr Rotor3& operator*=(const Scalar<T>& other) {
+        constexpr Rotor& operator*=(const Scalar<T>& other) {
             *this = *this * other;
             return *this;
         }
@@ -146,7 +146,7 @@ namespace CliffordCore
          * @param other The scalar to divide by.
          * @return A reference to this rotor.
          */
-        constexpr Rotor3& operator/=(const Scalar<T>& other) {
+        constexpr Rotor& operator/=(const Scalar<T>& other) {
             *this = *this / other;
             return *this;
         }
@@ -167,7 +167,7 @@ namespace CliffordCore
      * @param r The rotor to scale.
      * @return The resulting rotor.
      */
-    constexpr Rotor3<T> operator*(T value, const Rotor3<T>& r) {
+    constexpr Rotor<T> operator*(T value, const Rotor<T>& r) {
         return r * Scalar<T>(value);
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

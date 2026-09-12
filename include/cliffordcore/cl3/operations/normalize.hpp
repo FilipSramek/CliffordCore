@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file normalize.hpp
+ * @file cliffordcore/cl3/operations/normalize.hpp
  * @brief Unit-length versions of each type.
  *
  * Divides by the norm to give a unit-length version. Normalizing a Scalar
@@ -25,13 +25,13 @@
 
 #include "norm.hpp"
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -58,13 +58,13 @@ namespace CliffordCore
      * @pre v is non-zero; a zero vector has no direction to preserve and trips
      *      an assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Vector3<T> normalize(const Vector3<T>& v) {
+    constexpr Vector<T> normalize(const Vector<T>& v) {
         const T n = norm(v).value;
         assert(n != T(0) && "normalize: the vector is zero and has no unit direction");
         if (n == T(0)) {
             return v;   // NDEBUG only; the assert above fires otherwise.
         }
-        return Vector3<T>(v.x / n, v.y / n, v.z / n);
+        return Vector<T>(v.x / n, v.y / n, v.z / n);
     }
 
     template<typename T>
@@ -75,13 +75,13 @@ namespace CliffordCore
      * @pre b is non-zero; a zero bivector trips an assert. Under NDEBUG it is
      *      returned unchanged instead.
      */
-    constexpr Bivector3<T> normalize(const Bivector3<T>& b) {
+    constexpr Bivector<T> normalize(const Bivector<T>& b) {
         const T n = norm(b).value;
         assert(n != T(0) && "normalize: the bivector is zero and has no unit direction");
         if (n == T(0)) {
             return b;   // NDEBUG only; the assert above fires otherwise.
         }
-        return Bivector3<T>(b.xy / n, b.xz / n, b.yz / n);
+        return Bivector<T>(b.xy / n, b.xz / n, b.yz / n);
     }
 
     template<typename T>
@@ -92,13 +92,13 @@ namespace CliffordCore
      * @pre t is non-zero; a zero trivector trips an assert. Under NDEBUG it is
      *      returned unchanged instead.
      */
-    constexpr Trivector3<T> normalize(const Trivector3<T>& t) {
+    constexpr Trivector<T> normalize(const Trivector<T>& t) {
         const T n = norm(t).value;
         assert(n != T(0) && "normalize: the trivector is zero and has no unit direction");
         if (n == T(0)) {
             return t;   // NDEBUG only; the assert above fires otherwise.
         }
-        return Trivector3<T>(t.e123 / n);
+        return Trivector<T>(t.e123 / n);
     }
 
     template<typename T>
@@ -109,17 +109,17 @@ namespace CliffordCore
      * @pre m is non-zero; a zero multivector trips an assert. Under NDEBUG it is
      *      returned unchanged instead.
      */
-    constexpr Multivector3<T> normalize(const Multivector3<T>& m) {
+    constexpr Multivector<T> normalize(const Multivector<T>& m) {
         const T n = norm(m).value;
         assert(n != T(0) && "normalize: the multivector is zero and has no unit direction");
         if (n == T(0)) {
             return m;   // NDEBUG only; the assert above fires otherwise.
         }
-        return Multivector3<T>(
+        return Multivector<T>(
             Scalar<T>(m.scalar.value / n),
-            Vector3<T>(m.vector.x / n, m.vector.y / n, m.vector.z / n),
-            Bivector3<T>(m.bivector.xy / n, m.bivector.xz / n, m.bivector.yz / n),
-            Trivector3<T>(m.trivector.e123 / n)
+            Vector<T>(m.vector.x / n, m.vector.y / n, m.vector.z / n),
+            Bivector<T>(m.bivector.xy / n, m.bivector.xz / n, m.bivector.yz / n),
+            Trivector<T>(m.trivector.e123 / n)
         );
     }
 
@@ -133,15 +133,15 @@ namespace CliffordCore
      * @pre r is non-zero; a zero rotor trips an assert. Under NDEBUG it is
      *      returned unchanged instead.
      */
-    constexpr Rotor3<T> normalize(const Rotor3<T>& r) {
+    constexpr Rotor<T> normalize(const Rotor<T>& r) {
         const T n = norm(r).value;
         assert(n != T(0) && "normalize: the rotor is zero and has no unit direction");
         if (n == T(0)) {
             return r;   // NDEBUG only; the assert above fires otherwise.
         }
-        return Rotor3<T>(
+        return Rotor<T>(
             Scalar<T>(r.scalar.value / n),
-            Bivector3<T>(r.bivector.xy / n, r.bivector.xz / n, r.bivector.yz / n)
+            Bivector<T>(r.bivector.xy / n, r.bivector.xz / n, r.bivector.yz / n)
         );
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

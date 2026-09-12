@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file grade.hpp
+ * @file cliffordcore/cl3/operations/grade.hpp
  * @brief Grade projection: pulling one grade out of a mixed object.
  *
  * grade0 through grade3 pull a single grade out of a mixed object. They are
@@ -16,11 +16,11 @@
  */
 
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
 
 // Grade projection: pull a single grade out of a mixed object.
 //
@@ -28,7 +28,7 @@
 // grade has a different return type, which a single template cannot express
 // without extra machinery.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -36,7 +36,7 @@ namespace CliffordCore
      * @param m The multivector to project.
      * @return The scalar part.
      */
-    constexpr Scalar<T> grade0(const Multivector3<T>& m) {
+    constexpr Scalar<T> grade0(const Multivector<T>& m) {
         return m.scalar;
     }
 
@@ -46,7 +46,7 @@ namespace CliffordCore
      * @param m The multivector to project.
      * @return The vector part.
      */
-    constexpr Vector3<T> grade1(const Multivector3<T>& m) {
+    constexpr Vector<T> grade1(const Multivector<T>& m) {
         return m.vector;
     }
 
@@ -56,7 +56,7 @@ namespace CliffordCore
      * @param m The multivector to project.
      * @return The bivector part.
      */
-    constexpr Bivector3<T> grade2(const Multivector3<T>& m) {
+    constexpr Bivector<T> grade2(const Multivector<T>& m) {
         return m.bivector;
     }
 
@@ -66,7 +66,7 @@ namespace CliffordCore
      * @param m The multivector to project.
      * @return The trivector part.
      */
-    constexpr Trivector3<T> grade3(const Multivector3<T>& m) {
+    constexpr Trivector<T> grade3(const Multivector<T>& m) {
         return m.trivector;
     }
 
@@ -76,7 +76,7 @@ namespace CliffordCore
      * @param r The rotor to project.
      * @return The scalar part.
      */
-    constexpr Scalar<T> grade0(const Rotor3<T>& r) {
+    constexpr Scalar<T> grade0(const Rotor<T>& r) {
         return r.scalar;
     }
 
@@ -86,7 +86,7 @@ namespace CliffordCore
      * @param r The rotor to project.
      * @return The bivector part.
      */
-    constexpr Bivector3<T> grade2(const Rotor3<T>& r) {
+    constexpr Bivector<T> grade2(const Rotor<T>& r) {
         return r.bivector;
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

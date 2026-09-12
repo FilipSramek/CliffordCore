@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file reverse.hpp
+ * @file cliffordcore/cl3/operations/reverse.hpp
  * @brief The reverse involution, which flips grades 2 and 3.
  *
  * Reverse scales grade k by (-1)^(k(k-1)/2): grades 0 and 1 keep their
@@ -16,13 +16,13 @@
  */
 
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -40,8 +40,8 @@ namespace CliffordCore
      * @param v The vector for which to compute the reverse.
      * @return The reverse of the vector v. (reverse(v) = v)
      */
-    constexpr Vector3<T> reverse(const Vector3<T>& v) {
-        return Vector3<T>(v.x, v.y, v.z);
+    constexpr Vector<T> reverse(const Vector<T>& v) {
+        return Vector<T>(v.x, v.y, v.z);
     }
 
     template<typename T>
@@ -50,8 +50,8 @@ namespace CliffordCore
      * @param b The bivector for which to compute the reverse.
      * @return The reverse of the bivector b. (reverse(b) = -b)
      */
-    constexpr Bivector3<T> reverse(const Bivector3<T>& b) {
-        return Bivector3<T>(-b.xy, -b.xz, -b.yz);
+    constexpr Bivector<T> reverse(const Bivector<T>& b) {
+        return Bivector<T>(-b.xy, -b.xz, -b.yz);
     }
 
     template<typename T>
@@ -60,8 +60,8 @@ namespace CliffordCore
      * @param t The trivector for which to compute the reverse.
      * @return The reverse of the trivector t. (reverse(t) = -t)
      */
-    constexpr Trivector3<T> reverse(const Trivector3<T>& t) {
-        return Trivector3<T>(-t.e123);
+    constexpr Trivector<T> reverse(const Trivector<T>& t) {
+        return Trivector<T>(-t.e123);
     }
 
     template<typename T>
@@ -70,12 +70,12 @@ namespace CliffordCore
      * @param m The multivector for which to compute the reverse.
      * @return The reverse of the multivector m. (reverse(m) = scalar(m) + vector(m) - bivector(m) - trivector(m))
      */
-    constexpr Multivector3<T> reverse(const Multivector3<T>& m) {
-        return Multivector3<T>(
+    constexpr Multivector<T> reverse(const Multivector<T>& m) {
+        return Multivector<T>(
             m.scalar,
             m.vector,
-            Bivector3<T>(-m.bivector.xy, -m.bivector.xz, -m.bivector.yz),
-            Trivector3<T>(-m.trivector.e123)
+            Bivector<T>(-m.bivector.xy, -m.bivector.xz, -m.bivector.yz),
+            Trivector<T>(-m.trivector.e123)
         );
     }
 
@@ -85,11 +85,11 @@ namespace CliffordCore
      * @param r The rotor for which to compute the reverse.
      * @return The reverse of the rotor r. (reverse(r) = scalar(r) - bivector(r))
      */
-    constexpr Rotor3<T> reverse(const Rotor3<T>& r) {
-        return Rotor3<T>(r.scalar, Bivector3<T>(-r.bivector.xy, -r.bivector.xz, -r.bivector.yz));
+    constexpr Rotor<T> reverse(const Rotor<T>& r) {
+        return Rotor<T>(r.scalar, Bivector<T>(-r.bivector.xy, -r.bivector.xz, -r.bivector.yz));
     }
 
     
 
 
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

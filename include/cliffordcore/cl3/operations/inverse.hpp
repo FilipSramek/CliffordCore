@@ -1,11 +1,11 @@
 #pragma once
 
 /**
- * @file inverse.hpp
+ * @file cliffordcore/cl3/operations/inverse.hpp
  * @brief Multiplicative inverses, and Clifford conjugation.
  *
  * Inverses carry the minus signs the squares imply: v^-1 = v/|v|^2, but
- * B^-1 = -B/|B|^2 and t^-1 = -t/|t|^2. A Multivector3 inverts through
+ * B^-1 = -B/|B|^2 and t^-1 = -t/|t|^2. A Multivector inverts through
  * Clifford conjugation rather than by dividing by its norm.
  *
  * @author Filip Sramek
@@ -17,18 +17,18 @@
 
 #include <type_traits>
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
 #include "dot_product.hpp"
 #include "norm.hpp"
 #include "reverse.hpp"
 #include "involutions.hpp"
 #include "geometric_product.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -46,7 +46,7 @@ namespace CliffordCore
      * @param v The vector for which to compute the inverse.
      * @return The inverse vector to the input vector.
      */
-    constexpr Vector3<T> inverse(const Vector3<T>& v) {
+    constexpr Vector<T> inverse(const Vector<T>& v) {
         return v/squared_norm(v);
     }
 
@@ -56,7 +56,7 @@ namespace CliffordCore
      * @param b The bivector for which to compute the inverse.
      * @return The inverse bivector to the input bivector.
      */
-    constexpr Bivector3<T> inverse(const Bivector3<T>& b) {
+    constexpr Bivector<T> inverse(const Bivector<T>& b) {
         return -b/squared_norm(b);
     }
 
@@ -67,7 +67,7 @@ namespace CliffordCore
      * @return The inverse trivector to the input trivector. The pseudoscalar
      *         squares to -1, so the inverse carries a minus sign: t^-1 = -t/|t|^2.
      */
-    constexpr Trivector3<T> inverse(const Trivector3<T>& t) {
+    constexpr Trivector<T> inverse(const Trivector<T>& t) {
         return -t/squared_norm(t);
     }
 
@@ -86,23 +86,23 @@ namespace CliffordCore
      * The multivector is not invertible when a^2 + b^2 is zero; this returns a
      * zero multivector in that case rather than dividing by zero.
      */
-    constexpr Multivector3<T> inverse(const Multivector3<T>& m) {
-        const Multivector3<T> conj = conjugate(m);
-        const Multivector3<T> collapsed = m * conj;
+    constexpr Multivector<T> inverse(const Multivector<T>& m) {
+        const Multivector<T> conj = conjugate(m);
+        const Multivector<T> collapsed = m * conj;
 
         const T a = collapsed.scalar.value;
         const T b = collapsed.trivector.e123;
         const T denominator = a * a + b * b;
 
         if (denominator == T(0)) {
-            return Multivector3<T>();
+            return Multivector<T>();
         }
 
-        const Multivector3<T> collapsedInverse(
+        const Multivector<T> collapsedInverse(
             Scalar<T>(a / denominator),
-            Vector3<T>(),
-            Bivector3<T>(),
-            Trivector3<T>(-b / denominator)
+            Vector<T>(),
+            Bivector<T>(),
+            Trivector<T>(-b / denominator)
         );
 
         return conj * collapsedInverse;
@@ -116,7 +116,7 @@ namespace CliffordCore
      *         since r * reverse(r) = |r|^2. For a unit rotor this is just the
      *         reverse, which is why rotations undo by reversing.
      */
-    constexpr Rotor3<T> inverse(const Rotor3<T>& r) {
+    constexpr Rotor<T> inverse(const Rotor<T>& r) {
         return reverse(r)/squared_norm(r);
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

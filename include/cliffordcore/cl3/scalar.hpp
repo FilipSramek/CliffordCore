@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file scalar.hpp
+ * @file cliffordcore/cl3/scalar.hpp
  * @brief Grade 0: the Scalar type and its products with every other grade.
  *
  * Scalar<T> is the grade 0 element of Cl(3,0) -- a single number carrying
@@ -22,15 +22,15 @@
 #include <cmath>
 #include <string>
 
-#include "detail/format.hpp"
+#include "../detail/format.hpp"
 
 namespace CliffordCore {
 
-template<typename T> class Vector3;
-template<typename T> class Bivector3;
-template<typename T> class Trivector3;
-template<typename T> class Multivector3;
-template<typename T> class Rotor3;
+template<typename T> class Vector;
+template<typename T> class Bivector;
+template<typename T> class Trivector;
+template<typename T> class Multivector;
+template<typename T> class Rotor;
 
 template <typename T>
 
@@ -80,35 +80,35 @@ public:
      * @param other The vector to multiply with.
      * @return The resulting vector.
      */
-    constexpr Vector3<T> operator*(const Vector3<T>& other) const;
+    constexpr Vector<T> operator*(const Vector<T>& other) const;
 
     /**
      * @brief Multiplication of scaler by bivector operator overload.
      * @param other The bivector to multiply with.
      * @return The resulting bivector.
      */
-    constexpr Bivector3<T> operator*(const Bivector3<T>& other) const;
+    constexpr Bivector<T> operator*(const Bivector<T>& other) const;
 
     /**
      * @brief Multiplication of scaler by trivector operator overload.
      * @param other The trivector to multiply with.
      * @return The resulting trivector.
      */
-    constexpr Trivector3<T> operator*(const Trivector3<T>& other) const;
+    constexpr Trivector<T> operator*(const Trivector<T>& other) const;
 
     /**
      * @brief Multiplication of scaler by multivector operator overload.
      * @param other The multivector to multiply with.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator*(const Multivector3<T>& other) const;
+    constexpr Multivector<T> operator*(const Multivector<T>& other) const;
 
     /**
      * @brief Multiplication of scaler by rotor operator overload.
      * @param other The rotor to multiply with.
      * @return The resulting rotor.
      */
-    constexpr Rotor3<T> operator*(const Rotor3<T>& other) const;
+    constexpr Rotor<T> operator*(const Rotor<T>& other) const;
 
     /**
      * @brief Division operator overload.
@@ -168,16 +168,16 @@ public:
      * @return A string representing the scalar.
      */
     std::string to_string() const {
-        return detail::format_component(value);
+        return CliffordCore::detail::format_component(value);
     }
 };
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3
 
-#include "vector3.hpp"
-#include "bivector3.hpp"
-#include "trivector3.hpp"
-#include "multivector3.hpp"
-#include "rotor3.hpp"
+#include "vector.hpp"
+#include "bivector.hpp"
+#include "trivector.hpp"
+#include "multivector.hpp"
+#include "rotor.hpp"
 
 namespace CliffordCore {
 
@@ -197,25 +197,25 @@ constexpr Scalar<T> Scalar<T>::operator*(const Scalar& other) const {
 }
 
 template<typename T>
-constexpr Vector3<T> Scalar<T>::operator*(const Vector3<T>& other) const { 
-    return Vector3<T>(value * other.x, value * other.y, value * other.z);
+constexpr Vector<T> Scalar<T>::operator*(const Vector<T>& other) const { 
+    return Vector<T>(value * other.x, value * other.y, value * other.z);
 }
 
 template<typename T>
-constexpr Bivector3<T> Scalar<T>::operator*(const Bivector3<T>& other) const { 
-    return Bivector3<T>(value * other.xy, value * other.xz, value * other.yz);
+constexpr Bivector<T> Scalar<T>::operator*(const Bivector<T>& other) const { 
+    return Bivector<T>(value * other.xy, value * other.xz, value * other.yz);
 }
 
 template<typename T>
-constexpr Trivector3<T> Scalar<T>::operator*(const Trivector3<T>& other) const { 
-    return Trivector3<T>(value * other.e123);
+constexpr Trivector<T> Scalar<T>::operator*(const Trivector<T>& other) const { 
+    return Trivector<T>(value * other.e123);
 }
 
 template<typename T>
-constexpr Multivector3<T> Scalar<T>::operator*(const Multivector3<T>& other) const {
+constexpr Multivector<T> Scalar<T>::operator*(const Multivector<T>& other) const {
     // Delegate to the per-grade overloads above. Multiplying by the raw `value`
     // would put a T on the left of a class type, for which no operator exists.
-    return Multivector3<T>(
+    return Multivector<T>(
         *this * other.scalar,
         *this * other.vector,
         *this * other.bivector,
@@ -224,9 +224,9 @@ constexpr Multivector3<T> Scalar<T>::operator*(const Multivector3<T>& other) con
 }
 
 template<typename T>
-constexpr Rotor3<T> Scalar<T>::operator*(const Rotor3<T>& other) const {
-    // Same reasoning as the Multivector3 overload above.
-    return Rotor3<T>(
+constexpr Rotor<T> Scalar<T>::operator*(const Rotor<T>& other) const {
+    // Same reasoning as the Multivector overload above.
+    return Rotor<T>(
         *this * other.scalar,
         *this * other.bivector
     );
@@ -241,4 +241,4 @@ template<typename T>
 constexpr Scalar<T> Scalar<T>::operator-() const {                         
     return Scalar(-value);
 }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file rotor_construction.hpp
+ * @file cliffordcore/cl3/operations/rotor_construction.hpp
  * @brief Building rotors from axes, angles, vector pairs, and interpolation.
  *
  * rotor_from_axis_angle follows the ordinary right-hand rule -- +90 degrees
@@ -18,9 +18,9 @@
 #include <cmath>
 #include <limits>
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../rotor.hpp"
 #include "dual.hpp"
 #include "exp.hpp"
 #include "log.hpp"
@@ -37,15 +37,15 @@
 // `angle` about `axis` is exp(-(angle/2) * dual(axis)), which turns out to be
 // the ordinary right-hand rule: +90 degrees about +z takes e1 to e2.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
      * @brief The rotor that represents no rotation.
      * @return The identity rotor, scalar 1 with a zero bivector.
      */
-    constexpr Rotor3<T> identity_rotor() {
-        return Rotor3<T>(Scalar<T>(1), Bivector3<T>(0, 0, 0));
+    constexpr Rotor<T> identity_rotor() {
+        return Rotor<T>(Scalar<T>(1), Bivector<T>(0, 0, 0));
     }
 
     template<typename T>
@@ -57,13 +57,13 @@ namespace CliffordCore
      * @return The rotor performing that rotation, or the identity if the axis
      *         has zero length.
      */
-    constexpr Rotor3<T> rotor_from_axis_angle(const Vector3<T>& axis, T angle) {
+    constexpr Rotor<T> rotor_from_axis_angle(const Vector<T>& axis, T angle) {
         if (norm(axis).value == T(0)) {
             return identity_rotor<T>();
         }
         // dual() is a signed permutation, so the dual of a unit vector is
         // already a unit bivector -- the plane perpendicular to the axis.
-        const Bivector3<T> plane = dual(normalize(axis));
+        const Bivector<T> plane = dual(normalize(axis));
         return exp(plane * Scalar<T>(-angle / T(2)));
     }
 
@@ -78,26 +78,26 @@ namespace CliffordCore
      * directions are opposite the rotation plane is ambiguous, so a perpendicular
      * plane containing `from` is chosen and the result is a half turn.
      */
-    constexpr Rotor3<T> rotor_between(const Vector3<T>& from, const Vector3<T>& to) {
+    constexpr Rotor<T> rotor_between(const Vector<T>& from, const Vector<T>& to) {
         if (norm(from).value == T(0) || norm(to).value == T(0)) {
             return identity_rotor<T>();
         }
 
-        const Vector3<T> a = normalize(from);
-        const Vector3<T> b = normalize(to);
+        const Vector<T> a = normalize(from);
+        const Vector<T> b = normalize(to);
         const T alignment = (a | b).value;
 
         // Opposite directions: every plane containing `a` is a valid half turn,
         // so pick one that is definitely not degenerate.
         if (alignment < T(-1) + std::numeric_limits<T>::epsilon() * T(8)) {
-            const Vector3<T> reference =
-                (std::abs(a.x) < T(0.9)) ? Vector3<T>(1, 0, 0) : Vector3<T>(0, 1, 0);
+            const Vector<T> reference =
+                (std::abs(a.x) < T(0.9)) ? Vector<T>(1, 0, 0) : Vector<T>(0, 1, 0);
             // A unit bivector with zero scalar part is exactly a half turn.
-            return Rotor3<T>(Scalar<T>(0), normalize(a ^ reference));
+            return Rotor<T>(Scalar<T>(0), normalize(a ^ reference));
         }
 
-        const Multivector3<T> product = geometric_product(b, a);
-        return normalize(Rotor3<T>(product.scalar + Scalar<T>(1), product.bivector));
+        const Multivector<T> product = geometric_product(b, a);
+        return normalize(Rotor<T>(product.scalar + Scalar<T>(1), product.bivector));
     }
 
     template<typename T>
@@ -112,22 +112,22 @@ namespace CliffordCore
      * point away from each other the second is negated first and the result
      * takes the short way round.
      */
-    constexpr Rotor3<T> slerp(const Rotor3<T>& from, const Rotor3<T>& to, T t) {
-        const Rotor3<T> a = normalize(from);
-        Rotor3<T> b = normalize(to);
+    constexpr Rotor<T> slerp(const Rotor<T>& from, const Rotor<T>& to, T t) {
+        const Rotor<T> a = normalize(from);
+        Rotor<T> b = normalize(to);
 
         const T alignment = a.scalar.value * b.scalar.value
                           + a.bivector.xy * b.bivector.xy
                           + a.bivector.xz * b.bivector.xz
                           + a.bivector.yz * b.bivector.yz;
         if (alignment < T(0)) {
-            b = Rotor3<T>(Scalar<T>(-b.scalar.value),
-                          Bivector3<T>(-b.bivector.xy, -b.bivector.xz, -b.bivector.yz));
+            b = Rotor<T>(Scalar<T>(-b.scalar.value),
+                          Bivector<T>(-b.bivector.xy, -b.bivector.xz, -b.bivector.yz));
         }
 
         // reverse(a) is the inverse of a unit rotor, so this is the relative
         // rotation from a to b, scaled by t and reapplied.
-        const Bivector3<T> between = log(reverse(a) * b);
+        const Bivector<T> between = log(reverse(a) * b);
         return a * exp(between * Scalar<T>(t));
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

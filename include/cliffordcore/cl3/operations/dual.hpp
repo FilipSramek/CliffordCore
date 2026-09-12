@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file dual.hpp
+ * @file cliffordcore/cl3/operations/dual.hpp
  * @brief Duality: multiplication by the pseudoscalar.
  *
  * dual(A) = A * e123, which exchanges grade k with grade 3-k. Because
@@ -17,9 +17,9 @@
  */
 
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
 
 // The dual maps a grade-k element to grade 3-k by multiplying with the
 // pseudoscalar I = e123. Working the basis through, with bivectors stored as
@@ -32,7 +32,7 @@
 // Because I*I = -1, applying the dual twice negates rather than returning the
 // original: dual(dual(a)) == -a. That is the correct behaviour, not a defect.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
 
 template<typename T>
@@ -41,8 +41,8 @@ template<typename T>
  * @param s The scalar to compute the dual of.
  * @return The resulting trivector s * e123.
  */
-constexpr Trivector3<T> dual(const Scalar<T>& s) {
-    return Trivector3<T>(s.value);
+constexpr Trivector<T> dual(const Scalar<T>& s) {
+    return Trivector<T>(s.value);
 }
 
 template<typename T>
@@ -51,8 +51,8 @@ template<typename T>
  * @param v The vector to compute the dual of.
  * @return The resulting bivector v * e123, mapping x to yz, y to -xz and z to xy.
  */
-constexpr Bivector3<T> dual(const Vector3<T>& v) {
-    return Bivector3<T>(v.z, -v.y, v.x);
+constexpr Bivector<T> dual(const Vector<T>& v) {
+    return Bivector<T>(v.z, -v.y, v.x);
 }
 
 template<typename T>
@@ -61,8 +61,8 @@ template<typename T>
  * @param b The bivector to compute the dual of.
  * @return The resulting vector b * e123.
  */
-constexpr Vector3<T> dual(const Bivector3<T>& b) {
-    return Vector3<T>(-b.yz, b.xz, -b.xy);
+constexpr Vector<T> dual(const Bivector<T>& b) {
+    return Vector<T>(-b.yz, b.xz, -b.xy);
 }
 
 template<typename T>
@@ -71,7 +71,7 @@ template<typename T>
  * @param t The trivector to compute the dual of.
  * @return The resulting scalar. The pseudoscalar squares to -1, hence the sign.
  */
-constexpr Scalar<T> dual(const Trivector3<T>& t) {
+constexpr Scalar<T> dual(const Trivector<T>& t) {
     return Scalar<T>(-t.e123);
 }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

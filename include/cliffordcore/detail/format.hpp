@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file format.hpp
+ * @file cliffordcore/detail/format.hpp
  * @brief Shared number formatting for the types' to_string() methods.
  *
  * Components are printed at std::numeric_limits<T>::max_digits10, so what

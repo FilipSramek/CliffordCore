@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file dot_product.hpp
+ * @file cliffordcore/cl3/operations/dot_product.hpp
  * @brief Dot (inner) product of two vectors.
  *
  * The symmetric inner product of two vectors, equal to the grade 0 part of
@@ -16,9 +16,9 @@
  */
 
 #include "../scalar.hpp"
-#include "../vector3.hpp"
+#include "../vector.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
 
 template<typename T>
@@ -28,7 +28,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting scalar from the dot product of vectors a and b.
  */
-constexpr Scalar<T> operator|(const Vector3<T>& a, const Vector3<T>& b) {
+constexpr Scalar<T> operator|(const Vector<T>& a, const Vector<T>& b) {
     return Scalar<T>(a.x * b.x + a.y * b.y + a.z * b.z);
 }
 
@@ -39,7 +39,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting scalar from the dot product of vectors a and b.
  */
-constexpr Scalar<T> dot_product(const Vector3<T>& a, const Vector3<T>& b) {
+constexpr Scalar<T> dot_product(const Vector<T>& a, const Vector<T>& b) {
     return a | b;
 }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

@@ -12,9 +12,9 @@ free.
 
 **Types**
 
-- `Scalar`, `Vector3`, `Bivector3`, `Trivector3` — the four grades
-- `Multivector3` — all grades at once
-- `Rotor3` — a rotation, as a scalar plus a bivector
+- `Scalar`, `Vector`, `Bivector`, `Trivector` — the four grades
+- `Multivector` — all grades at once
+- `Rotor` — a rotation, as a scalar plus a bivector
 
 **Operations**
 
@@ -45,8 +45,8 @@ stands alone.
 
 int main()
 {
-    CliffordCore::Vector3<double> a(1, 2, 3);
-    CliffordCore::Vector3<double> b(4, 5, 6);
+    CliffordCore::Vector<double> a(1, 2, 3);
+    CliffordCore::Vector<double> b(4, 5, 6);
 
     // The geometric product keeps both the dot and the wedge.
     auto product = a * b;
@@ -57,8 +57,8 @@ int main()
     // A quarter turn about +z, applied to the x axis. Rotors compose by
     // multiplication and interpolate with slerp.
     auto turn = CliffordCore::rotor_from_axis_angle(
-        CliffordCore::Vector3<double>(0, 0, 1), 1.5707963);
-    auto spun = CliffordCore::rotate(CliffordCore::Vector3<double>(1, 0, 0), turn);
+        CliffordCore::Vector<double>(0, 0, 1), 1.5707963);
+    auto spun = CliffordCore::rotate(CliffordCore::Vector<double>(1, 0, 0), turn);
     std::cout << "e1 turned: (" << spun.x << ", " << spun.y << ", " << spun.z << ")\n";
 }
 ```
@@ -107,7 +107,7 @@ learning, prototyping, and exploring geometric algebra in C++. It implements
 Cl(3,0), 3D Euclidean geometric algebra, and the test suite covers it thoroughly.
 
 One change is already planned and will not be subtle: **the type names will
-change.** `Vector3`, `Rotor3` and friends name the dimension but not the metric,
+change.** `Vector`, `Rotor` and friends name the dimension but not the metric,
 which stops working as soon as Cl(3,0,1) and Cl(2,0) arrive — a projective
 "3D" vector has four components. Expect a namespace and naming reorganisation
 before 1.0. Pin a commit if you depend on the current spelling.

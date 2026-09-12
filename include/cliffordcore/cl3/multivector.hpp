@@ -1,10 +1,10 @@
 #pragma once
 
 /**
- * @file multivector3.hpp
- * @brief All grades at once: the Multivector3 type.
+ * @file cliffordcore/cl3/multivector.hpp
+ * @brief All grades at once: the Multivector type.
  *
- * Multivector3<T> holds all four grades at once and is the return type of
+ * Multivector<T> holds all four grades at once and is the return type of
  * any product that can leave its operands' grades. Mixed-grade addition and
  * subtraction always widen to it, so chaining stays predictable.
  *
@@ -18,31 +18,31 @@
 #include <type_traits>
 #include <string>
 #include "scalar.hpp"
-#include "vector3.hpp"
-#include "bivector3.hpp"
-#include "trivector3.hpp"
-#include "rotor3.hpp"
+#include "vector.hpp"
+#include "bivector.hpp"
+#include "trivector.hpp"
+#include "rotor.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
      * @brief A class representing a multivector in 3D space.
      * @tparam T The arithmetic component type.
      */
-    class Multivector3
+    class Multivector
     {
-        static_assert(std::is_arithmetic<T>::value, "Multivector3 can only be instantiated with numeric types.");
+        static_assert(std::is_arithmetic<T>::value, "Multivector can only be instantiated with numeric types.");
     public:
         Scalar<T> scalar;         ///< The grade 0 part.
-        Vector3<T> vector;        ///< The grade 1 part.
-        Bivector3<T> bivector;    ///< The grade 2 part.
-        Trivector3<T> trivector;  ///< The grade 3 part.
+        Vector<T> vector;        ///< The grade 1 part.
+        Bivector<T> bivector;    ///< The grade 2 part.
+        Trivector<T> trivector;  ///< The grade 3 part.
 
         /**
          * @brief Default constructor initializes all components to zero.
          */
-        constexpr Multivector3() : scalar(), vector(), bivector(), trivector() {}
+        constexpr Multivector() : scalar(), vector(), bivector(), trivector() {}
 
         /**
          * @brief Constructor initializes the multivector with the provided components.
@@ -51,23 +51,23 @@ namespace CliffordCore
          * @param b The bivector component.
          * @param t The trivector component.
          */
-        constexpr Multivector3(const Scalar<T>& s, const Vector3<T>& v, const Bivector3<T>& b, const Trivector3<T>& t)
+        constexpr Multivector(const Scalar<T>& s, const Vector<T>& v, const Bivector<T>& b, const Trivector<T>& t)
             : scalar(s), vector(v), bivector(b), trivector(t) {}
 
         /**
          * @brief Constructor initializes the multivector with a 3D rotor.
          * @param r The rotor to initialize the multivector with.
          */
-        constexpr Multivector3(const Rotor3<T>& r)
-            : scalar(r.scalar), vector(Vector3<T>(0, 0, 0)), bivector(r.bivector), trivector(Trivector3<T>(0)) {}
+        constexpr Multivector(const Rotor<T>& r)
+            : scalar(r.scalar), vector(Vector<T>(0, 0, 0)), bivector(r.bivector), trivector(Trivector<T>(0)) {}
         
             /**
          * @brief Addition operator overload.
          * @param other The multivector to add.
          * @return The resulting multivector.
          */
-        constexpr Multivector3 operator+(const Multivector3& other) const {
-            return Multivector3(
+        constexpr Multivector operator+(const Multivector& other) const {
+            return Multivector(
                 scalar + other.scalar,
                 vector + other.vector,
                 bivector + other.bivector,
@@ -80,8 +80,8 @@ namespace CliffordCore
          * @param other The multivector to subtract.
          * @return The resulting multivector.
          */
-        constexpr Multivector3 operator-(const Multivector3& other) const {
-            return Multivector3(
+        constexpr Multivector operator-(const Multivector& other) const {
+            return Multivector(
                 scalar - other.scalar,
                 vector - other.vector,
                 bivector - other.bivector,
@@ -93,8 +93,8 @@ namespace CliffordCore
          * @brief Unary negation operator overload.
          * @return The resulting multivector.
          */
-        constexpr Multivector3 operator-() const {
-            return Multivector3(
+        constexpr Multivector operator-() const {
+            return Multivector(
                 -scalar,
                 -vector,
                 -bivector,
@@ -107,8 +107,8 @@ namespace CliffordCore
          * @param s The scalar to multiply by.
          * @return The resulting multivector.
          */
-        constexpr Multivector3 operator*(const Scalar<T>& s) const {
-            return Multivector3(
+        constexpr Multivector operator*(const Scalar<T>& s) const {
+            return Multivector(
                 scalar * s,
                 vector * s,
                 bivector * s,
@@ -121,8 +121,8 @@ namespace CliffordCore
          * @param s The scalar to divide by.
          * @return The resulting multivector.
          */
-        constexpr Multivector3 operator/(const Scalar<T>& s) const {
-            return Multivector3(
+        constexpr Multivector operator/(const Scalar<T>& s) const {
+            return Multivector(
                 scalar / s,
                 vector / s,
                 bivector / s,
@@ -135,7 +135,7 @@ namespace CliffordCore
          * @param other The multivector to add.
          * @return A reference to this multivector.
          */
-        constexpr Multivector3& operator+=(const Multivector3& other) {
+        constexpr Multivector& operator+=(const Multivector& other) {
             *this = *this + other;
             return *this;
         }
@@ -145,7 +145,7 @@ namespace CliffordCore
          * @param other The multivector to subtract.
          * @return A reference to this multivector.
          */
-        constexpr Multivector3& operator-=(const Multivector3& other) {
+        constexpr Multivector& operator-=(const Multivector& other) {
             *this = *this - other;
             return *this;
         }
@@ -155,7 +155,7 @@ namespace CliffordCore
          * @param s The scalar to multiply by.
          * @return A reference to this multivector.
          */
-        constexpr Multivector3& operator*=(const Scalar<T>& s) {
+        constexpr Multivector& operator*=(const Scalar<T>& s) {
             *this = *this * s;
             return *this;
         }
@@ -165,7 +165,7 @@ namespace CliffordCore
          * @param s The scalar to divide by.
          * @return A reference to this multivector.
          */
-        constexpr Multivector3& operator/=(const Scalar<T>& s) {
+        constexpr Multivector& operator/=(const Scalar<T>& s) {
             *this = *this / s;
             return *this;
         }
@@ -190,7 +190,7 @@ namespace CliffordCore
      * @param m The multivector to scale.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator*(T value, const Multivector3<T>& m) {
+    constexpr Multivector<T> operator*(T value, const Multivector<T>& m) {
         return m * Scalar<T>(value);
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

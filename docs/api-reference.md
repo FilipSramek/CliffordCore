@@ -25,69 +25,69 @@ Grade 0. Member: `value`.
 | `Scalar()`, `Scalar(T val)` | — |
 | `operator+`, `operator-`, `operator*`, `operator/` `(Scalar)` | `Scalar` |
 | `operator-()` | `Scalar` |
-| `operator*(Vector3 \| Bivector3 \| Trivector3 \| Multivector3 \| Rotor3)` | that same type |
+| `operator*(Vector \| Bivector \| Trivector \| Multivector \| Rotor)` | that same type |
 | `operator+=`, `-=`, `*=`, `/=` `(Scalar)` | `Scalar&` |
 
-### `vector3.hpp` — `Vector3`
+### `vector.hpp` — `Vector`
 
 Grade 1. Members: `x`, `y`, `z`.
 
 | Signature | Returns |
 | --- | --- |
-| `Vector3()`, `Vector3(T x, T y, T z)` | — |
+| `Vector()`, `Vector(T x, T y, T z)` | — |
 | `magnitude()` | `Scalar` |
-| `operator+`, `operator-` `(Vector3)`, `operator-()` | `Vector3` |
-| `operator*`, `operator/` `(Scalar)` | `Vector3` |
-| `operator+=`, `-=` `(Vector3)`; `*=`, `/=` `(T or Scalar)` | `Vector3&` |
-| free `operator*(T, Vector3)` | `Vector3` |
+| `operator+`, `operator-` `(Vector)`, `operator-()` | `Vector` |
+| `operator*`, `operator/` `(Scalar)` | `Vector` |
+| `operator+=`, `-=` `(Vector)`; `*=`, `/=` `(T or Scalar)` | `Vector&` |
+| free `operator*(T, Vector)` | `Vector` |
 
-### `bivector3.hpp` — `Bivector3`
+### `bivector.hpp` — `Bivector`
 
 Grade 2. Members: `xy`, `xz`, `yz` = `e1e2`, `e1e3`, `e2e3`. Same shape as
-`Vector3`: `magnitude()`, `+`, `-`, unary `-`, `*`/`/` with `Scalar`, the
-compound forms, and free `operator*(T, Bivector3)`.
+`Vector`: `magnitude()`, `+`, `-`, unary `-`, `*`/`/` with `Scalar`, the
+compound forms, and free `operator*(T, Bivector)`.
 
-### `trivector3.hpp` — `Trivector3`
+### `trivector.hpp` — `Trivector`
 
 Grade 3, the pseudoscalar. Member: **`e123`** (not `value`).
 
 | Signature | Returns | Note |
 | --- | --- | --- |
-| `Trivector3()`, `Trivector3(const T&)` | — | implicit converting ctor |
+| `Trivector()`, `Trivector(const T&)` | — | implicit converting ctor |
 | `magnitude()` | `Scalar` | |
-| `operator+`, `operator-` `(Trivector3)`, `operator-()` | `Trivector3` | |
-| `operator*(Trivector3)` | **`Scalar`** | `-ab`, since `e123^2 = -1` |
-| `operator/(Trivector3)` | **`Scalar`** | `a/b`, the minus signs cancel |
-| `operator*`, `operator/` `(T)` | `Trivector3` | exact-match, resolves ambiguity |
-| `operator*`, `operator/` `(Scalar)` | `Trivector3` | scaling |
-| `operator+=`, `-=`, `*=`, `/=` | `Trivector3&` | |
-| free `operator*(T, Trivector3)` | `Trivector3` | |
+| `operator+`, `operator-` `(Trivector)`, `operator-()` | `Trivector` | |
+| `operator*(Trivector)` | **`Scalar`** | `-ab`, since `e123^2 = -1` |
+| `operator/(Trivector)` | **`Scalar`** | `a/b`, the minus signs cancel |
+| `operator*`, `operator/` `(T)` | `Trivector` | exact-match, resolves ambiguity |
+| `operator*`, `operator/` `(Scalar)` | `Trivector` | scaling |
+| `operator+=`, `-=`, `*=`, `/=` | `Trivector&` | |
+| free `operator*(T, Trivector)` | `Trivector` | |
 
-### `multivector3.hpp` — `Multivector3`
+### `multivector.hpp` — `Multivector`
 
 All grades. Members: `scalar`, `vector`, `bivector`, `trivector`.
 
 | Signature | Returns |
 | --- | --- |
-| `Multivector3()`, `Multivector3(Scalar, Vector3, Bivector3, Trivector3)` | — |
-| `Multivector3(const Rotor3&)` | — (implicit widening) |
-| `operator+`, `operator-` `(Multivector3)`, `operator-()` | `Multivector3` |
-| `operator*`, `operator/` `(Scalar)` | `Multivector3` |
-| `operator+=`, `-=`, `*=`, `/=` | `Multivector3&` |
-| free `operator*(T, Multivector3)` | `Multivector3` |
+| `Multivector()`, `Multivector(Scalar, Vector, Bivector, Trivector)` | — |
+| `Multivector(const Rotor&)` | — (implicit widening) |
+| `operator+`, `operator-` `(Multivector)`, `operator-()` | `Multivector` |
+| `operator*`, `operator/` `(Scalar)` | `Multivector` |
+| `operator+=`, `-=`, `*=`, `/=` | `Multivector&` |
+| free `operator*(T, Multivector)` | `Multivector` |
 
-### `rotor3.hpp` — `Rotor3`
+### `rotor.hpp` — `Rotor`
 
 Grades 0 + 2. Members: `scalar`, `bivector`. No `magnitude()` — use `norm(r)`.
 
 | Signature | Returns |
 | --- | --- |
-| `Rotor3()`, `Rotor3(Scalar, Bivector3)` | — |
-| `explicit Rotor3(const Multivector3&)` | — (**explicit**; drops grades 1 and 3) |
-| `operator+`, `operator-` `(Rotor3)` | `Rotor3` |
-| `operator*`, `operator/` `(Scalar)` | `Rotor3` |
-| `operator+=`, `-=`, `*=`, `/=` | `Rotor3&` |
-| free `operator*(T, Rotor3)` | `Rotor3` |
+| `Rotor()`, `Rotor(Scalar, Bivector)` | — |
+| `explicit Rotor(const Multivector&)` | — (**explicit**; drops grades 1 and 3) |
+| `operator+`, `operator-` `(Rotor)` | `Rotor` |
+| `operator*`, `operator/` `(Scalar)` | `Rotor` |
+| `operator+=`, `-=`, `*=`, `/=` | `Rotor&` |
+| free `operator*(T, Rotor)` | `Rotor` |
 
 ---
 
@@ -95,40 +95,40 @@ Grades 0 + 2. Members: `scalar`, `bivector`. No `magnitude()` — use `norm(r)`.
 
 ### `dot_product.hpp`
 
-- `operator|(Vector3, Vector3)` → `Scalar`
-- `dot_product(Vector3, Vector3)` → `Scalar`
+- `operator|(Vector, Vector)` → `Scalar`
+- `dot_product(Vector, Vector)` → `Scalar`
 
 Vector-vector only; `contraction.hpp` extends `operator|` across grades.
 
 ### `wedge_product.hpp`
 
-- `operator^(Vector3, Vector3)` → `Bivector3`
-- `wedge_product(Vector3, Vector3)` → `Bivector3`
+- `operator^(Vector, Vector)` → `Bivector`
+- `wedge_product(Vector, Vector)` → `Bivector`
 
 Grade 1 ∧ grade 2 lives in `mixed_products.hpp`.
 
 ### `geometric_product.hpp`
 
-- `geometric_product(Vector3, Vector3)` → `Multivector3`
-- `operator*(Vector3, Vector3)` → `Multivector3`
-- `rotor_product(Vector3, Vector3)` → `Rotor3`
-- `geometric_product(Multivector3, Multivector3)` → `Multivector3` — **the full
+- `geometric_product(Vector, Vector)` → `Multivector`
+- `operator*(Vector, Vector)` → `Multivector`
+- `rotor_product(Vector, Vector)` → `Rotor`
+- `geometric_product(Multivector, Multivector)` → `Multivector` — **the full
   8x8 multiplication table; every mixed product routes through this**
-- `operator*(Multivector3, Multivector3)` → `Multivector3`
-- `operator*(Rotor3, Rotor3)` → `Rotor3`
-- `rotor_product(Rotor3, Rotor3)` → `Rotor3`
+- `operator*(Multivector, Multivector)` → `Multivector`
+- `operator*(Rotor, Rotor)` → `Rotor`
+- `rotor_product(Rotor, Rotor)` → `Rotor`
 
 ### `mixed_products.hpp`
 
-`operator*` for every remaining pair, all returning `Multivector3`: vector with
+`operator*` for every remaining pair, all returning `Multivector`: vector with
 bivector, bivector with bivector, vector with trivector, bivector with trivector,
 rotor with vector, and multivector with each of vector, bivector, trivector and
 rotor — in both operand orders.
 
 Also the wedge beyond grade 1:
 
-- `operator^(Vector3, Bivector3)` → `Trivector3`
-- `operator^(Bivector3, Vector3)` → `Trivector3`
+- `operator^(Vector, Bivector)` → `Trivector`
+- `operator^(Bivector, Vector)` → `Trivector`
 - `wedge_product(...)` for both
 
 With these, `operator*` is defined for **every** operand pair; see
@@ -141,13 +141,13 @@ With these, `operator*` is defined for **every** operand pair; see
 ### `addition.hpp`
 
 Twenty `operator+` overloads covering every mixed-grade pair in both orders, all
-returning `Multivector3`. Plus:
+returning `Multivector`. Plus:
 
-- `rotor_sum(Scalar, Bivector3)` → `Rotor3`
-- `to_rotor(Multivector3)` → `Rotor3` (drops grades 1 and 3)
-- `to_multivector(Rotor3)` → `Multivector3`
+- `rotor_sum(Scalar, Bivector)` → `Rotor`
+- `to_rotor(Multivector)` → `Rotor` (drops grades 1 and 3)
+- `to_multivector(Rotor)` → `Multivector`
 
-Internal: `detail::promote(X)` → `Multivector3`, for each grade.
+Internal: `detail::promote(X)` → `Multivector`, for each grade.
 
 ### `subtraction.hpp`
 
@@ -159,8 +159,8 @@ The same twenty pairs as `operator-`. Reuses `detail::promote`.
 
 ### `norm.hpp`
 
-- `norm(x)` → `Scalar`, for `Scalar`, `Vector3`, `Bivector3`, `Trivector3`,
-  `Multivector3`, `Rotor3`
+- `norm(x)` → `Scalar`, for `Scalar`, `Vector`, `Bivector`, `Trivector`,
+  `Multivector`, `Rotor`
 - `squared_norm(x)` → `Scalar`, for all six types
 
 ### `normalize.hpp`
@@ -177,9 +177,9 @@ A zero input is returned unchanged rather than producing `NaN`.
 
 ### `inverse.hpp`
 
-- `inverse(x)` → same type, for `Scalar`, `Vector3`, `Bivector3`, `Trivector3`,
-  `Multivector3`, `Rotor3`
-`inverse(Scalar)` does not guard against zero. `inverse(Multivector3)` returns a
+- `inverse(x)` → same type, for `Scalar`, `Vector`, `Bivector`, `Trivector`,
+  `Multivector`, `Rotor`
+`inverse(Scalar)` does not guard against zero. `inverse(Multivector)` returns a
 zero multivector when the input is not invertible. See `conventions.md` for the
 sign of each.
 
@@ -189,21 +189,21 @@ sign of each.
 
 ### `dual.hpp`
 
-- `dual(Scalar)` → `Trivector3`
-- `dual(Vector3)` → `Bivector3`
-- `dual(Bivector3)` → `Vector3`
-- `dual(Trivector3)` → `Scalar`
+- `dual(Scalar)` → `Trivector`
+- `dual(Vector)` → `Bivector`
+- `dual(Bivector)` → `Vector`
+- `dual(Trivector)` → `Scalar`
 
-Not defined for `Multivector3` or `Rotor3`.
+Not defined for `Multivector` or `Rotor`.
 
 ### `grade.hpp`
 
-- `grade0(Multivector3)` → `Scalar`
-- `grade1(Multivector3)` → `Vector3`
-- `grade2(Multivector3)` → `Bivector3`
-- `grade3(Multivector3)` → `Trivector3`
-- `grade0(Rotor3)` → `Scalar`
-- `grade2(Rotor3)` → `Bivector3`
+- `grade0(Multivector)` → `Scalar`
+- `grade1(Multivector)` → `Vector`
+- `grade2(Multivector)` → `Bivector`
+- `grade3(Multivector)` → `Trivector`
+- `grade0(Rotor)` → `Scalar`
+- `grade2(Rotor)` → `Bivector`
 
 Named per grade rather than `grade<N>()` because each returns a different type.
 
@@ -218,8 +218,8 @@ Together with `reverse` these are the three involutions; `conjugate` equals
 ### `contraction.hpp`
 
 - `left_contraction(a, b)`, also spelled `a | b` — for the blade pairs where the
-  result grade is non-negative: `V,V`→`Scalar`; `V,B`→`Vector3`;
-  `V,T`→`Bivector3`; `B,B`→`Scalar`; `B,T`→`Vector3`; `T,T`→`Scalar`
+  result grade is non-negative: `V,V`→`Scalar`; `V,B`→`Vector`;
+  `V,T`→`Bivector`; `B,B`→`Scalar`; `B,T`→`Vector`; `T,T`→`Scalar`
 - `right_contraction(a, b)` — the reverse-mirror, so the operands swap roles
 - `scalar_product(a, b)` → `Scalar` — the grade 0 part of any product
 
@@ -227,11 +227,11 @@ Together with `reverse` these are the three involutions; `conjugate` equals
 
 ### `geometry.hpp`
 
-- `reflect(Vector3, Vector3)` → `Vector3` — reflect in the plane normal to the
+- `reflect(Vector, Vector)` → `Vector` — reflect in the plane normal to the
   second argument
-- `reflect(Vector3, Bivector3)` → `Vector3` — reflect in the plane itself
-- `project(Vector3, Vector3 | Bivector3)` → `Vector3`
-- `reject(Vector3, Vector3 | Bivector3)` → `Vector3`
+- `reflect(Vector, Bivector)` → `Vector` — reflect in the plane itself
+- `project(Vector, Vector | Bivector)` → `Vector`
+- `reject(Vector, Vector | Bivector)` → `Vector`
 
 None require a unit second argument; each divides through by `inverse`.
 `project(v, x) + reject(v, x) == v`.
@@ -255,11 +255,11 @@ Kept apart so the type headers need not include `<ostream>`.
 
 ### `exp.hpp`
 
-- `exp(Bivector3)` → `Rotor3` — returns the identity rotor for a zero bivector
+- `exp(Bivector)` → `Rotor` — returns the identity rotor for a zero bivector
 
 ### `log.hpp`
 
-- `log(Rotor3)` → `Bivector3` — clamps the scalar part into `[-1, 1]` before
+- `log(Rotor)` → `Bivector` — clamps the scalar part into `[-1, 1]` before
   `std::acos`; returns a zero bivector when the bivector part is zero
 
 Both collide by name with `<cmath>`, so qualify them as `CliffordCore::exp` /
@@ -267,16 +267,16 @@ Both collide by name with `<cmath>`, so qualify them as `CliffordCore::exp` /
 
 ### `sandwich.hpp`
 
-- `sandwich(x, Rotor3)` → same type as `x`, for `Vector3`, `Bivector3`,
-  `Trivector3` and `Multivector3` — computes `R x reverse(R)`
-- `rotate(x, Rotor3)` — alias for each
+- `sandwich(x, Rotor)` → same type as `x`, for `Vector`, `Bivector`,
+  `Trivector` and `Multivector` — computes `R x reverse(R)`
+- `rotate(x, Rotor)` — alias for each
 
-**Object first, rotor second.** Rotating a `Trivector3` is the identity for a
+**Object first, rotor second.** Rotating a `Trivector` is the identity for a
 unit rotor: the pseudoscalar is central.
 
 ### `rotor_construction.hpp`
 
-- `identity_rotor<T>()` → `Rotor3` — `T` must be given explicitly
-- `rotor_from_axis_angle(Vector3 axis, T angle)` → `Rotor3`
-- `rotor_between(Vector3 from, Vector3 to)` → `Rotor3`
-- `slerp(Rotor3 from, Rotor3 to, T t)` → `Rotor3`
+- `identity_rotor<T>()` → `Rotor` — `T` must be given explicitly
+- `rotor_from_axis_angle(Vector axis, T angle)` → `Rotor`
+- `rotor_between(Vector from, Vector to)` → `Rotor`
+- `slerp(Rotor from, Rotor to, T t)` → `Rotor`

@@ -1,11 +1,11 @@
 #pragma once
 
 /**
- * @file geometric_product.hpp
+ * @file cliffordcore/cl3/operations/geometric_product.hpp
  * @brief Geometric products, including the full 8x8 multiplication table.
  *
- * The full 8x8 Cayley table lives here, as geometric_product(Multivector3,
- * Multivector3). Every mixed-grade product in the library routes through
+ * The full 8x8 Cayley table lives here, as geometric_product(Multivector,
+ * Multivector). Every mixed-grade product in the library routes through
  * it, so there is exactly one multiplication table to get right.
  *
  * @author Filip Sramek
@@ -16,10 +16,10 @@
  */
 
 #include <type_traits>
-#include "../vector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
-#include "../bivector3.hpp"
+#include "../vector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
+#include "../bivector.hpp"
 #include "../scalar.hpp"
 #include "dot_product.hpp"
 #include "wedge_product.hpp"
@@ -33,9 +33,9 @@
 // operator* always returns the most general type the product can produce, so
 // there is exactly one operator* per operand pair. Named functions provide the
 // narrower spellings -- rotor_product() packs a vector-vector product into a
-// Rotor3 -- because overloads cannot differ by return type alone.
+// Rotor -- because overloads cannot differ by return type alone.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -44,12 +44,12 @@ namespace CliffordCore
      * @param b The second vector.
      * @return The resulting multivector from the geometric product = dot_product(a, b) + wedge_product(a, b) so that the scalar part is the dot product and the bivector part is the wedge product.
      */
-    constexpr Multivector3<T> geometric_product(const Vector3<T>& a, const Vector3<T>& b) {
-        return Multivector3<T>(
+    constexpr Multivector<T> geometric_product(const Vector<T>& a, const Vector<T>& b) {
+        return Multivector<T>(
             a | b,
-            Vector3<T>(0, 0, 0),
+            Vector<T>(0, 0, 0),
             a ^ b,
-            Trivector3<T>(0)
+            Trivector<T>(0)
         );
     }
 
@@ -60,7 +60,7 @@ namespace CliffordCore
      * @param b The second vector.
      * @return The resulting multivector from the geometric product = dot_product(a, b) + wedge_product(a, b) so that the scalar part is the dot product and the bivector part is the wedge product.
      */
-    constexpr Multivector3<T> operator*(const Vector3<T>& a, const Vector3<T>& b) {
+    constexpr Multivector<T> operator*(const Vector<T>& a, const Vector<T>& b) {
         return geometric_product(a, b);
     }
 
@@ -72,8 +72,8 @@ namespace CliffordCore
      * @return The resulting rotor. Same components as geometric_product(a, b),
      *         whose vector and trivector parts are always zero.
      */
-    constexpr Rotor3<T> rotor_product(const Vector3<T>& a, const Vector3<T>& b) {
-        return Rotor3<T>(
+    constexpr Rotor<T> rotor_product(const Vector<T>& a, const Vector<T>& b) {
+        return Rotor<T>(
             a | b,
             a ^ b
         );
@@ -87,7 +87,7 @@ namespace CliffordCore
      * @return The resulting multivector. This is the general product of the
      *         algebra; every other product here is a special case of it.
      */
-    constexpr Multivector3<T> geometric_product(const Multivector3<T>& m, const Multivector3<T>& n) {
+    constexpr Multivector<T> geometric_product(const Multivector<T>& m, const Multivector<T>& n) {
         // Left operand components.
         const T a0   = m.scalar.value;
         const T a1   = m.vector.x,    a2   = m.vector.y,  a3   = m.vector.z;
@@ -134,11 +134,11 @@ namespace CliffordCore
                      + a1*b23 - a2*b13 + a3*b12
                      + a23*b1 - a13*b2 + a12*b3;
 
-        return Multivector3<T>(
+        return Multivector<T>(
             Scalar<T>(c0),
-            Vector3<T>(c1, c2, c3),
-            Bivector3<T>(c12, c13, c23),
-            Trivector3<T>(c123)
+            Vector<T>(c1, c2, c3),
+            Bivector<T>(c12, c13, c23),
+            Trivector<T>(c123)
         );
     }
 
@@ -149,7 +149,7 @@ namespace CliffordCore
      * @param n The right multivector.
      * @return The resulting multivector.
      */
-    constexpr Multivector3<T> operator*(const Multivector3<T>& m, const Multivector3<T>& n) {
+    constexpr Multivector<T> operator*(const Multivector<T>& m, const Multivector<T>& n) {
         return geometric_product(m, n);
     }
 
@@ -160,15 +160,15 @@ namespace CliffordCore
      * @param s The second rotor.
      * @return The resulting rotor from the geometric product.
      */
-    constexpr Rotor3<T> operator*(const Rotor3<T>& r, const Rotor3<T>& s) {
+    constexpr Rotor<T> operator*(const Rotor<T>& r, const Rotor<T>& s) {
         const T r0 = r.scalar.value;
         const T r12 = r.bivector.xy, r13 = r.bivector.xz, r23 = r.bivector.yz;
         const T s0 = s.scalar.value;
         const T s12 = s.bivector.xy, s13 = s.bivector.xz, s23 = s.bivector.yz;
 
-        return Rotor3<T>(
+        return Rotor<T>(
             Scalar<T>(r0*s0 - r12*s12 - r13*s13 - r23*s23),
-            Bivector3<T>(
+            Bivector<T>(
                 r0*s12 + r12*s0 - r13*s23 + r23*s13,
                 r0*s13 + r13*s0 + r12*s23 - r23*s12,
                 r0*s23 + r23*s0 - r12*s13 + r13*s12
@@ -183,7 +183,7 @@ namespace CliffordCore
      * @param s The second rotor.
      * @return The resulting rotor, equivalent to applying s then r.
      */
-    constexpr Rotor3<T> rotor_product(const Rotor3<T>& r, const Rotor3<T>& s) {
+    constexpr Rotor<T> rotor_product(const Rotor<T>& r, const Rotor<T>& s) {
         return r * s;
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

@@ -28,57 +28,57 @@ Those four minus signs drive every inverse and dual formula below.
 | Type | Grade | Members |
 | --- | --- | --- |
 | `Scalar<T>` | 0 | `value` |
-| `Vector3<T>` | 1 | `x, y, z` |
-| `Bivector3<T>` | 2 | `xy, xz, yz` |
-| `Trivector3<T>` | 3 | `e123` |
-| `Multivector3<T>` | mixed | `scalar, vector, bivector, trivector` |
-| `Rotor3<T>` | 0 + 2 | `scalar, bivector` |
+| `Vector<T>` | 1 | `x, y, z` |
+| `Bivector<T>` | 2 | `xy, xz, yz` |
+| `Trivector<T>` | 3 | `e123` |
+| `Multivector<T>` | mixed | `scalar, vector, bivector, trivector` |
+| `Rotor<T>` | 0 + 2 | `scalar, bivector` |
 
-`Trivector3`'s member is **`e123`**, not `value`. Reaching for `.value` on a
+`Trivector`'s member is **`e123`**, not `value`. Reaching for `.value` on a
 trivector is a recurring mistake.
 
 ## Return-type rules
 
 **`operator*` always returns the most general type the product can produce.**
 There is therefore exactly one `operator*` per operand pair. This is forced:
-C++ cannot overload on return type, so a second `operator*(Vector3, Vector3)`
-returning `Rotor3` would make every `v * v` ambiguous.
+C++ cannot overload on return type, so a second `operator*(Vector, Vector)`
+returning `Rotor` would make every `v * v` ambiguous.
 
 **Narrower spellings are named functions:**
 
 | Instead of | Use | To get |
 | --- | --- | --- |
-| `a * b` | `rotor_product(a, b)` | `Rotor3` from two vectors |
-| `s + b` | `rotor_sum(s, b)` | `Rotor3` from a scalar and a bivector |
-| — | `to_rotor(m)` | `Rotor3` from a multivector (drops grades 1 and 3) |
-| — | `to_multivector(r)` | `Multivector3` from a rotor |
+| `a * b` | `rotor_product(a, b)` | `Rotor` from two vectors |
+| `s + b` | `rotor_sum(s, b)` | `Rotor` from a scalar and a bivector |
+| — | `to_rotor(m)` | `Rotor` from a multivector (drops grades 1 and 3) |
+| — | `to_multivector(r)` | `Multivector` from a rotor |
 
-**Mixed-grade `+` and `-` always widen to `Multivector3`** — including
-`Scalar + Bivector3`, even though that pair is exactly a rotor. Uniformity keeps
+**Mixed-grade `+` and `-` always widen to `Multivector`** — including
+`Scalar + Bivector`, even though that pair is exactly a rotor. Uniformity keeps
 chaining predictable. Only binary pairs are defined; `a + b + c` parses as
 `((a + b) + c)`, so chains of any length follow from the pairs alone.
-Same-grade sums keep their own type: `Vector3 + Vector3` is a `Vector3`.
+Same-grade sums keep their own type: `Vector + Vector` is a `Vector`.
 
 Every mixed-grade product routes through the single 8x8 multiplication table in
 `geometric_product.hpp`. There is exactly one such table in the library; when
 adding a product, delegate to it rather than deriving a closed form.
 
-## The Trivector3 exception
+## The Trivector exception
 
 Two pseudoscalars multiply to a **scalar**, not a trivector:
 
 ```cpp
-Trivector3<double> t(6), u(3);
+Trivector<double> t(6), u(3);
 t * u        // Scalar<double>(-18)   because e123 * e123 = -1
 t / u        // Scalar<double>(2)     the two minus signs cancel
-t * 2.0      // Trivector3<double>(12)   scaling stays a trivector
-t * Scalar<double>(2)   // Trivector3<double>(12)
+t * 2.0      // Trivector<double>(12)   scaling stays a trivector
+t * Scalar<double>(2)   // Trivector<double>(12)
 ```
 
-So `t * u` and `t * 2.0` deliberately differ in return type. `Trivector3` is the
+So `t * u` and `t * 2.0` deliberately differ in return type. `Trivector` is the
 only grade type with a single-argument converting constructor, which is why it
 carries extra raw-`T` overloads: without them a bare `2.0` could reach either
-`operator*(Trivector3)` or `operator*(Scalar<T>)` by one user-defined conversion
+`operator*(Trivector)` or `operator*(Scalar<T>)` by one user-defined conversion
 each, and the call would be ambiguous.
 
 ## The inner product
@@ -91,8 +91,8 @@ is simply what it generalises to across grades:
 A _| B  =  <A B>_(s-r)        for blades of grade r and s
 ```
 
-Where the grade would go negative the result is zero, so `Bivector3 | Vector3` is
-not provided -- you almost always meant `Vector3 | Bivector3`.
+Where the grade would go negative the result is zero, so `Bivector | Vector` is
+not provided -- you almost always meant `Vector | Bivector`.
 
 The left contraction is chosen over the symmetric "fat dot" deliberately. It is
 the product the projection formulas are written with -- `project(v, plane)` is
@@ -152,16 +152,16 @@ defined for all six types.
 
 | Input | Inverse | Why |
 | --- | --- | --- |
-| `Vector3` | `v / \|v\|^2` | `v^2 = +\|v\|^2` |
-| `Bivector3` | `-b / \|b\|^2` | `b^2 = -\|b\|^2` |
-| `Trivector3` | `-t / \|t\|^2` | `e123^2 = -1` |
-| `Rotor3` | `reverse(r) / \|r\|^2` | `r * reverse(r) = \|r\|^2` |
-| `Multivector3` | via Clifford conjugation | see below |
+| `Vector` | `v / \|v\|^2` | `v^2 = +\|v\|^2` |
+| `Bivector` | `-b / \|b\|^2` | `b^2 = -\|b\|^2` |
+| `Trivector` | `-t / \|t\|^2` | `e123^2 = -1` |
+| `Rotor` | `reverse(r) / \|r\|^2` | `r * reverse(r) = \|r\|^2` |
+| `Multivector` | via Clifford conjugation | see below |
 
 For a **unit** rotor the inverse is simply the reverse — which is why rotations
 undo by reversing.
 
-`inverse(Multivector3)` is **not** `m / |m|^2`; that only works for a single
+`inverse(Multivector)` is **not** `m / |m|^2`; that only works for a single
 grade (a unit bivector would give `b * b = -1`). Instead, `m * conjugate(m)`
 collapses to a scalar plus a pseudoscalar, `a + b*e123`. Since `e123^2 = -1`
 that behaves like a complex number and inverts as `(a - b*e123) / (a^2 + b^2)`.
@@ -189,20 +189,20 @@ side by side.
 
 ## Known gaps
 
-- **`operator+` and `operator-` are undefined for `Rotor3`** with anything but
-  another `Rotor3`, plus `Multivector3 + Rotor3` which widens losslessly. Use
+- **`operator+` and `operator-` are undefined for `Rotor`** with anything but
+  another `Rotor`, plus `Multivector + Rotor` which widens losslessly. Use
   `to_multivector(r)` first. `operator*`, by contrast, is defined for every pair.
-- **No contractions between a `Multivector3` and anything.** The contraction
+- **No contractions between a `Multivector` and anything.** The contraction
   family covers the blade types, which is where it is well defined.
 - **No general `exp`/`log`** for arbitrary multivectors -- only
-  `exp(Bivector3)` and `log(Rotor3)`. The series does not close cleanly once odd
+  `exp(Bivector)` and `log(Rotor)`. The series does not close cleanly once odd
   grades are involved, and `log` becomes multivalued.
 - **No `meet` / `join`.** In Cl(3,0) everything passes through the origin, which
   makes them much less interesting than they are in a projective algebra.
 
 ### A conversion that used to bite
 
-`Rotor3`'s constructor from `Multivector3` is **explicit**. While it was
+`Rotor`'s constructor from `Multivector` is **explicit**. While it was
 implicit, `r + m` compiled, narrowed `m`, and discarded grades 1 and 3 silently,
 while `m + r` kept everything. Narrowing now has to be spelled out, with the
 constructor or with `to_rotor(m)`.

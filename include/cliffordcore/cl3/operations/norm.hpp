@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file norm.hpp
+ * @file cliffordcore/cl3/operations/norm.hpp
  * @brief Magnitudes: norm and squared_norm for every type.
  *
  * norm is the square root of squared_norm, which is the sum of the squared
@@ -17,13 +17,13 @@
 
 #include <cmath>
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
 
 template<typename T>
@@ -42,7 +42,7 @@ template<typename T>
  * @param v The vector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the vector v.
  */
-constexpr Scalar<T> norm(const Vector3<T>& v) {
+constexpr Scalar<T> norm(const Vector<T>& v) {
     return Scalar<T>(std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z));
 }
 
@@ -52,7 +52,7 @@ template<typename T>
  * @param b The bivector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the bivector b.
  */
-constexpr Scalar<T> norm(const Bivector3<T>& b) {
+constexpr Scalar<T> norm(const Bivector<T>& b) {
     return Scalar<T>(std::sqrt(b.xy * b.xy + b.xz * b.xz + b.yz * b.yz));  
 }
 
@@ -72,7 +72,7 @@ template<typename T>
  * @param v The vector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the vector v.
  */
-constexpr Scalar<T> squared_norm(const Vector3<T>& v) {
+constexpr Scalar<T> squared_norm(const Vector<T>& v) {
     return Scalar<T>(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
@@ -82,7 +82,7 @@ template<typename T>
  * @param b The bivector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the bivector b.
  */
-constexpr Scalar<T> squared_norm(const Bivector3<T>& b) {
+constexpr Scalar<T> squared_norm(const Bivector<T>& b) {
     return Scalar<T>(b.xy * b.xy + b.xz * b.xz + b.yz * b.yz);
 }
 
@@ -92,7 +92,7 @@ template<typename T>
  * @param t The trivector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the trivector t.
  */
-constexpr Scalar<T> norm(const Trivector3<T>& t) {
+constexpr Scalar<T> norm(const Trivector<T>& t) {
     return Scalar<T>(std::abs(t.e123));
 }
 
@@ -102,7 +102,7 @@ template<typename T>
  * @param t The trivector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the trivector t.
  */
-constexpr Scalar<T> squared_norm(const Trivector3<T>& t) {
+constexpr Scalar<T> squared_norm(const Trivector<T>& t) {
     return Scalar<T>(t.e123 * t.e123);
 }
 
@@ -112,7 +112,7 @@ template<typename T>
  * @param m The multivector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the multivector m.
  */
-constexpr Scalar<T> norm(const Multivector3<T>& m) {
+constexpr Scalar<T> norm(const Multivector<T>& m) {
     return Scalar<T>(std::sqrt(squared_norm(m).value));
 }
 
@@ -122,7 +122,7 @@ template<typename T>
  * @param m The multivector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the multivector m.
  */
-constexpr Scalar<T> squared_norm(const Multivector3<T>& m) {
+constexpr Scalar<T> squared_norm(const Multivector<T>& m) {
     return Scalar<T>((m.scalar.value * m.scalar.value)
         + (m.vector.x * m.vector.x) + (m.vector.y * m.vector.y) + (m.vector.z * m.vector.z)
         + (m.bivector.xy * m.bivector.xy) + (m.bivector.xz * m.bivector.xz) + (m.bivector.yz * m.bivector.yz)
@@ -135,7 +135,7 @@ template<typename T>
  * @param r The rotor for which to compute the norm.
  * @return The euclidian norm (magnitude) of the rotor r.
  */ 
-constexpr Scalar<T> norm(const Rotor3<T>& r) {
+constexpr Scalar<T> norm(const Rotor<T>& r) {
     return Scalar<T>(std::sqrt(squared_norm(r).value));
 }
 
@@ -145,9 +145,9 @@ template<typename T>
  * @param r The rotor for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the rotor r.
  */ 
-constexpr Scalar<T> squared_norm(const Rotor3<T>& r) {
+constexpr Scalar<T> squared_norm(const Rotor<T>& r) {
     return Scalar<T>((r.scalar.value * r.scalar.value)
         + (r.bivector.xy * r.bivector.xy) + (r.bivector.xz * r.bivector.xz) + (r.bivector.yz * r.bivector.yz));
 }
 
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file stream.hpp
+ * @file cliffordcore/cl3/operations/stream.hpp
  * @brief Stream insertion for every type, delegating to to_string().
  *
  * One-line operator<< for each type, delegating to its to_string(). Kept in
@@ -17,16 +17,16 @@
 #include <ostream>
 
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
 
 // Kept out of the type headers so they do not all drag in <ostream>. Include
 // this one, or the umbrella header, when you want to print.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -46,7 +46,7 @@ namespace CliffordCore
      * @param v The vector to write.
      * @return The stream.
      */
-    inline std::ostream& operator<<(std::ostream& os, const Vector3<T>& v) {
+    inline std::ostream& operator<<(std::ostream& os, const Vector<T>& v) {
         return os << v.to_string();
     }
 
@@ -57,7 +57,7 @@ namespace CliffordCore
      * @param b The bivector to write.
      * @return The stream.
      */
-    inline std::ostream& operator<<(std::ostream& os, const Bivector3<T>& b) {
+    inline std::ostream& operator<<(std::ostream& os, const Bivector<T>& b) {
         return os << b.to_string();
     }
 
@@ -68,7 +68,7 @@ namespace CliffordCore
      * @param t The trivector to write.
      * @return The stream.
      */
-    inline std::ostream& operator<<(std::ostream& os, const Trivector3<T>& t) {
+    inline std::ostream& operator<<(std::ostream& os, const Trivector<T>& t) {
         return os << t.to_string();
     }
 
@@ -79,7 +79,7 @@ namespace CliffordCore
      * @param m The multivector to write.
      * @return The stream.
      */
-    inline std::ostream& operator<<(std::ostream& os, const Multivector3<T>& m) {
+    inline std::ostream& operator<<(std::ostream& os, const Multivector<T>& m) {
         return os << m.to_string();
     }
 
@@ -90,7 +90,7 @@ namespace CliffordCore
      * @param r The rotor to write.
      * @return The stream.
      */
-    inline std::ostream& operator<<(std::ostream& os, const Rotor3<T>& r) {
+    inline std::ostream& operator<<(std::ostream& os, const Rotor<T>& r) {
         return os << r.to_string();
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

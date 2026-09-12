@@ -5,43 +5,43 @@ One screen. Everything here is verified by compilation and by
 
 ## `operator*` return types
 
-| `*` | Scalar | Vector3 | Bivector3 | Trivector3 | Multivector3 | Rotor3 |
+| `*` | Scalar | Vector | Bivector | Trivector | Multivector | Rotor |
 | --- | --- | --- | --- | --- | --- | --- |
-| **Scalar** | Scalar | Vector3 | Bivector3 | Trivector3 | Multivector3 | Rotor3 |
-| **Vector3** | Vector3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 |
-| **Bivector3** | Bivector3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 |
-| **Trivector3** | Trivector3 | Multivector3 | Multivector3 | **Scalar** | Multivector3 | Multivector3 |
-| **Multivector3** | Multivector3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 |
-| **Rotor3** | Rotor3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 | Rotor3 |
+| **Scalar** | Scalar | Vector | Bivector | Trivector | Multivector | Rotor |
+| **Vector** | Vector | Multivector | Multivector | Multivector | Multivector | Multivector |
+| **Bivector** | Bivector | Multivector | Multivector | Multivector | Multivector | Multivector |
+| **Trivector** | Trivector | Multivector | Multivector | **Scalar** | Multivector | Multivector |
+| **Multivector** | Multivector | Multivector | Multivector | Multivector | Multivector | Multivector |
+| **Rotor** | Rotor | Multivector | Multivector | Multivector | Multivector | Rotor |
 
-Every pair is defined. Two cells to remember: `Trivector3 * Trivector3` is a **Scalar** (`e123^2 = -1`),
-and `Rotor3 * Rotor3` stays a **Rotor3** so composition never widens.
+Every pair is defined. Two cells to remember: `Trivector * Trivector` is a **Scalar** (`e123^2 = -1`),
+and `Rotor * Rotor` stays a **Rotor** so composition never widens.
 
 ## `operator+` and `operator-` return types
 
-Every mixed pair gives `Multivector3`. Same-grade pairs keep their type.
+Every mixed pair gives `Multivector`. Same-grade pairs keep their type.
 `operator-` has exactly the same shape.
 
-| `+` `-` | Scalar | Vector3 | Bivector3 | Trivector3 | Multivector3 | Rotor3 |
+| `+` `-` | Scalar | Vector | Bivector | Trivector | Multivector | Rotor |
 | --- | --- | --- | --- | --- | --- | --- |
-| **Scalar** | Scalar | Multivector3 | Multivector3 | Multivector3 | Multivector3 | — |
-| **Vector3** | Multivector3 | Vector3 | Multivector3 | Multivector3 | Multivector3 | — |
-| **Bivector3** | Multivector3 | Multivector3 | Bivector3 | Multivector3 | Multivector3 | — |
-| **Trivector3** | Multivector3 | Multivector3 | Multivector3 | Trivector3 | Multivector3 | — |
-| **Multivector3** | Multivector3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 | Multivector3 |
-| **Rotor3** | — | — | — | — | — | Rotor3 |
+| **Scalar** | Scalar | Multivector | Multivector | Multivector | Multivector | — |
+| **Vector** | Multivector | Vector | Multivector | Multivector | Multivector | — |
+| **Bivector** | Multivector | Multivector | Bivector | Multivector | Multivector | — |
+| **Trivector** | Multivector | Multivector | Multivector | Trivector | Multivector | — |
+| **Multivector** | Multivector | Multivector | Multivector | Multivector | Multivector | Multivector |
+| **Rotor** | — | — | — | — | — | Rotor |
 
 ### The rotor row
 
-`Rotor3` adds only with another `Rotor3`, or with a `Multivector3` on the left.
+`Rotor` adds only with another `Rotor`, or with a `Multivector` on the left.
 For anything else, widen it first:
 
 ```cpp
-auto sum = to_multivector(r) + v;   // Multivector3
+auto sum = to_multivector(r) + v;   // Multivector
 ```
 
-This used to be worse. `Rotor3` once had an *implicit* constructor from
-`Multivector3`, so `r + m` compiled, narrowed `m` down to a rotor, and threw
+This used to be worse. `Rotor` once had an *implicit* constructor from
+`Multivector`, so `r + m` compiled, narrowed `m` down to a rotor, and threw
 away grades 1 and 3 with no diagnostic — while `m + r` kept everything. The
 constructor is `explicit` now, so the lossy spelling is a compile error rather
 than a silent wrong answer.
@@ -100,11 +100,11 @@ To read components directly instead:
 | Type | Fields |
 | --- | --- |
 | `Scalar<T>` | `.value` |
-| `Vector3<T>` | `.x` `.y` `.z` |
-| `Bivector3<T>` | `.xy` `.xz` `.yz` |
-| `Trivector3<T>` | `.e123` |
-| `Rotor3<T>` | `.scalar.value`, `.bivector.xy` … |
-| `Multivector3<T>` | `.scalar` `.vector` `.bivector` `.trivector` |
+| `Vector<T>` | `.x` `.y` `.z` |
+| `Bivector<T>` | `.xy` `.xz` `.yz` |
+| `Trivector<T>` | `.e123` |
+| `Rotor<T>` | `.scalar.value`, `.bivector.xy` … |
+| `Multivector<T>` | `.scalar` `.vector` `.bivector` `.trivector` |
 
 ## Signs, in four lines
 

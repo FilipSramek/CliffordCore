@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file geometry.hpp
+ * @file cliffordcore/cl3/operations/geometry.hpp
  * @brief Reflection, projection and rejection.
  *
  * reflect, project and reject, written with the contraction and the inverse
@@ -16,9 +16,9 @@
  */
 
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../multivector3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../multivector.hpp"
 #include "contraction.hpp"
 #include "dual.hpp"
 #include "geometric_product.hpp"
@@ -36,7 +36,7 @@
 // Projection and rejection split a vector into the part inside a subspace and
 // the part outside it, so project(v, x) + reject(v, x) == v always.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     // -----------------------------------------------------------------------
     // Reflection
@@ -53,7 +53,7 @@ namespace CliffordCore
      * product so it composes: two reflections make a rotation, which is what a
      * rotor is.
      */
-    constexpr Vector3<T> reflect(const Vector3<T>& v, const Vector3<T>& n) {
+    constexpr Vector<T> reflect(const Vector<T>& v, const Vector<T>& n) {
         return grade1(-(n * v * inverse(n)));
     }
 
@@ -68,7 +68,7 @@ namespace CliffordCore
      * the formulation that carries over to algebras where a plane has no single
      * normal vector.
      */
-    constexpr Vector3<T> reflect(const Vector3<T>& v, const Bivector3<T>& plane) {
+    constexpr Vector<T> reflect(const Vector<T>& v, const Bivector<T>& plane) {
         return reflect(v, dual(plane));
     }
 
@@ -83,7 +83,7 @@ namespace CliffordCore
      * @param u The direction to project onto. Need not be unit length.
      * @return The component of v parallel to u.
      */
-    constexpr Vector3<T> project(const Vector3<T>& v, const Vector3<T>& u) {
+    constexpr Vector<T> project(const Vector<T>& v, const Vector<T>& u) {
         return (v | u) * inverse(u);
     }
 
@@ -96,7 +96,7 @@ namespace CliffordCore
      *
      * This is the one that needs the left contraction: (v _| B) * inverse(B).
      */
-    constexpr Vector3<T> project(const Vector3<T>& v, const Bivector3<T>& plane) {
+    constexpr Vector<T> project(const Vector<T>& v, const Bivector<T>& plane) {
         return grade1((v | plane) * inverse(plane));
     }
 
@@ -107,7 +107,7 @@ namespace CliffordCore
      * @param u The direction to reject from. Need not be unit length.
      * @return The component of v perpendicular to u.
      */
-    constexpr Vector3<T> reject(const Vector3<T>& v, const Vector3<T>& u) {
+    constexpr Vector<T> reject(const Vector<T>& v, const Vector<T>& u) {
         return grade1((v ^ u) * inverse(u));
     }
 
@@ -118,7 +118,7 @@ namespace CliffordCore
      * @param plane The plane to reject from. Need not be unit length.
      * @return The component of v perpendicular to the plane.
      */
-    constexpr Vector3<T> reject(const Vector3<T>& v, const Bivector3<T>& plane) {
+    constexpr Vector<T> reject(const Vector<T>& v, const Bivector<T>& plane) {
         return grade1((v ^ plane) * inverse(plane));
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3

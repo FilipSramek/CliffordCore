@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file involutions.hpp
+ * @file cliffordcore/cl3/operations/involutions.hpp
  * @brief The grade involution and Clifford conjugation.
  *
  * The grade involution negates the odd grades, 1 and 3; Clifford
@@ -16,11 +16,11 @@
  */
 
 #include "../scalar.hpp"
-#include "../vector3.hpp"
-#include "../bivector3.hpp"
-#include "../trivector3.hpp"
-#include "../multivector3.hpp"
-#include "../rotor3.hpp"
+#include "../vector.hpp"
+#include "../bivector.hpp"
+#include "../trivector.hpp"
+#include "../multivector.hpp"
+#include "../rotor.hpp"
 #include "reverse.hpp"
 
 // Cl(3,0) has three sign-flipping involutions, and they come as a set. Each
@@ -37,7 +37,7 @@
 // reverse() lives in reverse.hpp, which this header includes, so including
 // this one gives you all three.
 
-namespace CliffordCore
+namespace CliffordCore::Cl3
 {
     template<typename T>
     /**
@@ -55,8 +55,8 @@ namespace CliffordCore
      * @param v The vector to involve.
      * @return The negated vector; grade 1 flips sign.
      */
-    constexpr Vector3<T> involute(const Vector3<T>& v) {
-        return Vector3<T>(-v.x, -v.y, -v.z);
+    constexpr Vector<T> involute(const Vector<T>& v) {
+        return Vector<T>(-v.x, -v.y, -v.z);
     }
 
     template<typename T>
@@ -65,7 +65,7 @@ namespace CliffordCore
      * @param b The bivector to involve.
      * @return The bivector unchanged; grade 2 keeps its sign.
      */
-    constexpr Bivector3<T> involute(const Bivector3<T>& b) {
+    constexpr Bivector<T> involute(const Bivector<T>& b) {
         return b;
     }
 
@@ -75,8 +75,8 @@ namespace CliffordCore
      * @param t The trivector to involve.
      * @return The negated trivector; grade 3 flips sign.
      */
-    constexpr Trivector3<T> involute(const Trivector3<T>& t) {
-        return Trivector3<T>(-t.e123);
+    constexpr Trivector<T> involute(const Trivector<T>& t) {
+        return Trivector<T>(-t.e123);
     }
 
     template<typename T>
@@ -85,12 +85,12 @@ namespace CliffordCore
      * @param m The multivector to involve.
      * @return The multivector with its odd grades, 1 and 3, negated.
      */
-    constexpr Multivector3<T> involute(const Multivector3<T>& m) {
-        return Multivector3<T>(
+    constexpr Multivector<T> involute(const Multivector<T>& m) {
+        return Multivector<T>(
             m.scalar,
-            Vector3<T>(-m.vector.x, -m.vector.y, -m.vector.z),
+            Vector<T>(-m.vector.x, -m.vector.y, -m.vector.z),
             m.bivector,
-            Trivector3<T>(-m.trivector.e123)
+            Trivector<T>(-m.trivector.e123)
         );
     }
 
@@ -101,7 +101,7 @@ namespace CliffordCore
      * @return The rotor unchanged. A rotor holds only even grades, which is
      *         exactly what makes rotors closed under the sandwich product.
      */
-    constexpr Rotor3<T> involute(const Rotor3<T>& r) {
+    constexpr Rotor<T> involute(const Rotor<T>& r) {
         return r;
     }
 
@@ -125,8 +125,8 @@ namespace CliffordCore
      * @param v The vector to conjugate.
      * @return The negated vector.
      */
-    constexpr Vector3<T> conjugate(const Vector3<T>& v) {
-        return Vector3<T>(-v.x, -v.y, -v.z);
+    constexpr Vector<T> conjugate(const Vector<T>& v) {
+        return Vector<T>(-v.x, -v.y, -v.z);
     }
 
     template<typename T>
@@ -135,8 +135,8 @@ namespace CliffordCore
      * @param b The bivector to conjugate.
      * @return The negated bivector.
      */
-    constexpr Bivector3<T> conjugate(const Bivector3<T>& b) {
-        return Bivector3<T>(-b.xy, -b.xz, -b.yz);
+    constexpr Bivector<T> conjugate(const Bivector<T>& b) {
+        return Bivector<T>(-b.xy, -b.xz, -b.yz);
     }
 
     template<typename T>
@@ -145,7 +145,7 @@ namespace CliffordCore
      * @param t The trivector to conjugate.
      * @return The trivector unchanged; grades 0 and 3 survive conjugation.
      */
-    constexpr Trivector3<T> conjugate(const Trivector3<T>& t) {
+    constexpr Trivector<T> conjugate(const Trivector<T>& t) {
         return t;
     }
 
@@ -159,11 +159,11 @@ namespace CliffordCore
      * by its conjugate collapses to a scalar plus a pseudoscalar, which then
      * inverts like a complex number. See inverse.hpp.
      */
-    constexpr Multivector3<T> conjugate(const Multivector3<T>& m) {
-        return Multivector3<T>(
+    constexpr Multivector<T> conjugate(const Multivector<T>& m) {
+        return Multivector<T>(
             m.scalar,
-            Vector3<T>(-m.vector.x, -m.vector.y, -m.vector.z),
-            Bivector3<T>(-m.bivector.xy, -m.bivector.xz, -m.bivector.yz),
+            Vector<T>(-m.vector.x, -m.vector.y, -m.vector.z),
+            Bivector<T>(-m.bivector.xy, -m.bivector.xz, -m.bivector.yz),
             m.trivector
         );
     }
@@ -175,7 +175,7 @@ namespace CliffordCore
      * @return The rotor with its bivector part negated. For a rotor this
      *         coincides with reverse(), since a rotor has no odd grades.
      */
-    constexpr Rotor3<T> conjugate(const Rotor3<T>& r) {
-        return Rotor3<T>(r.scalar, Bivector3<T>(-r.bivector.xy, -r.bivector.xz, -r.bivector.yz));
+    constexpr Rotor<T> conjugate(const Rotor<T>& r) {
+        return Rotor<T>(r.scalar, Bivector<T>(-r.bivector.xy, -r.bivector.xz, -r.bivector.yz));
     }
-} // namespace CliffordCore
+} // namespace CliffordCore::Cl3
