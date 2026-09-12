@@ -24,7 +24,7 @@
 
 #include "../detail/format.hpp"
 
-namespace CliffordCore {
+namespace CliffordCore::Cl3 {
 
 template<typename T> class Vector;
 template<typename T> class Bivector;
@@ -179,7 +179,7 @@ public:
 #include "multivector.hpp"
 #include "rotor.hpp"
 
-namespace CliffordCore {
+namespace CliffordCore::Cl3 {
 
 template<typename T>
 constexpr Scalar<T> Scalar<T>::operator+(const Scalar& other) const {     
