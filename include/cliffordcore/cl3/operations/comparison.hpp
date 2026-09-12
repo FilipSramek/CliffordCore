@@ -18,6 +18,7 @@
 #include <cmath>
 #include <limits>
 
+#include "../../detail/compare.hpp"
 #include "../scalar.hpp"
 #include "../vector.hpp"
 #include "../bivector.hpp"
@@ -137,31 +138,6 @@ namespace CliffordCore::Cl3
     // Tolerant comparison
     // -----------------------------------------------------------------------
 
-    namespace detail
-    {
-        template<typename T>
-        /**
-         * @brief The default tolerance for approx_equal, scaled to the type.
-         * @return One hundred epsilons, which absorbs ordinary rounding without
-         *         hiding a real discrepancy.
-         */
-        constexpr T default_tolerance() {
-            return std::numeric_limits<T>::epsilon() * T(100);
-        }
-
-        template<typename T>
-        /**
-         * @brief Compares two raw components within a tolerance.
-         * @param a The left value.
-         * @param b The right value.
-         * @param tolerance The largest difference still considered equal.
-         * @return True if they differ by no more than the tolerance.
-         */
-        inline bool close(T a, T b, T tolerance) {
-            return std::fabs(a - b) <= tolerance;
-        }
-    } // namespace detail
-
     template<typename T>
     /**
      * @brief Compares two scalars within a tolerance.
@@ -171,8 +147,8 @@ namespace CliffordCore::Cl3
      * @return True if they agree to within the tolerance.
      */
     inline bool approx_equal(const Scalar<T>& a, const Scalar<T>& b,
-                             T tolerance = detail::default_tolerance<T>()) {
-        return detail::close(a.value, b.value, tolerance);
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+        return CliffordCore::detail::close(a.value, b.value, tolerance);
     }
 
     template<typename T>
@@ -184,10 +160,10 @@ namespace CliffordCore::Cl3
      * @return True if every component agrees to within the tolerance.
      */
     inline bool approx_equal(const Vector<T>& a, const Vector<T>& b,
-                             T tolerance = detail::default_tolerance<T>()) {
-        return detail::close(a.x, b.x, tolerance)
-            && detail::close(a.y, b.y, tolerance)
-            && detail::close(a.z, b.z, tolerance);
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+        return CliffordCore::detail::close(a.x, b.x, tolerance)
+            && CliffordCore::detail::close(a.y, b.y, tolerance)
+            && CliffordCore::detail::close(a.z, b.z, tolerance);
     }
 
     template<typename T>
@@ -199,10 +175,10 @@ namespace CliffordCore::Cl3
      * @return True if every component agrees to within the tolerance.
      */
     inline bool approx_equal(const Bivector<T>& a, const Bivector<T>& b,
-                             T tolerance = detail::default_tolerance<T>()) {
-        return detail::close(a.xy, b.xy, tolerance)
-            && detail::close(a.xz, b.xz, tolerance)
-            && detail::close(a.yz, b.yz, tolerance);
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+        return CliffordCore::detail::close(a.xy, b.xy, tolerance)
+            && CliffordCore::detail::close(a.xz, b.xz, tolerance)
+            && CliffordCore::detail::close(a.yz, b.yz, tolerance);
     }
 
     template<typename T>
@@ -214,8 +190,8 @@ namespace CliffordCore::Cl3
      * @return True if they agree to within the tolerance.
      */
     inline bool approx_equal(const Trivector<T>& a, const Trivector<T>& b,
-                             T tolerance = detail::default_tolerance<T>()) {
-        return detail::close(a.e123, b.e123, tolerance);
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+        return CliffordCore::detail::close(a.e123, b.e123, tolerance);
     }
 
     template<typename T>
@@ -227,7 +203,7 @@ namespace CliffordCore::Cl3
      * @return True if every grade agrees to within the tolerance.
      */
     inline bool approx_equal(const Multivector<T>& a, const Multivector<T>& b,
-                             T tolerance = detail::default_tolerance<T>()) {
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
         return approx_equal(a.scalar, b.scalar, tolerance)
             && approx_equal(a.vector, b.vector, tolerance)
             && approx_equal(a.bivector, b.bivector, tolerance)
@@ -244,7 +220,7 @@ namespace CliffordCore::Cl3
      *         negation are the same rotation but are not approx_equal.
      */
     inline bool approx_equal(const Rotor<T>& a, const Rotor<T>& b,
-                             T tolerance = detail::default_tolerance<T>()) {
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
         return approx_equal(a.scalar, b.scalar, tolerance)
             && approx_equal(a.bivector, b.bivector, tolerance);
     }

@@ -8,8 +8,10 @@
 #include <cmath>
 #include <iostream>
 
-#include "cliffordcore.hpp"
+#include "cliffordcore/cl3.hpp"
 #include "print_helpers.hpp"
+
+namespace ga = CliffordCore::Cl3;
 
 using ga::Bivector;
 using ga::Multivector;

@@ -2,8 +2,9 @@
 
 // Printing scaffolding for the CliffordCore examples.
 //
-// The library deliberately has no operator<< (see docs/conventions.md, "Known
-// gaps"). These helpers exist ONLY so the examples can show their work. They
+// The library now has operator<< (cl3/operations/stream.hpp), which prints at
+// round-trip precision. These helpers exist so the examples can show their
+// work at a fixed width with near-zero noise suppressed instead. They
 // live in examples/ rather than include/ so there is no doubt they are not part
 // of the API, and they touch nothing but the public component names:
 // .value, .x/.y/.z, .xy/.xz/.yz, .e123.
@@ -21,9 +22,11 @@
 #include <sstream>
 #include <string>
 
-#include "cliffordcore.hpp"
+#include "cliffordcore/cl3.hpp"
 
 namespace ex {
+
+namespace ga = CliffordCore::Cl3;
 
 /// Show near-zero values as exact zero, so rotation output stays readable.
 inline double clean(double v)
