@@ -11,7 +11,8 @@ suite is clean under `-Wall -Wextra -Wpedantic` on both C++17 and C++20.
 Add `include/` to your include path. Then either take everything:
 
 ```cpp
-#include <cliffordcore.hpp>
+#include <cliffordcore/cl3.hpp>
+
 ```
 
 ...or include only the pieces you need:
@@ -29,12 +30,14 @@ for convenience; use individual headers if compile time matters.
 
 ```cpp
 #include <iostream>
-#include <cliffordcore.hpp>
+#include <cliffordcore/cl3.hpp>
+
+namespace ga = CliffordCore::Cl3;
 
 int main()
 {
-    CliffordCore::Vector<double> a(1, 2, 3);
-    CliffordCore::Vector<double> b(4, 5, 6);
+    ga::Vector<double> a(1, 2, 3);
+    ga::Vector<double> b(4, 5, 6);
 
     // The geometric product keeps both the dot and the wedge.
     auto product = a * b;
@@ -43,8 +46,8 @@ int main()
               << product.bivector.xz << ", " << product.bivector.yz << "\n";
 
     // A quarter turn about +z, applied to the x axis.
-    auto turn = CliffordCore::rotor_from_axis_angle(CliffordCore::Vector<double>(0, 0, 1), 1.5707963);
-    auto spun = CliffordCore::rotate(CliffordCore::Vector<double>(1, 0, 0), turn);
+    auto turn = ga::rotor_from_axis_angle(ga::Vector<double>(0, 0, 1), 1.5707963);
+    auto spun = ga::rotate(ga::Vector<double>(1, 0, 0), turn);
     std::cout << "e1 turned:  (" << spun.x << ", " << spun.y << ", " << spun.z << ")\n";
 }
 ```
@@ -91,7 +94,7 @@ compiler: the dot, wedge and geometric products, `dual`, `reverse`, the grade
 projections, `sandwich`, and mixed-grade `+` and `-`.
 
 ```cpp
-constexpr CliffordCore::Vector<double> e1(1, 0, 0), e2(0, 1, 0);
+constexpr ga::Vector<double> e1(1, 0, 0), e2(0, 1, 0);
 static_assert((e1 ^ e2).xy == 1.0, "checked at compile time");
 ```
 

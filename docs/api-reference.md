@@ -262,8 +262,8 @@ Kept apart so the type headers need not include `<ostream>`.
 - `log(Rotor)` → `Bivector` — clamps the scalar part into `[-1, 1]` before
   `std::acos`; returns a zero bivector when the bivector part is zero
 
-Both collide by name with `<cmath>`, so qualify them as `CliffordCore::exp` /
-`CliffordCore::log` when `using namespace` is in play.
+Both collide by name with `<cmath>`, so qualify them as `ga::exp` /
+`ga::log` when `using namespace` is in play.
 
 ### `sandwich.hpp`
 

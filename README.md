@@ -41,12 +41,14 @@ stands alone.
 
 ```cpp
 #include <iostream>
-#include <cliffordcore.hpp>
+#include <cliffordcore/cl3.hpp>
+
+namespace ga = CliffordCore::Cl3;
 
 int main()
 {
-    CliffordCore::Vector<double> a(1, 2, 3);
-    CliffordCore::Vector<double> b(4, 5, 6);
+    ga::Vector<double> a(1, 2, 3);
+    ga::Vector<double> b(4, 5, 6);
 
     // The geometric product keeps both the dot and the wedge.
     auto product = a * b;
@@ -56,9 +58,9 @@ int main()
 
     // A quarter turn about +z, applied to the x axis. Rotors compose by
     // multiplication and interpolate with slerp.
-    auto turn = CliffordCore::rotor_from_axis_angle(
-        CliffordCore::Vector<double>(0, 0, 1), 1.5707963);
-    auto spun = CliffordCore::rotate(CliffordCore::Vector<double>(1, 0, 0), turn);
+    auto turn = ga::rotor_from_axis_angle(
+        ga::Vector<double>(0, 0, 1), 1.5707963);
+    auto spun = ga::rotate(ga::Vector<double>(1, 0, 0), turn);
     std::cout << "e1 turned: (" << spun.x << ", " << spun.y << ", " << spun.z << ")\n";
 }
 ```
