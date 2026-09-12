@@ -2,12 +2,17 @@
 
 /**
  * @file cliffordcore.hpp
- * @brief Umbrella header: includes every CliffordCore type and operation.
+ * @brief Library-wide version information. Not an umbrella -- pick an algebra.
  *
- * Including this one header brings in all six types and every operation.
- * It declares nothing itself; each individual header is also a valid
- * standalone entry point, so include only what you need if compile time
- * matters.
+ * This header deliberately includes no algebra. CliffordCore ships one
+ * namespace per algebra, and you want exactly one of them:
+ *
+ * - `#include <cliffordcore/cl3.hpp>` for Cl(3,0), namespace CliffordCore::Cl3
+ *
+ * Cl(3,0,1) (namespace PGA) and Cl(2,0) (namespace Cl2) are planned and will
+ * slot in the same way. There is no header that pulls in all of them, because
+ * mixing two algebras in one expression is a bug, and keeping them in separate
+ * namespaces makes it a compile error.
  *
  * @author Filip Sramek
  * @version 0.1.0
@@ -19,26 +24,45 @@
 /**
  * @mainpage CliffordCore
  *
- * CliffordCore is a header-only C++17 library for 3D Clifford (geometric)
- * algebra, Cl(3,0). Everything lives in namespace CliffordCore, every type is a
- * template over an arithmetic component type, and every operation is constexpr.
- * There is no build system and no dependency -- add `include/` to your include
- * path and go.
+ * CliffordCore is a header-only C++17 library for Clifford (geometric) algebra.
+ * Every type is a template over an arithmetic component type, and every
+ * operation is constexpr apart from the printing helpers. There is no build
+ * system and no dependency -- add `include/` to your include path and go.
+ *
+ * @section mainpage_algebras One namespace per algebra
+ *
+ * Each algebra lives in its own namespace under `CliffordCore`, with the **same
+ * type names** in each: `Scalar`, `Vector`, `Bivector`, `Multivector`, and so
+ * on. Choosing an algebra is therefore one line, and switching is a one-line
+ * edit:
+ *
+ * | Algebra | Header | Namespace | Status |
+ * | --- | --- | --- | --- |
+ * | Cl(3,0), 3D Euclidean | `<cliffordcore/cl3.hpp>` | `CliffordCore::Cl3` | shipping |
+ * | Cl(3,0,1), 3D projective | `<cliffordcore/pga.hpp>` | `CliffordCore::PGA` | planned |
+ * | Cl(2,0), 2D Euclidean | `<cliffordcore/cl2.hpp>` | `CliffordCore::Cl2` | planned |
+ *
+ * The types are written independently per algebra rather than generated from a
+ * signature, because the algebras share a vocabulary rather than an
+ * implementation. A grade 1 element is a *direction* in Cl(3,0) but a *plane*
+ * in PGA, with a different component count; Cl(2,0)'s bivector is also its
+ * pseudoscalar. Names carry across, meanings do not.
  *
  * @section mainpage_usage Usage
  *
  * @code
- * #include <cliffordcore.hpp>
+ * #include <cliffordcore/cl3.hpp>
+ * namespace ga = CliffordCore::Cl3;
  *
- * CliffordCore::Vector3<double> a(1, 2, 3), b(4, 5, 6);
- * auto product = a * b;              // Multivector3: dot part + wedge part
- * auto r = CliffordCore::rotor_from_axis_angle(CliffordCore::Vector3<double>(0, 0, 1), 1.5708);
- * auto turned = CliffordCore::rotate(a, r);
+ * ga::Vector<double> a(1, 2, 3), b(4, 5, 6);
+ * auto product = a * b;              // Multivector: dot part + wedge part
+ * auto r = ga::rotor_from_axis_angle(ga::Vector<double>(0, 0, 1), 1.5708);
+ * auto turned = ga::rotate(a, r);
  * @endcode
  *
  * Compile with `g++ -std=c++17 -Iinclude your_file.cpp`.
  *
- * @section mainpage_basis The basis
+ * @section mainpage_basis The Cl(3,0) basis
  *
  * Vectors are `e1 e2 e3` with `e_i^2 = +1`. Bivectors are stored as
  * `(xy, xz, yz) = (e1e2, e1e3, e2e3)` -- note `xz`, not the more common `zx`.
@@ -55,13 +79,13 @@
  * - `docs/cheatsheet.md` -- the return-type matrices on one screen
  * - `examples/` -- five runnable programs, build them with `./build_examples.sh`
  *
- * @section mainpage_includes About this header
+ * @section mainpage_includes About the umbrella headers
  *
- * This header is a pure aggregate: it declares nothing of its own. Every header
- * it lists is also a valid standalone entry point, so include just the one or
- * two you need if compile time matters.
+ * Each algebra's umbrella is a pure aggregate: it declares nothing of its own.
+ * Every header it lists is also a valid standalone entry point, so include just
+ * the one or two you need if compile time matters.
  *
- * Note that `tests/test_core.cpp` deliberately does NOT use this header. Its
+ * Note that `tests/test_core.cpp` deliberately does NOT use an umbrella. Its
  * explicit per-header includes are a live check that each header pulls in its
  * own dependencies; an umbrella include would mask exactly that class of bug,
  * which has broken this codebase twice.
@@ -78,43 +102,3 @@
 #define CLIFFORDCORE_VERSION_PATCH 0
 #define CLIFFORDCORE_VERSION_STRING "0.1.0"
 /** @} */
-
-// Types, in grade order. (scalar.hpp alone already pulls in all six via its
-// declare-then-include pattern; the rest are listed for readability.)
-#include "scalar.hpp"
-#include "vector3.hpp"
-#include "bivector3.hpp"
-#include "trivector3.hpp"
-#include "multivector3.hpp"
-#include "rotor3.hpp"
-
-// Products.
-#include "operations/dot_product.hpp"
-#include "operations/wedge_product.hpp"
-#include "operations/contraction.hpp"
-#include "operations/geometric_product.hpp"
-#include "operations/mixed_products.hpp"
-
-// Sums.
-#include "operations/addition.hpp"
-#include "operations/subtraction.hpp"
-
-// Magnitudes and involutions.
-#include "operations/norm.hpp"
-#include "operations/normalize.hpp"
-#include "operations/reverse.hpp"
-#include "operations/involutions.hpp"
-#include "operations/inverse.hpp"
-
-// Structure.
-#include "operations/dual.hpp"
-#include "operations/grade.hpp"
-#include "operations/comparison.hpp"
-#include "operations/stream.hpp"
-#include "operations/geometry.hpp"
-
-// Rotations.
-#include "operations/exp.hpp"
-#include "operations/log.hpp"
-#include "operations/sandwich.hpp"
-#include "operations/rotor_construction.hpp"
