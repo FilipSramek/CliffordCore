@@ -1,6 +1,7 @@
 # API reference
 
-Every entity lives in `namespace CliffordCore`. Every type is
+Every entity lives in `namespace CliffordCore::Cl3`; the snippets below assume
+`namespace ga = CliffordCore::Cl3;`. Every type is
 `template<typename T>` with `static_assert(std::is_arithmetic<T>::value, ...)`,
 and every function is `constexpr`. `T` is omitted below for readability.
 
@@ -262,8 +263,9 @@ Kept apart so the type headers need not include `<ostream>`.
 - `log(Rotor)` → `Bivector` — clamps the scalar part into `[-1, 1]` before
   `std::acos`; returns a zero bivector when the bivector part is zero
 
-Both collide by name with `<cmath>`, so qualify them as `ga::exp` /
-`ga::log` when `using namespace` is in play.
+Both collide by name with `<cmath>`, so qualify them as `ga::exp` / `ga::log`
+when `using namespace` is in play. The alias makes that the natural spelling
+anyway.
 
 ### `sandwich.hpp`
 

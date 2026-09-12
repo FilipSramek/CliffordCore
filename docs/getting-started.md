@@ -12,15 +12,20 @@ Add `include/` to your include path. Then either take everything:
 
 ```cpp
 #include <cliffordcore/cl3.hpp>
-
+namespace ga = CliffordCore::Cl3;
 ```
 
 ...or include only the pieces you need:
 
 ```cpp
-#include <vector.hpp>
-#include <operations/geometric_product.hpp>
+#include <cliffordcore/cl3/vector.hpp>
+#include <cliffordcore/cl3/operations/geometric_product.hpp>
 ```
+
+Everything lives in `namespace CliffordCore::Cl3`. The alias is the recommended
+spelling: it makes the choice of algebra one visible line, and switching to
+Cl(3,0,1) or Cl(2,0) later is a one-line edit, because those namespaces use the
+same type names.
 
 Every header is a valid standalone entry point, and that property is maintained
 deliberately — each one pulls in its own dependencies. Use the umbrella header

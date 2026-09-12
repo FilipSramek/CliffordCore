@@ -73,8 +73,10 @@ g++ -std=c++17 -Iinclude your_file.cpp -o your_file
 
 ## Project structure
 
-- `include/` — the library. `cliffordcore.hpp` pulls in everything; the six type
-  headers and `operations/` can also be included individually
+- `include/cliffordcore/` — the library, one directory per algebra.
+  `cliffordcore/cl3.hpp` pulls in all of Cl(3,0); the six type headers and
+  `cl3/operations/` can also be included individually. `cliffordcore/detail/`
+  holds the few helpers that are algebra-independent
 - `examples/` — five runnable programs, from the basic products through
   rotations to a small geometry toolkit
 - `tests/` — the test suite, a single translation unit
@@ -108,11 +110,20 @@ CliffordCore is an educational and experimental implementation, suitable for
 learning, prototyping, and exploring geometric algebra in C++. It implements
 Cl(3,0), 3D Euclidean geometric algebra, and the test suite covers it thoroughly.
 
-One change is already planned and will not be subtle: **the type names will
-change.** `Vector`, `Rotor` and friends name the dimension but not the metric,
-which stops working as soon as Cl(3,0,1) and Cl(2,0) arrive — a projective
-"3D" vector has four components. Expect a namespace and naming reorganisation
-before 1.0. Pin a commit if you depend on the current spelling.
+**The namespace reorganisation has landed.** Each algebra gets its own
+namespace under `CliffordCore`, with the *same* type names in each, so choosing
+an algebra is one line and switching is a one-line edit:
+
+| Algebra | Header | Namespace | Status |
+| --- | --- | --- | --- |
+| Cl(3,0), 3D Euclidean | `<cliffordcore/cl3.hpp>` | `CliffordCore::Cl3` | shipping |
+| Cl(3,0,1), 3D projective | `<cliffordcore/pga.hpp>` | `CliffordCore::PGA` | planned |
+| Cl(2,0), 2D Euclidean | `<cliffordcore/cl2.hpp>` | `CliffordCore::Cl2` | planned |
+
+That is why the types dropped their dimension suffix — `Vector3` became
+`Cl3::Vector`, which said "3" twice, and would have been actively wrong in
+`Cl2`. **If you are on an earlier commit, this rename will break your code**;
+the fix is mechanical. Further API changes are still possible before 1.0.
 
 **No license yet.** Until a LICENSE file lands the code is all rights reserved,
 so this is not yet usable in your own project. That is being resolved.
