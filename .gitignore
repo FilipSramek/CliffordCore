@@ -2,6 +2,7 @@ CLAUDE.md
 
 # Build output. build.sh/build.ps1 write here, and so does build_examples.*
 build/
+graphify-out/
 
 # Compiled binaries. The VS Code build task writes the .exe next to the source,
 # so example binaries can land in examples/ as well as build/.
