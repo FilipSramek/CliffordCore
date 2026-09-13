@@ -3,6 +3,11 @@
 Every sign in CliffordCore follows from a handful of choices made once. This page
 collects them. If a result's sign looks wrong, the answer is almost always here.
 
+**This page is about Cl(3,0)**, `namespace CliffordCore::Cl3`. The planned
+`PGA` and `Cl2` namespaces reuse the type names but not the metric, so none of
+the signs below carry over to them unexamined -- a degenerate `e0^2 = 0` breaks
+the dual and the inverse in particular.
+
 ## The basis
 
 Vectors are `e1 e2 e3` with `e_i^2 = +1`. Bivectors are stored as

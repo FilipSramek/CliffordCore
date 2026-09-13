@@ -1,7 +1,12 @@
 # Cheat sheet
 
-One screen. Everything here is verified by compilation and by
+One screen, for Cl(3,0). Everything here is verified by compilation and by
 `tests/test_core.cpp`.
+
+```cpp
+#include <cliffordcore/cl3.hpp>
+namespace ga = CliffordCore::Cl3;
+```
 
 ## `operator*` return types
 

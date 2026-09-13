@@ -13,9 +13,26 @@ repository. For a generated reference with cross-links, run
 
 ## Core types
 
+### `cliffordcore/cl3.hpp`
+
+Umbrella for Cl(3,0). Includes every type and operation below; declares nothing
+itself. Headers are listed by their name within `cliffordcore/cl3/`.
+
 ### `cliffordcore.hpp`
 
-Umbrella header. Includes every type and operation; declares nothing itself.
+**Not an umbrella.** Holds only `CLIFFORDCORE_VERSION_MAJOR` / `_MINOR` /
+`_PATCH` / `_STRING` and the Doxygen mainpage. There is deliberately no header
+that pulls in every algebra.
+
+### `cliffordcore/detail/`
+
+Algebra-independent helpers in `CliffordCore::detail`, shared by every algebra:
+`format_component` (round-trip number formatting, in `format.hpp`) and
+`default_tolerance` / `close` (in `compare.hpp`). Not part of the public API.
+
+Note that each algebra also has its own `detail` — `CliffordCore::Cl3::detail`
+holds `promote`, which widens to *that algebra's* `Multivector`. The inner one
+shadows the outer, so library code spells the shared helpers in full.
 
 ### `scalar.hpp` — `Scalar`
 
@@ -169,7 +186,10 @@ The same twenty pairs as `operator-`. Reuses `detail::promote`.
 - `normalize(x)` → same type, for all six types. `normalize(Scalar)` gives the
   sign, +1 or -1.
 
-A zero input is returned unchanged rather than producing `NaN`.
+**A zero input is a precondition violation, not a value.** Every overload
+asserts that the norm is non-zero, since a zero element has no direction to
+preserve. The assert compiles out under `NDEBUG`, where the argument is returned
+unchanged instead — a release build must not divide by zero and hand back `NaN`.
 
 ### `reverse.hpp`
 

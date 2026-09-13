@@ -1,7 +1,21 @@
 # CliffordCore documentation
 
-CliffordCore is a header-only C++17 library for 3D Clifford (geometric) algebra,
-Cl(3,0).
+CliffordCore is a header-only C++17 library for Clifford (geometric) algebra.
+Each algebra lives in its own namespace under `CliffordCore`, with the **same
+type names** in each, so choosing one is a single line:
+
+```cpp
+#include <cliffordcore/cl3.hpp>
+namespace ga = CliffordCore::Cl3;
+```
+
+| Algebra | Header | Namespace | Status |
+| --- | --- | --- | --- |
+| Cl(3,0), 3D Euclidean | `<cliffordcore/cl3.hpp>` | `CliffordCore::Cl3` | shipping |
+| Cl(3,0,1), 3D projective | `<cliffordcore/pga.hpp>` | `CliffordCore::PGA` | planned |
+| Cl(2,0), 2D Euclidean | `<cliffordcore/cl2.hpp>` | `CliffordCore::Cl2` | planned |
+
+**These pages document Cl(3,0)**, the only algebra implemented today.
 
 ## Pages
 
@@ -52,7 +66,8 @@ build task compiles whichever example file is open.
 .\build.ps1                    # PowerShell
 ```
 
-A green run prints `779 checks, 0 failed.`
+A green run prints `911 checks, 0 failed.` `build.sh` runs `check_headers.sh`
+first, which compiles all 31 headers alone in their own translation units.
 
 ## Generated API reference
 

@@ -124,8 +124,9 @@ the same value and `float`, `double` and `long double` are distinguishable. That
 matters here: this library routinely produces residuals around 1e-16, and a
 fixed six-decimal format would print all of them as `0.000000`.
 
-`operator<<` lives in `operations/stream.hpp`, which the umbrella header
-includes; the type headers deliberately do not pull in `<ostream>`.
+`operator<<` lives in `cliffordcore/cl3/operations/stream.hpp`, which the
+umbrella header includes; the type headers deliberately do not pull in
+`<ostream>`.
 
 To read components directly instead:
 
