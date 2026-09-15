@@ -30,6 +30,13 @@
 #include "../include/cliffordcore/pga/rotor.hpp"
 #include "../include/cliffordcore/pga/translator.hpp"
 #include "../include/cliffordcore/pga/motor.hpp"
+#include "../include/cliffordcore/pga/operations/dot_product.hpp"
+#include "../include/cliffordcore/pga/operations/wedge_product.hpp"
+#include "../include/cliffordcore/pga/operations/geometric_product.hpp"
+#include "../include/cliffordcore/pga/operations/mixed_products.hpp"
+#include "../include/cliffordcore/pga/operations/addition.hpp"
+#include "../include/cliffordcore/pga/operations/subtraction.hpp"
+#include "../include/cliffordcore/pga/operations/grade.hpp"
 
 namespace ga = CliffordCore::PGA;
 
@@ -559,6 +566,539 @@ void test_compound_assignment()
 }
 
 // ---------------------------------------------------------------------------
+// Products
+// ---------------------------------------------------------------------------
+
+// The sixteen basis blades in lexicographic order, as index lists. Index 0 is
+// the scalar (empty list). This order is the one make_mv() takes.
+struct BladeIndices {
+    int count;
+    int index[4];
+};
+
+const BladeIndices kBlades[16] = {
+    {0, {0, 0, 0, 0}},
+    {1, {0, 0, 0, 0}}, {1, {1, 0, 0, 0}}, {1, {2, 0, 0, 0}}, {1, {3, 0, 0, 0}},
+    {2, {0, 1, 0, 0}}, {2, {0, 2, 0, 0}}, {2, {0, 3, 0, 0}},
+    {2, {1, 2, 0, 0}}, {2, {1, 3, 0, 0}}, {2, {2, 3, 0, 0}},
+    {3, {0, 1, 2, 0}}, {3, {0, 1, 3, 0}}, {3, {0, 2, 3, 0}}, {3, {1, 2, 3, 0}},
+    {4, {0, 1, 2, 3}},
+};
+
+const char* const kBladeNames[16] = {
+    "1", "e0", "e1", "e2", "e3", "e01", "e02", "e03", "e12", "e13", "e23",
+    "e012", "e013", "e023", "e123", "e0123",
+};
+
+// A multivector with a single basis blade set to one.
+Multivector<double> basis_blade(int which)
+{
+    double c[16] = {0};
+    c[which] = 1.0;
+    return make_mv(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8],
+                   c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
+}
+
+// Independent reference for the product of two basis blades: concatenate the
+// index lists, bubble-sort them counting swaps (each swap flips the sign),
+// then cancel equal neighbours -- e0 e0 = 0 kills the term, e_i e_i = +1 for
+// the others. Returns the sign (0 if the product vanishes) and the index of
+// the resulting blade. This is the definition of the algebra; the 16x16 table
+// in geometric_product.hpp must reproduce it exactly.
+int reference_blade_product(int i, int j, int& result_blade)
+{
+    int list[8];
+    int n = 0;
+    for (int k = 0; k < kBlades[i].count; ++k) list[n++] = kBlades[i].index[k];
+    for (int k = 0; k < kBlades[j].count; ++k) list[n++] = kBlades[j].index[k];
+
+    int sign = 1;
+    bool changed = true;
+    while (changed) {
+        changed = false;
+        for (int k = 0; k + 1 < n; ++k) {
+            if (list[k] > list[k + 1]) {
+                const int tmp = list[k]; list[k] = list[k + 1]; list[k + 1] = tmp;
+                sign = -sign;
+                changed = true;
+            }
+        }
+    }
+
+    int out[4];
+    int m = 0;
+    for (int k = 0; k < n;) {
+        if (k + 1 < n && list[k] == list[k + 1]) {
+            if (list[k] == 0) sign = 0;   // e0^2 = 0
+            k += 2;
+        } else {
+            out[m++] = list[k];
+            k += 1;
+        }
+    }
+
+    result_blade = -1;
+    for (int b = 0; b < 16; ++b) {
+        if (kBlades[b].count != m) continue;
+        bool same = true;
+        for (int k = 0; k < m; ++k) same = same && kBlades[b].index[k] == out[k];
+        if (same) { result_blade = b; break; }
+    }
+    return sign;
+}
+
+// Local stand-ins for the primitives that arrive with primitives.hpp; written
+// straight from docs/pga.md so the products can be tested on real geometry.
+Trivector<double> test_point(double x, double y, double z)
+{
+    return Trivector<double>(-z, y, -x, 1.0);
+}
+
+Vector<double> test_plane(double a, double b, double c, double d)
+{
+    return Vector<double>(d, a, b, c);
+}
+
+void test_basis_multiplication_table()
+{
+    section("basis table");
+
+    const Multivector<double> e0 = basis_blade(1), e1 = basis_blade(2), e2 = basis_blade(3), e3 = basis_blade(4);
+    const Multivector<double> zero;
+
+    // The metric: e0 is null, the rest square to +1.
+    check(mv_difference(e0 * e0, zero) == 0.0, "e0 * e0 == 0 exactly");
+    check_mv_close(e1 * e1, basis_blade(0), "e1 * e1 == 1");
+    check_mv_close(e2 * e2, basis_blade(0), "e2 * e2 == 1");
+    check_mv_close(e3 * e3, basis_blade(0), "e3 * e3 == 1");
+
+    // Anticommutation of distinct basis vectors, e0 included.
+    check_mv_close(e0 * e1, -(e1 * e0), "e0 and e1 anticommute");
+    check_mv_close(e1 * e2, -(e2 * e1), "e1 and e2 anticommute");
+
+    // The spot checks from docs/pga.md.
+    check_mv_close(basis_blade(5) * basis_blade(8), basis_blade(6), "e01 * e12 == +e02");
+    check_mv_close(basis_blade(8) * basis_blade(5), -basis_blade(6), "e12 * e01 == -e02");
+    check_mv_close(basis_blade(14) * basis_blade(15), basis_blade(1), "e123 * e0123 == +e0");
+    check_mv_close(basis_blade(15) * basis_blade(14), -basis_blade(1), "e0123 * e123 == -e0");
+    check_mv_close(basis_blade(11) * basis_blade(14), -basis_blade(7), "e012 * e123 == -e03");
+    check(mv_difference(basis_blade(11) * basis_blade(12), zero) == 0.0, "e012 * e013 == 0 exactly");
+    check(mv_difference(basis_blade(15) * basis_blade(15), zero) == 0.0, "e0123 * e0123 == 0 exactly");
+    check_mv_close(basis_blade(14) * basis_blade(14), -basis_blade(0), "e123 * e123 == -1");
+    check_mv_close(basis_blade(8) * basis_blade(15), -basis_blade(7), "e12 * e0123 == -e03");
+    check_mv_close(basis_blade(9) * basis_blade(15), basis_blade(6), "e13 * e0123 == +e02");
+    check_mv_close(basis_blade(10) * basis_blade(15), -basis_blade(5), "e23 * e0123 == -e01");
+
+    // The pseudoscalar commutes with every bivector and anticommutes with every vector.
+    const Multivector<double> I = basis_blade(15);
+    for (int b = 5; b <= 10; ++b) {
+        check_mv_close(I * basis_blade(b), basis_blade(b) * I, std::string("e0123 commutes with ") + kBladeNames[b]);
+    }
+    for (int v = 1; v <= 4; ++v) {
+        check_mv_close(I * basis_blade(v), -(basis_blade(v) * I), std::string("e0123 anticommutes with ") + kBladeNames[v]);
+    }
+}
+
+void test_cayley_table_against_permutation_rule()
+{
+    section("Cayley table vs permutation rule");
+
+    // Every one of the 256 basis products, against the independent reference.
+    // One check per entry keeps a failure pointing at the exact term.
+    int nonzero = 0;
+    for (int i = 0; i < 16; ++i) {
+        for (int j = 0; j < 16; ++j) {
+            int k = -1;
+            const int sign = reference_blade_product(i, j, k);
+            const Multivector<double> product = basis_blade(i) * basis_blade(j);
+            const std::string what = std::string(kBladeNames[i]) + " * " + kBladeNames[j];
+            if (sign == 0) {
+                check(mv_difference(product, Multivector<double>()) == 0.0, what + " == 0");
+            } else {
+                ++nonzero;
+                check_mv_close(product, static_cast<double>(sign) * basis_blade(k),
+                               what + " == " + (sign > 0 ? "+" : "-") + kBladeNames[k]);
+            }
+        }
+    }
+    check(nonzero == 192, "192 of the 256 basis products are non-zero");
+}
+
+void test_multivector_product()
+{
+    section("multivector product");
+
+    const Multivector<double> a = make_mv(1, -2, 3, 0.5, -1, 2, -3, 1, 0.25, -0.5, 4, 1, -1, 2, -2, 0.75);
+    const Multivector<double> b = make_mv(-0.5, 1, 2, -3, 4, -1, 0.5, 2, 3, -2, 1, 0.5, 1.5, -1, 1, -2);
+    const Multivector<double> c = make_mv(2, 0.5, -1, 1, 1, 3, -2, 0.5, -1, 1, -0.5, -2, 1, 0.5, 3, 1);
+    const Multivector<double> one = basis_blade(0);
+
+    check_mv_close((a * b) * c, a * (b * c), "associativity", 1e-9);
+    check_mv_close(a * (b + c), a * b + a * c, "left distributivity", 1e-9);
+    check_mv_close((a + b) * c, a * c + b * c, "right distributivity", 1e-9);
+    check_mv_close(one * a, a, "1 * a == a");
+    check_mv_close(a * one, a, "a * 1 == a");
+    check(mv_difference(a * b, b * a) > 1e-6, "the product is not commutative");
+
+    // operator* and the named function are the same thing.
+    check_mv_close(a * b, ga::geometric_product(a, b), "operator* == geometric_product");
+}
+
+void test_dot_and_wedge()
+{
+    section("dot and wedge");
+
+    const Vector<double> a(1, 2, 3, 4);   // e0, e1, e2, e3
+    const Vector<double> b(5, 6, 7, 8);
+
+    // The dot product ignores e0: only the normals matter.
+    check_scalar(a | b, 2 * 6 + 3 * 7 + 4 * 8, "operator| ignores e0");
+    check_scalar(ga::dot_product(a, b), (a | b).value, "dot_product == operator|");
+    check_scalar(Vector<double>(1, 0, 0, 0) | Vector<double>(1, 0, 0, 0), 0.0, "e0 | e0 == 0");
+    check_scalar(a | b, (b | a).value, "dot product is symmetric");
+
+    // The wedge is antisymmetric and lexicographic.
+    check_bivector(a ^ b, 1 * 6 - 2 * 5, 1 * 7 - 3 * 5, 1 * 8 - 4 * 5,
+                   2 * 7 - 3 * 6, 2 * 8 - 4 * 6, 3 * 8 - 4 * 7, "operator^ components");
+    check_bivector(b ^ a, -(a ^ b).e01, -(a ^ b).e02, -(a ^ b).e03, -(a ^ b).e12, -(a ^ b).e13, -(a ^ b).e23,
+                   "wedge is antisymmetric");
+    const Bivector<double> self = a ^ a;
+    check(self.e01 == 0.0 && self.e02 == 0.0 && self.e03 == 0.0
+          && self.e12 == 0.0 && self.e13 == 0.0 && self.e23 == 0.0, "v ^ v == 0 exactly");
+    check_bivector(ga::wedge_product(a, b), (a ^ b).e01, (a ^ b).e02, (a ^ b).e03, (a ^ b).e12, (a ^ b).e13, (a ^ b).e23,
+                   "wedge_product == operator^");
+
+    // Both agree with the general product.
+    const Multivector<double> product = a * b;
+    check_scalar(product.scalar, (a | b).value, "scalar part of v*w is the dot");
+    check_bivector(product.bivector, (a ^ b).e01, (a ^ b).e02, (a ^ b).e03, (a ^ b).e12, (a ^ b).e13, (a ^ b).e23,
+                   "bivector part of v*w is the wedge");
+    check_mv_close(ga::geometric_product(a, b), ga::geometric_product(ga::detail::promote(a), ga::detail::promote(b)),
+                   "Vector*Vector agrees with the 16x16 table");
+
+    // Geometry: the wedge of two planes is the line where they meet.
+    const Vector<double> x0 = test_plane(1, 0, 0, 0);   // x = 0
+    const Vector<double> y0 = test_plane(0, 1, 0, 0);   // y = 0
+    const Vector<double> x1 = test_plane(1, 0, 0, -1);  // x = 1
+    check_bivector(x0 ^ y0, 0, 0, 0, 1, 0, 0, "meet(x=0, y=0) is the z-axis e12");
+    check_bivector(x1 ^ y0, 0, -1, 0, 1, 0, 0, "meet(x=1, y=0) is e12 - e02");
+    const Vector<double> z0 = test_plane(0, 0, 1, 0);
+    const Vector<double> z1 = test_plane(0, 0, 1, -1);
+    check_scalar((z0 ^ z1).magnitude(), 0.0, "parallel planes meet in an ideal line");
+    check_bivector(z0 ^ z1, 0, 0, 1, 0, 0, 0, "meet(z=0, z=1) is the ideal line +e03");
+}
+
+void test_incidence()
+{
+    section("incidence");
+
+    // plane ^ point = (a x + b y + c z + d) e0123, verified in docs/pga.md.
+    const Vector<double> p = test_plane(1, 2, 3, 4);
+    const Trivector<double> P = test_point(0.5, -1, 2);
+    check_quadvector(p ^ P, 1 * 0.5 + 2 * -1 + 3 * 2 + 4, "plane ^ point is the plane equation");
+    check_quadvector(P ^ p, -(1 * 0.5 + 2 * -1 + 3 * 2 + 4), "point ^ plane has the opposite sign");
+
+    // A point on the plane gives exactly zero.
+    const Vector<double> x1 = test_plane(1, 0, 0, -1);
+    check((x1 ^ test_point(1, 7, -3)).e0123 == 0.0, "point(1, 7, -3) lies on x = 1");
+    check((x1 ^ test_point(2, 0, 0)).e0123 != 0.0, "point(2, 0, 0) does not lie on x = 1");
+
+    // The origin is e123 and lies on every plane through the origin.
+    check((test_plane(3, -2, 5, 0) ^ test_point(0, 0, 0)).e0123 == 0.0, "the origin lies on 3x - 2y + 5z = 0");
+
+    // The point is the triple meet of its coordinate planes.
+    const Vector<double> px = test_plane(1, 0, 0, -1), py = test_plane(0, 1, 0, -2), pz = test_plane(0, 0, 1, -3);
+    check_trivector((px ^ py) ^ pz, -3, 2, -1, 1, "point(1,2,3) == (x=1) ^ (y=2) ^ (z=3)");
+    check_trivector(px ^ (py ^ pz), -3, 2, -1, 1, "the triple meet associates");
+
+    // Two lines: zero iff coplanar.
+    const Bivector<double> zAxis(0, 0, 0, 1, 0, 0);
+    const Bivector<double> zParallel(0, -1, 0, 1, 0, 0);   // through (1,0,0)
+    const Bivector<double> xAxis(0, 0, 0, 0, 0, 1);
+    check((zAxis ^ zParallel).e0123 == 0.0, "parallel lines are coplanar");
+    check((zAxis ^ xAxis).e0123 == 0.0, "intersecting lines are coplanar");
+    const Bivector<double> skew = test_plane(0, 1, 0, -1) ^ test_plane(0, 0, 1, 0);   // y = 1, z = 0: parallel to x, offset
+    check((zAxis ^ skew).e0123 != 0.0, "skew lines have a non-zero wedge");
+}
+
+void test_even_closure()
+{
+    section("even subalgebra closure");
+
+    const Rotor<double> r(Scalar<double>(0.5), 0.25, -0.75, 1.0);
+    const Rotor<double> s(Scalar<double>(-1.0), 2.0, 0.5, -0.25);
+    const Translator<double> t(Scalar<double>(1.0), 0.5, -1.0, 2.0);
+    const Translator<double> u(Scalar<double>(2.0), -0.25, 3.0, 1.0);
+    const Motor<double> m(Scalar<double>(0.75), Bivector<double>(1, -2, 0.5, 3, -1, 2), Quadvector<double>(-0.5));
+    const Motor<double> n(Scalar<double>(-1.5), Bivector<double>(0.5, 1, -1, -2, 0.25, 1), Quadvector<double>(2.0));
+
+    // The closed forms must agree with the one multiplication table.
+    check_mv_close(ga::to_multivector(r * s), ga::to_multivector(r) * ga::to_multivector(s), "Rotor * Rotor matches the table");
+    check_mv_close(ga::to_multivector(t * u), ga::to_multivector(t) * ga::to_multivector(u), "Translator * Translator matches the table");
+    check_mv_close(ga::to_multivector(m * n), ga::to_multivector(m) * ga::to_multivector(n), "Motor * Motor matches the table");
+    check_mv_close(ga::to_multivector(r * t), ga::to_multivector(r) * ga::to_multivector(t), "Rotor * Translator matches the table");
+    check_mv_close(ga::to_multivector(t * r), ga::to_multivector(t) * ga::to_multivector(r), "Translator * Rotor matches the table");
+    check_mv_close(ga::to_multivector(m * r), ga::to_multivector(m) * ga::to_multivector(r), "Motor * Rotor matches the table");
+    check_mv_close(ga::to_multivector(r * m), ga::to_multivector(r) * ga::to_multivector(m), "Rotor * Motor matches the table");
+    check_mv_close(ga::to_multivector(m * t), ga::to_multivector(m) * ga::to_multivector(t), "Motor * Translator matches the table");
+    check_mv_close(ga::to_multivector(t * m), ga::to_multivector(t) * ga::to_multivector(m), "Translator * Motor matches the table");
+
+    // Return types: closures stay narrow, everything else is a Multivector.
+    static_assert(std::is_same<decltype(r * s), Rotor<double>>::value, "Rotor * Rotor is a Rotor");
+    static_assert(std::is_same<decltype(t * u), Translator<double>>::value, "Translator * Translator is a Translator");
+    static_assert(std::is_same<decltype(m * n), Motor<double>>::value, "Motor * Motor is a Motor");
+    static_assert(std::is_same<decltype(r * t), Motor<double>>::value, "Rotor * Translator is a Motor");
+    static_assert(std::is_same<decltype(t * r), Motor<double>>::value, "Translator * Rotor is a Motor");
+    static_assert(std::is_same<decltype(m * r), Motor<double>>::value, "Motor * Rotor is a Motor");
+    static_assert(std::is_same<decltype(t * m), Motor<double>>::value, "Translator * Motor is a Motor");
+
+    // The named spellings are the same products.
+    check_mv_close(ga::to_multivector(ga::rotor_product(r, s)), ga::to_multivector(r * s), "rotor_product == operator*");
+    check_mv_close(ga::to_multivector(ga::translator_product(t, u)), ga::to_multivector(t * u), "translator_product == operator*");
+    check_mv_close(ga::to_multivector(ga::motor_product(m, n)), ga::to_multivector(m * n), "motor_product == operator*");
+
+    // Normalised translators compose by adding their displacements.
+    const Translator<double> tx(Scalar<double>(1.0), -0.5, 0, 0);   // +1 along x
+    const Translator<double> ty(Scalar<double>(1.0), 0, -1.0, 0);   // +2 along y
+    check_translator(tx * ty, 1, -0.5, -1.0, 0, "translators add their ideal parts");
+    check_translator(ty * tx, 1, -0.5, -1.0, 0, "translators commute");
+
+    // Two planes multiply to a motor; motor_product packs it.
+    const Vector<double> p = test_plane(1, 0, 0, 0), q = test_plane(0, 1, 0, -1);
+    check_mv_close(ga::to_multivector(ga::motor_product(p, q)), p * q, "motor_product(plane, plane) == plane * plane");
+    // Two points too: grades 0 and 2 only.
+    const Trivector<double> P = test_point(1, 2, 3), Q = test_point(-1, 0, 2);
+    const Multivector<double> PQ = P * Q;
+    static_assert(std::is_same<decltype(P * Q), Multivector<double>>::value, "Trivector * Trivector is a Multivector in PGA");
+    check(PQ.vector.magnitude().value == 0.0 && PQ.vector.e0 == 0.0 && PQ.trivector.e123 == 0.0
+          && PQ.trivector.e012 == 0.0 && PQ.trivector.e013 == 0.0 && PQ.trivector.e023 == 0.0
+          && PQ.quadvector.e0123 == 0.0, "point * point has grades 0 and 2 only");
+    check_scalar(PQ.scalar, -1.0, "unit points multiply to scalar -1 plus an ideal line");
+    check_mv_close(ga::to_multivector(ga::motor_product(P, Q)), PQ, "motor_product(point, point) == point * point");
+}
+
+void test_mixed_products()
+{
+    section("mixed products");
+
+    const Vector<double> v(1, -2, 0.5, 3);
+    const Bivector<double> b(2, -1, 0.5, 1, 3, -2);
+    const Trivector<double> t(-1, 2, 0.5, 1.5);
+    const Quadvector<double> q(2.5);
+    const Multivector<double> m = make_mv(1, -2, 3, 0.5, -1, 2, -3, 1, 0.25, -0.5, 4, 1, -1, 2, -2, 0.75);
+    const Rotor<double> r(Scalar<double>(0.5), 0.25, -0.75, 1.0);
+    const Translator<double> tr(Scalar<double>(1.0), 0.5, -1.0, 2.0);
+    const Motor<double> mo(Scalar<double>(0.75), Bivector<double>(1, -2, 0.5, 3, -1, 2), Quadvector<double>(-0.5));
+
+    const Multivector<double> V = ga::detail::promote(v), B = ga::detail::promote(b), Tt = ga::detail::promote(t);
+    const Multivector<double> Q = ga::detail::promote(q), R = ga::detail::promote(r), Tr = ga::detail::promote(tr);
+    const Multivector<double> Mo = ga::detail::promote(mo);
+
+    // A representative sweep of the 58 pairs against the table, both orders.
+    check_mv_close(v * b, V * B, "Vector * Bivector");
+    check_mv_close(b * v, B * V, "Bivector * Vector");
+    check_mv_close(v * t, V * Tt, "Vector * Trivector");
+    check_mv_close(t * v, Tt * V, "Trivector * Vector");
+    check_mv_close(v * q, V * Q, "Vector * Quadvector");
+    check_mv_close(q * v, Q * V, "Quadvector * Vector");
+    check_mv_close(b * b, B * B, "Bivector * Bivector");
+    check_mv_close(b * t, B * Tt, "Bivector * Trivector");
+    check_mv_close(t * b, Tt * B, "Trivector * Bivector");
+    check_mv_close(b * q, B * Q, "Bivector * Quadvector");
+    check_mv_close(q * b, Q * B, "Quadvector * Bivector");
+    check_mv_close(t * t, Tt * Tt, "Trivector * Trivector");
+    check_mv_close(t * q, Tt * Q, "Trivector * Quadvector");
+    check_mv_close(q * t, Q * Tt, "Quadvector * Trivector");
+    check_mv_close(m * v, m * V, "Multivector * Vector");
+    check_mv_close(v * m, V * m, "Vector * Multivector");
+    check_mv_close(m * b, m * B, "Multivector * Bivector");
+    check_mv_close(t * m, Tt * m, "Trivector * Multivector");
+    check_mv_close(m * q, m * Q, "Multivector * Quadvector");
+    check_mv_close(q * m, Q * m, "Quadvector * Multivector");
+    check_mv_close(r * v, R * V, "Rotor * Vector");
+    check_mv_close(v * r, V * R, "Vector * Rotor");
+    check_mv_close(tr * t, Tr * Tt, "Translator * Trivector");
+    check_mv_close(t * tr, Tt * Tr, "Trivector * Translator");
+    check_mv_close(mo * b, Mo * B, "Motor * Bivector");
+    check_mv_close(b * mo, B * Mo, "Bivector * Motor");
+    check_mv_close(mo * q, Mo * Q, "Motor * Quadvector");
+    check_mv_close(m * mo, m * Mo, "Multivector * Motor");
+    check_mv_close(r * m, R * m, "Rotor * Multivector");
+    check_mv_close(tr * m, Tr * m, "Translator * Multivector");
+
+    // A line squares to a study number: scalar plus e0123, nothing else.
+    const Multivector<double> bb = b * b;
+    check(bb.vector.e0 == 0.0 && bb.vector.e1 == 0.0 && bb.bivector.e01 == 0.0 && bb.bivector.e12 == 0.0
+          && bb.trivector.e123 == 0.0, "a bivector squared has grades 0 and 4 only");
+    check_scalar(bb.scalar, -(1 * 1 + 3 * 3 + 2 * 2), "the scalar part of B*B is minus the Euclidean norm squared");
+    check_quadvector(bb.quadvector, 2 * (2 * -2 - (-1) * 3 + 0.5 * 1), "the e0123 part of B*B is 2(e01 e23 - e02 e13 + e03 e12)");
+
+    // Higher wedges via the table.
+    check_trivector(v ^ b, (V * B).trivector.e012, (V * B).trivector.e013, (V * B).trivector.e023, (V * B).trivector.e123,
+                    "Vector ^ Bivector is the grade 3 part");
+    check_trivector(b ^ v, (B * V).trivector.e012, (B * V).trivector.e013, (B * V).trivector.e023, (B * V).trivector.e123,
+                    "Bivector ^ Vector is the grade 3 part");
+    check_quadvector(v ^ t, (V * Tt).quadvector.e0123, "Vector ^ Trivector is the grade 4 part");
+    check_quadvector(t ^ v, (Tt * V).quadvector.e0123, "Trivector ^ Vector is the grade 4 part");
+    check_quadvector(b ^ b, (B * B).quadvector.e0123, "Bivector ^ Bivector is the grade 4 part");
+    check_quadvector(b ^ Bivector<double>(0, 0, 0, 1, 0, 0), (B * ga::detail::promote(Bivector<double>(0, 0, 0, 1, 0, 0))).quadvector.e0123,
+                     "Bivector ^ Bivector against a second line");
+    check_trivector(ga::wedge_product(v, b), (v ^ b).e012, (v ^ b).e013, (v ^ b).e023, (v ^ b).e123, "wedge_product(v, b) == v ^ b");
+    check_trivector(ga::wedge_product(b, v), (b ^ v).e012, (b ^ v).e013, (b ^ v).e023, (b ^ v).e123, "wedge_product(b, v) == b ^ v");
+    check_quadvector(ga::wedge_product(v, t), (v ^ t).e0123, "wedge_product(v, t) == v ^ t");
+    check_quadvector(ga::wedge_product(t, v), (t ^ v).e0123, "wedge_product(t, v) == t ^ v");
+    check_quadvector(ga::wedge_product(b, b), (b ^ b).e0123, "wedge_product(b, b) == b ^ b");
+
+    // The wedge of a plane with a line is the point where they meet.
+    const Vector<double> z1 = test_plane(0, 0, 1, -1);
+    const Bivector<double> zAxis(0, 0, 0, 1, 0, 0);
+    const Trivector<double> hit = z1 ^ zAxis;
+    check_close(hit.e012 / hit.e123, -1.0, "z=1 meets the z-axis at z = 1 (e012 = -z)");
+    check_close(hit.e013 / hit.e123, 0.0, "... with y = 0");
+    check_close(hit.e023 / hit.e123, 0.0, "... with x = 0");
+}
+
+void test_mixed_grade_addition()
+{
+    section("mixed-grade addition");
+
+    const Scalar<double> s(1.0);
+    const Vector<double> v(2, 3, 4, 5);
+    const Bivector<double> b(6, 7, 8, 9, 10, 11);
+    const Trivector<double> t(12, 13, 14, 15);
+    const Quadvector<double> q(16.0);
+    const Multivector<double> all = make_mv(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+    // A chain through every grade, in an arbitrary order, lands every component.
+    check_mv_close(t + s + q + v + b, all, "s + v + b + t + q in any order");
+
+    // Every distinct pair, both orders, against promote-and-add.
+    check_mv_close(s + v, make_mv(1, 2, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), "Scalar + Vector");
+    check_mv_close(v + s, s + v, "Vector + Scalar");
+    check_mv_close(s + b, make_mv(1, 0, 0, 0, 0, 6, 7, 8, 9, 10, 11, 0, 0, 0, 0, 0), "Scalar + Bivector");
+    check_mv_close(b + s, s + b, "Bivector + Scalar");
+    check_mv_close(s + t, make_mv(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 13, 14, 15, 0), "Scalar + Trivector");
+    check_mv_close(t + s, s + t, "Trivector + Scalar");
+    check_mv_close(s + q, make_mv(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16), "Scalar + Quadvector");
+    check_mv_close(q + s, s + q, "Quadvector + Scalar");
+    check_mv_close(v + b, make_mv(0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 0, 0, 0, 0), "Vector + Bivector");
+    check_mv_close(b + v, v + b, "Bivector + Vector");
+    check_mv_close(v + t, make_mv(0, 2, 3, 4, 5, 0, 0, 0, 0, 0, 0, 12, 13, 14, 15, 0), "Vector + Trivector");
+    check_mv_close(t + v, v + t, "Trivector + Vector");
+    check_mv_close(v + q, make_mv(0, 2, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16), "Vector + Quadvector");
+    check_mv_close(q + v, v + q, "Quadvector + Vector");
+    check_mv_close(b + t, make_mv(0, 0, 0, 0, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0), "Bivector + Trivector");
+    check_mv_close(t + b, b + t, "Trivector + Bivector");
+    check_mv_close(b + q, make_mv(0, 0, 0, 0, 0, 6, 7, 8, 9, 10, 11, 0, 0, 0, 0, 16), "Bivector + Quadvector");
+    check_mv_close(q + b, b + q, "Quadvector + Bivector");
+    check_mv_close(t + q, make_mv(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 13, 14, 15, 16), "Trivector + Quadvector");
+    check_mv_close(q + t, t + q, "Quadvector + Trivector");
+
+    // Multivector with each grade, both orders.
+    check_mv_close(all + s, make_mv(2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16), "Multivector + Scalar");
+    check_mv_close(s + all, all + s, "Scalar + Multivector");
+    check_mv_close(all + v, make_mv(1, 4, 6, 8, 10, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16), "Multivector + Vector");
+    check_mv_close(v + all, all + v, "Vector + Multivector");
+    check_mv_close(all + b, make_mv(1, 2, 3, 4, 5, 12, 14, 16, 18, 20, 22, 12, 13, 14, 15, 16), "Multivector + Bivector");
+    check_mv_close(b + all, all + b, "Bivector + Multivector");
+    check_mv_close(all + t, make_mv(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 24, 26, 28, 30, 16), "Multivector + Trivector");
+    check_mv_close(t + all, all + t, "Trivector + Multivector");
+    check_mv_close(all + q, make_mv(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 32), "Multivector + Quadvector");
+    check_mv_close(q + all, all + q, "Quadvector + Multivector");
+
+    // Every mixed sum is a Multivector, even the ones that would fit a motor.
+    static_assert(std::is_same<decltype(s + b), Multivector<double>>::value, "Scalar + Bivector widens to Multivector");
+    static_assert(std::is_same<decltype(s + q), Multivector<double>>::value, "Scalar + Quadvector widens to Multivector");
+    static_assert(std::is_same<decltype(v + t), Multivector<double>>::value, "Vector + Trivector widens to Multivector");
+    static_assert(std::is_same<decltype(all + q), Multivector<double>>::value, "Multivector + Quadvector stays Multivector");
+
+    // The even types widen into Multivector on the right.
+    const Rotor<double> r(Scalar<double>(1.0), 2, 3, 4);
+    const Translator<double> tr(Scalar<double>(1.0), 2, 3, 4);
+    const Motor<double> mo(Scalar<double>(1.0), Bivector<double>(1, 1, 1, 1, 1, 1), Quadvector<double>(1.0));
+    check_mv_close(all + r, make_mv(2, 2, 3, 4, 5, 6, 7, 8, 11, 13, 15, 12, 13, 14, 15, 16), "Multivector + Rotor");
+    check_mv_close(all + tr, make_mv(2, 2, 3, 4, 5, 8, 10, 12, 9, 10, 11, 12, 13, 14, 15, 16), "Multivector + Translator");
+    check_mv_close(all + mo, make_mv(2, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 12, 13, 14, 15, 17), "Multivector + Motor");
+
+    // The named conversions.
+    const Motor<double> rm = ga::to_motor(r);
+    check_bivector(rm.bivector, 0, 0, 0, 2, 3, 4, "to_motor(Rotor)");
+    const Motor<double> tm = ga::to_motor(tr);
+    check_bivector(tm.bivector, 2, 3, 4, 0, 0, 0, "to_motor(Translator)");
+    const Motor<double> am = ga::to_motor(all);
+    check_scalar(am.scalar, 1.0, "to_motor(Multivector) scalar");
+    check_bivector(am.bivector, 6, 7, 8, 9, 10, 11, "to_motor(Multivector) bivector");
+    check_quadvector(am.quadvector, 16.0, "to_motor(Multivector) quadvector");
+    check_rotor(ga::to_rotor(all), 1, 9, 10, 11, "to_rotor(Multivector)");
+    check_rotor(ga::to_rotor(mo), 1, 1, 1, 1, "to_rotor(Motor)");
+    check_translator(ga::to_translator(all), 1, 6, 7, 8, "to_translator(Multivector)");
+    check_translator(ga::to_translator(mo), 1, 1, 1, 1, "to_translator(Motor)");
+    check_mv_close(ga::to_multivector(r), make_mv(1, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 0, 0), "to_multivector(Rotor)");
+    check_mv_close(ga::to_multivector(tr), make_mv(1, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0), "to_multivector(Translator)");
+    check_mv_close(ga::to_multivector(mo), make_mv(1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1), "to_multivector(Motor)");
+}
+
+void test_mixed_grade_subtraction()
+{
+    section("mixed-grade subtraction");
+
+    const Scalar<double> s(1.0);
+    const Vector<double> v(2, 3, 4, 5);
+    const Bivector<double> b(6, 7, 8, 9, 10, 11);
+    const Trivector<double> t(12, 13, 14, 15);
+    const Quadvector<double> q(16.0);
+    const Multivector<double> all = make_mv(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+    // a - b == a + (-b) for every pair, both orders.
+    check_mv_close(s - v, s + (-v), "Scalar - Vector");     check_mv_close(v - s, v + (-s), "Vector - Scalar");
+    check_mv_close(s - b, s + (-b), "Scalar - Bivector");   check_mv_close(b - s, b + (-s), "Bivector - Scalar");
+    check_mv_close(s - t, s + (-t), "Scalar - Trivector");  check_mv_close(t - s, t + (-s), "Trivector - Scalar");
+    check_mv_close(s - q, s + (-q), "Scalar - Quadvector"); check_mv_close(q - s, q + (-s), "Quadvector - Scalar");
+    check_mv_close(v - b, v + (-b), "Vector - Bivector");   check_mv_close(b - v, b + (-v), "Bivector - Vector");
+    check_mv_close(v - t, v + (-t), "Vector - Trivector");  check_mv_close(t - v, t + (-v), "Trivector - Vector");
+    check_mv_close(v - q, v + (-q), "Vector - Quadvector"); check_mv_close(q - v, q + (-v), "Quadvector - Vector");
+    check_mv_close(b - t, b + (-t), "Bivector - Trivector"); check_mv_close(t - b, t + (-b), "Trivector - Bivector");
+    check_mv_close(b - q, b + (-q), "Bivector - Quadvector"); check_mv_close(q - b, q + (-b), "Quadvector - Bivector");
+    check_mv_close(t - q, t + (-q), "Trivector - Quadvector"); check_mv_close(q - t, q + (-t), "Quadvector - Trivector");
+    check_mv_close(all - s, all + (-s), "Multivector - Scalar");     check_mv_close(s - all, s + (-all), "Scalar - Multivector");
+    check_mv_close(all - v, all + (-v), "Multivector - Vector");     check_mv_close(v - all, v + (-all), "Vector - Multivector");
+    check_mv_close(all - b, all + (-b), "Multivector - Bivector");   check_mv_close(b - all, b + (-all), "Bivector - Multivector");
+    check_mv_close(all - t, all + (-t), "Multivector - Trivector");  check_mv_close(t - all, t + (-all), "Trivector - Multivector");
+    check_mv_close(all - q, all + (-q), "Multivector - Quadvector"); check_mv_close(q - all, q + (-all), "Quadvector - Multivector");
+
+    // Subtracting a grade removes it.
+    check_mv_close(all - v - b - t - q - s, Multivector<double>(), "removing every grade leaves zero");
+    static_assert(std::is_same<decltype(v - q), Multivector<double>>::value, "Vector - Quadvector widens to Multivector");
+}
+
+void test_grade_projection()
+{
+    section("grade projection");
+
+    const Multivector<double> m = make_mv(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+    check_scalar(ga::grade0(m), 1.0, "grade0");
+    check_vector(ga::grade1(m), 2, 3, 4, 5, "grade1");
+    check_bivector(ga::grade2(m), 6, 7, 8, 9, 10, 11, "grade2");
+    check_trivector(ga::grade3(m), 12, 13, 14, 15, "grade3");
+    check_quadvector(ga::grade4(m), 16.0, "grade4");
+    check_mv_close(ga::grade0(m) + ga::grade1(m) + ga::grade2(m) + ga::grade3(m) + ga::grade4(m), m,
+                   "the grades reassemble the multivector");
+
+    const Rotor<double> r(Scalar<double>(1.0), 2, 3, 4);
+    check_scalar(ga::grade0(r), 1.0, "grade0(Rotor)");
+    check_bivector(ga::grade2(r), 0, 0, 0, 2, 3, 4, "grade2(Rotor) has zero ideal components");
+
+    const Translator<double> t(Scalar<double>(1.0), 2, 3, 4);
+    check_scalar(ga::grade0(t), 1.0, "grade0(Translator)");
+    check_bivector(ga::grade2(t), 2, 3, 4, 0, 0, 0, "grade2(Translator) has zero Euclidean components");
+
+    const Motor<double> mo(Scalar<double>(1.0), Bivector<double>(2, 3, 4, 5, 6, 7), Quadvector<double>(8.0));
+    check_scalar(ga::grade0(mo), 1.0, "grade0(Motor)");
+    check_bivector(ga::grade2(mo), 2, 3, 4, 5, 6, 7, "grade2(Motor)");
+    check_quadvector(ga::grade4(mo), 8.0, "grade4(Motor)");
+}
+
+// ---------------------------------------------------------------------------
 // Instantiation sweep
 //
 // Every check above runs on double and asserts about VALUES. A member of a
@@ -628,6 +1168,51 @@ void instantiate_every_entry_point()
     { ga::Translator<T> x(mo); (void)x; }
     { ga::Motor<T> x(m); (void)x; }
 
+    // Products: dot, wedge, the general product, and named spellings.
+    (void)(v | v); (void)ga::dot_product(v, v);
+    (void)(v ^ v); (void)ga::wedge_product(v, v);
+    (void)(v ^ b); (void)(b ^ v); (void)(v ^ t); (void)(t ^ v); (void)(b ^ b);
+    (void)ga::wedge_product(v, b); (void)ga::wedge_product(b, v); (void)ga::wedge_product(v, t);
+    (void)ga::wedge_product(t, v); (void)ga::wedge_product(b, b);
+    (void)(v * v); (void)ga::geometric_product(v, v); (void)ga::motor_product(v, v);
+    (void)(m * m); (void)ga::geometric_product(m, m);
+    (void)(r * r); (void)ga::rotor_product(r, r);
+    (void)(tr * tr); (void)ga::translator_product(tr, tr);
+    (void)(mo * mo); (void)ga::motor_product(mo, mo);
+    (void)ga::motor_product(t, t);
+
+    // Every mixed_products.hpp overload, both orders.
+    (void)(v * b); (void)(b * v); (void)(v * t); (void)(t * v); (void)(v * q); (void)(q * v);
+    (void)(v * m); (void)(m * v); (void)(v * r); (void)(r * v); (void)(v * tr); (void)(tr * v); (void)(v * mo); (void)(mo * v);
+    (void)(b * b); (void)(b * t); (void)(t * b); (void)(b * q); (void)(q * b);
+    (void)(b * m); (void)(m * b); (void)(b * r); (void)(r * b); (void)(b * tr); (void)(tr * b); (void)(b * mo); (void)(mo * b);
+    (void)(t * t); (void)(t * q); (void)(q * t);
+    (void)(t * m); (void)(m * t); (void)(t * r); (void)(r * t); (void)(t * tr); (void)(tr * t); (void)(t * mo); (void)(mo * t);
+    (void)(q * m); (void)(m * q); (void)(q * r); (void)(r * q); (void)(q * tr); (void)(tr * q); (void)(q * mo); (void)(mo * q);
+    (void)(m * r); (void)(r * m); (void)(m * tr); (void)(tr * m); (void)(m * mo); (void)(mo * m);
+    (void)(r * tr); (void)(tr * r); (void)(r * mo); (void)(mo * r); (void)(tr * mo); (void)(mo * tr);
+
+    // Mixed-grade sums and differences, both orders.
+    (void)(s + v); (void)(v + s); (void)(s + b); (void)(b + s); (void)(s + t); (void)(t + s); (void)(s + q); (void)(q + s);
+    (void)(v + b); (void)(b + v); (void)(v + t); (void)(t + v); (void)(v + q); (void)(q + v);
+    (void)(b + t); (void)(t + b); (void)(b + q); (void)(q + b); (void)(t + q); (void)(q + t);
+    (void)(m + s); (void)(s + m); (void)(m + v); (void)(v + m); (void)(m + b); (void)(b + m);
+    (void)(m + t); (void)(t + m); (void)(m + q); (void)(q + m);
+    (void)(s - v); (void)(v - s); (void)(s - b); (void)(b - s); (void)(s - t); (void)(t - s); (void)(s - q); (void)(q - s);
+    (void)(v - b); (void)(b - v); (void)(v - t); (void)(t - v); (void)(v - q); (void)(q - v);
+    (void)(b - t); (void)(t - b); (void)(b - q); (void)(q - b); (void)(t - q); (void)(q - t);
+    (void)(m - s); (void)(s - m); (void)(m - v); (void)(v - m); (void)(m - b); (void)(b - m);
+    (void)(m - t); (void)(t - m); (void)(m - q); (void)(q - m);
+    (void)(m + r); (void)(m + tr); (void)(m + mo); (void)(mo + r); (void)(mo + tr);
+
+    // Named conversions and grade projection.
+    (void)ga::to_motor(r); (void)ga::to_motor(tr); (void)ga::to_motor(m);
+    (void)ga::to_rotor(m); (void)ga::to_rotor(mo); (void)ga::to_translator(m); (void)ga::to_translator(mo);
+    (void)ga::to_multivector(r); (void)ga::to_multivector(tr); (void)ga::to_multivector(mo);
+    (void)ga::grade0(m); (void)ga::grade1(m); (void)ga::grade2(m); (void)ga::grade3(m); (void)ga::grade4(m);
+    (void)ga::grade0(r); (void)ga::grade2(r); (void)ga::grade0(tr); (void)ga::grade2(tr);
+    (void)ga::grade0(mo); (void)ga::grade2(mo); (void)ga::grade4(mo);
+
     // Printing.
     (void)s.to_string(); (void)v.to_string(); (void)b.to_string(); (void)t.to_string(); (void)q.to_string();
     (void)m.to_string(); (void)r.to_string(); (void)tr.to_string(); (void)mo.to_string();
@@ -693,6 +1278,17 @@ int main()
     test_translator();
     test_motor();
     test_compound_assignment();
+
+    test_basis_multiplication_table();
+    test_cayley_table_against_permutation_rule();
+    test_multivector_product();
+    test_dot_and_wedge();
+    test_incidence();
+    test_even_closure();
+    test_mixed_products();
+    test_mixed_grade_addition();
+    test_mixed_grade_subtraction();
+    test_grade_projection();
 
     test_instantiation_sweep();
 
