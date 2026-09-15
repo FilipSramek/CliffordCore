@@ -49,3 +49,16 @@
 #include "pga/rotor.hpp"
 #include "pga/translator.hpp"
 #include "pga/motor.hpp"
+
+// Products.
+#include "pga/operations/dot_product.hpp"
+#include "pga/operations/wedge_product.hpp"
+#include "pga/operations/geometric_product.hpp"
+#include "pga/operations/mixed_products.hpp"
+
+// Sums.
+#include "pga/operations/addition.hpp"
+#include "pga/operations/subtraction.hpp"
+
+// Structure.
+#include "pga/operations/grade.hpp"
