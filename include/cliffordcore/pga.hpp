@@ -74,3 +74,11 @@
 #include "pga/operations/contraction.hpp"
 #include "pga/operations/comparison.hpp"
 #include "pga/operations/stream.hpp"
+#include "pga/operations/geometry.hpp"
+#include "pga/operations/primitives.hpp"
+
+// Motions.
+#include "pga/operations/exp.hpp"
+#include "pga/operations/log.hpp"
+#include "pga/operations/sandwich.hpp"
+#include "pga/operations/motor_construction.hpp"
