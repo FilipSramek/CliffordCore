@@ -15,6 +15,7 @@
 // every one of them was verified against an independent model of the algebra
 // before being written down, so a failure means the code, not the expectation.
 
+#include <array>
 #include <cmath>
 #include <iostream>
 #include <sstream>
@@ -47,6 +48,12 @@
 #include "../include/cliffordcore/pga/operations/contraction.hpp"
 #include "../include/cliffordcore/pga/operations/comparison.hpp"
 #include "../include/cliffordcore/pga/operations/stream.hpp"
+#include "../include/cliffordcore/pga/operations/exp.hpp"
+#include "../include/cliffordcore/pga/operations/log.hpp"
+#include "../include/cliffordcore/pga/operations/sandwich.hpp"
+#include "../include/cliffordcore/pga/operations/primitives.hpp"
+#include "../include/cliffordcore/pga/operations/motor_construction.hpp"
+#include "../include/cliffordcore/pga/operations/geometry.hpp"
 
 namespace ga = CliffordCore::PGA;
 
@@ -163,6 +170,15 @@ void check_translator(const Translator<double>& t, double s, double e01, double 
     check_close(t.e01, e01, what + ".e01", tolerance);
     check_close(t.e02, e02, what + ".e02", tolerance);
     check_close(t.e03, e03, what + ".e03", tolerance);
+}
+
+// A unit motor satisfies m * reverse(m) == 1 exactly -- scalar one and nothing
+// else, e0123 included. That last part is what a naive normalisation misses.
+void check_motor_unit(const Motor<double>& m, const std::string& what, double tolerance = 1e-12)
+{
+    const Motor<double> product = m * ga::reverse(m);
+    check_close(product.scalar.value, 1.0, what + " (scalar)", tolerance);
+    check_close(product.quadvector.e0123, 0.0, what + " (e0123)", tolerance);
 }
 
 constexpr double kPi = 3.14159265358979323846;
@@ -657,16 +673,16 @@ int reference_blade_product(int i, int j, int& result_blade)
     return sign;
 }
 
-// Local stand-ins for the primitives that arrive with primitives.hpp; written
-// straight from docs/pga.md so the products can be tested on real geometry.
+// The primitives under short local names, so the product tests below read as
+// geometry. These are the real factories from primitives.hpp.
 Trivector<double> test_point(double x, double y, double z)
 {
-    return Trivector<double>(-z, y, -x, 1.0);
+    return ga::point(x, y, z);
 }
 
 Vector<double> test_plane(double a, double b, double c, double d)
 {
-    return Vector<double>(d, a, b, c);
+    return ga::plane(a, b, c, d);
 }
 
 void test_basis_multiplication_table()
@@ -1507,6 +1523,381 @@ void test_comparison()
 }
 
 // ---------------------------------------------------------------------------
+// Motions and geometry
+// ---------------------------------------------------------------------------
+
+void test_primitives()
+{
+    section("primitives");
+
+    // The conventions from docs/pga.md, spelled out once.
+    check_trivector(ga::point(1.0, 2.0, 3.0), -3, 2, -1, 1, "point(1,2,3) == e123 - x e023 + y e013 - z e012");
+    check_trivector(ga::origin<double>(), 0, 0, 0, 1, "origin() == e123");
+    check_trivector(ga::ideal_point(1.0, 2.0, 3.0), -3, 2, -1, 0, "ideal_point has the same ideal parts and zero weight");
+    check_vector(ga::plane(1.0, 2.0, 3.0, 4.0), 4, 1, 2, 3, "plane(a,b,c,d) == d e0 + a e1 + b e2 + c e3");
+    check_vector(ga::ideal_plane<double>(), 1, 0, 0, 0, "ideal_plane() == e0");
+    check_bivector(ga::line_through_origin(1.0, 0.0, 0.0), 0, 0, 0, 0, 0, 1, "the x axis is e23");
+    check_bivector(ga::line_through_origin(0.0, 1.0, 0.0), 0, 0, 0, 0, -1, 0, "the y axis is -e13");
+    check_bivector(ga::line_through_origin(0.0, 0.0, 1.0), 0, 0, 0, 1, 0, 0, "the z axis is e12");
+
+    // A point built by the factory is the triple meet of its coordinate planes.
+    check_trivector(ga::point(1.0, 2.0, 3.0),
+                    (ga::plane(1.0, 0.0, 0.0, -1.0) ^ ga::plane(0.0, 1.0, 0.0, -2.0) ^ ga::plane(0.0, 0.0, 1.0, -3.0)).e012,
+                    (ga::plane(1.0, 0.0, 0.0, -1.0) ^ ga::plane(0.0, 1.0, 0.0, -2.0) ^ ga::plane(0.0, 0.0, 1.0, -3.0)).e013,
+                    (ga::plane(1.0, 0.0, 0.0, -1.0) ^ ga::plane(0.0, 1.0, 0.0, -2.0) ^ ga::plane(0.0, 0.0, 1.0, -3.0)).e023,
+                    (ga::plane(1.0, 0.0, 0.0, -1.0) ^ ga::plane(0.0, 1.0, 0.0, -2.0) ^ ga::plane(0.0, 0.0, 1.0, -3.0)).e123,
+                    "point(1,2,3) is the meet of x=1, y=2, z=3");
+
+    // Round trips.
+    const std::array<double, 3> pos = ga::position(ga::point(1.5, -2.5, 3.0));
+    check_close(pos[0], 1.5, "position round trips x");
+    check_close(pos[1], -2.5, "position round trips y");
+    check_close(pos[2], 3.0, "position round trips z");
+    const std::array<double, 3> scaled = ga::position(ga::point(1.5, -2.5, 3.0) * Scalar<double>(4.0));
+    check_close(scaled[0], 1.5, "position divides out the weight");
+    check_close(scaled[2], 3.0, "... on every coordinate");
+    const std::array<double, 3> none = ga::position(ga::ideal_point(1.0, 2.0, 3.0));
+    check(none[0] == 0.0 && none[1] == 0.0 && none[2] == 0.0, "an ideal point has no position");
+
+    const std::array<double, 3> dir = ga::direction(ga::line_through_origin(1.0, 2.0, 3.0));
+    check_close(dir[0], 1.0, "direction(line) round trips dx");
+    check_close(dir[1], 2.0, "direction(line) round trips dy");
+    check_close(dir[2], 3.0, "direction(line) round trips dz");
+    const std::array<double, 3> nrm = ga::normal(ga::plane(1.0, 2.0, 3.0, 4.0));
+    check_close(nrm[0], 1.0, "normal(plane) round trips a");
+    check_close(nrm[2], 3.0, "normal(plane) round trips c");
+    check_scalar(ga::offset(ga::plane(1.0, 2.0, 3.0, 4.0)), 4.0, "offset(plane) is d");
+    const std::array<double, 3> mom = ga::moment(Bivector<double>(1, 2, 3, 4, 5, 6));
+    check(mom[0] == 1.0 && mom[1] == 2.0 && mom[2] == 3.0, "moment(line) is the ideal half");
+
+    // Lines two ways, and the plane through three points.
+    check_bivector(ga::line_through_points(ga::origin<double>(), ga::point(0.0, 0.0, 1.0)), 0, 0, 0, 1, 0, 0,
+                   "line_through_points(O, Z) is the z axis");
+    check_bivector(ga::line_from_planes(ga::plane(1.0, 0.0, 0.0, 0.0), ga::plane(0.0, 1.0, 0.0, 0.0)), 0, 0, 0, 1, 0, 0,
+                   "line_from_planes(x=0, y=0) is the z axis");
+    check_vector(ga::plane_through_points(ga::origin<double>(), ga::point(1.0, 0.0, 0.0), ga::point(0.0, 1.0, 0.0)),
+                 0, 0, 0, 1, "plane_through_points(O, X, Y) is z = 0");
+    check_vector(ga::plane_through_points(ga::origin<double>(), ga::point(1.0, 0.0, 0.0), ga::point(2.0, 0.0, 0.0)),
+                 0, 0, 0, 0, "three collinear points give a zero plane");
+
+    // Classification.
+    check(!ga::is_ideal(ga::point(1.0, 2.0, 3.0)) && ga::is_ideal(ga::ideal_point(1.0, 2.0, 3.0)), "is_ideal(point)");
+    check(!ga::is_ideal(ga::plane(1.0, 0.0, 0.0, 5.0)) && ga::is_ideal(ga::ideal_plane<double>()), "is_ideal(plane)");
+    check(!ga::is_ideal(ga::line_through_origin(0.0, 0.0, 1.0)) && ga::is_ideal(Bivector<double>(1, 2, 3, 0, 0, 0)), "is_ideal(line)");
+}
+
+void test_translator_construction()
+{
+    section("translator");
+
+    // The defining behaviour: it moves a point by exactly (dx, dy, dz).
+    const Trivector<double> O = ga::origin<double>();
+    check_trivector(ga::sandwich(O, ga::translator(2.0, 0.0, 0.0)), ga::point(2.0, 0.0, 0.0).e012,
+                    ga::point(2.0, 0.0, 0.0).e013, ga::point(2.0, 0.0, 0.0).e023, 1.0, "translator moves the origin along x");
+    check_trivector(ga::sandwich(O, ga::translator(0.0, 2.0, 0.0)), 0, 2, 0, 1, "translator moves the origin along y");
+    check_trivector(ga::sandwich(O, ga::translator(0.0, 0.0, 2.0)), -2, 0, 0, 1, "translator moves the origin along z");
+    const Trivector<double> moved = ga::sandwich(ga::point(1.0, 1.0, 1.0), ga::translator(1.0, 2.0, 3.0));
+    check_trivector(moved, ga::point(2.0, 3.0, 4.0).e012, ga::point(2.0, 3.0, 4.0).e013,
+                    ga::point(2.0, 3.0, 4.0).e023, 1.0, "translator moves an off-origin point");
+
+    // Planes and lines move too.
+    check_vector(ga::sandwich(ga::plane(1.0, 0.0, 0.0, 0.0), ga::translator(1.0, 0.0, 0.0)), -1, 1, 0, 0,
+                 "translating x = 0 by +1 gives x = 1");
+    const Bivector<double> zAxis = ga::line_through_origin(0.0, 0.0, 1.0);
+    check_bivector(ga::translate(zAxis, ga::translator(1.0, 0.0, 0.0)), 0, -1, 0, 1, 0, 0,
+                   "translating the z axis by +x gives the z-parallel line through (1,0,0)");
+    check_close(ga::distance(ga::point(0.0, 0.0, 5.0), ga::translate(zAxis, ga::translator(1.0, 0.0, 0.0))), 1.0,
+                "... which is 1 away from the z axis");
+
+    // Composition, inversion, and the named constructors.
+    const Translator<double> a = ga::translator(1.0, 2.0, 3.0);
+    const Translator<double> b = ga::translator(-1.0, 4.0, 0.5);
+    check_translator(a * b, ga::translator(0.0, 6.0, 3.5).scalar.value, ga::translator(0.0, 6.0, 3.5).e01,
+                     ga::translator(0.0, 6.0, 3.5).e02, ga::translator(0.0, 6.0, 3.5).e03, "translators add");
+    check_trivector(ga::sandwich(ga::sandwich(O, a), ga::inverse(a)), 0, 0, 0, 1, "a translation undoes itself");
+    check_translator(ga::identity_translator<double>(), 1, 0, 0, 0, "identity_translator");
+    check_trivector(ga::sandwich(ga::point(3.0, -1.0, 2.0), ga::identity_translator<double>()), -2, -1, -3, 1,
+                    "the identity translator moves nothing");
+    const Translator<double> between = ga::translator_between(ga::point(1.0, 2.0, 3.0), ga::point(4.0, 6.0, 3.0));
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 2.0, 3.0), between), ga::point(4.0, 6.0, 3.0)), 0.0,
+                "translator_between lands exactly");
+}
+
+void test_rotor_construction()
+{
+    section("rotor construction");
+
+    const double q = kPi / 2;
+
+    // The right-hand rule, on all three axes, for points.
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 0.0, 0.0), ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q)),
+                             ga::point(0.0, 1.0, 0.0)), 0.0, "+90 about +z takes (1,0,0) to (0,1,0)");
+    check_close(ga::distance(ga::sandwich(ga::point(0.0, 1.0, 0.0), ga::rotor_from_axis_angle(1.0, 0.0, 0.0, q)),
+                             ga::point(0.0, 0.0, 1.0)), 0.0, "+90 about +x takes (0,1,0) to (0,0,1)");
+    check_close(ga::distance(ga::sandwich(ga::point(0.0, 0.0, 1.0), ga::rotor_from_axis_angle(0.0, 1.0, 0.0, q)),
+                             ga::point(1.0, 0.0, 0.0)), 0.0, "+90 about +y takes (0,0,1) to (1,0,0)");
+
+    // ... and for planes, which is the same rotation seen the other way up.
+    const Vector<double> turned = ga::rotate(ga::plane(1.0, 0.0, 0.0, 0.0), ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q));
+    check_vector(turned, 0, 0, 1, 0, "+90 about +z takes the plane x=0 to the plane y=0");
+
+    // The axis is fixed, and the rotor is unit.
+    const Rotor<double> r = ga::rotor_from_axis_angle(1.0, 1.0, 1.0, 0.7);
+    check_scalar(ga::norm(r), 1.0, "rotor_from_axis_angle returns a unit rotor");
+    const Bivector<double> axis = ga::normalize(ga::line_through_origin(1.0, 1.0, 1.0));
+    check_bivector(ga::rotate(axis, r), axis.e01, axis.e02, axis.e03, axis.e12, axis.e13, axis.e23,
+                   "the axis line is fixed by the rotation");
+    check_trivector(ga::sandwich(ga::origin<double>(), r), 0, 0, 0, 1, "the origin is fixed by a rotor");
+
+    // An unnormalised axis, a zero axis, and composition.
+    check_rotor(ga::rotor_from_axis_angle(0.0, 0.0, 5.0, q), ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q).scalar.value,
+                ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q).e12, ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q).e13,
+                ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q).e23, "the axis is normalized internally");
+    check_rotor(ga::rotor_from_axis_angle(0.0, 0.0, 0.0, q), 1, 0, 0, 0, "a zero axis gives the identity");
+    check_rotor(ga::identity_rotor<double>(), 1, 0, 0, 0, "identity_rotor");
+    const Rotor<double> half = ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q / 2);
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 0.0, 0.0), half * half), ga::point(0.0, 1.0, 0.0)), 0.0,
+                "two 45 degree turns compose into 90");
+    check_close(ga::distance(ga::sandwich(ga::sandwich(ga::point(1.0, 2.0, 3.0), r), ga::reverse(r)), ga::point(1.0, 2.0, 3.0)),
+                0.0, "reversing a unit rotor undoes it");
+
+    // A rotor agrees with the motor built from the same line.
+    const Motor<double> asMotor = ga::motor_from_line_angle(ga::line_through_origin(0.0, 0.0, 1.0), q);
+    check_mv_close(ga::to_multivector(asMotor), ga::to_multivector(Motor<double>(ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q))),
+                   "motor_from_line_angle about an origin line is the rotor");
+}
+
+void test_motor_construction()
+{
+    section("motor construction");
+
+    const double q = kPi / 2;
+
+    // A rotation about a line that misses the origin: the whole point of PGA.
+    const Bivector<double> offset = ga::line_through_points(ga::point(1.0, 0.0, 0.0), ga::point(1.0, 0.0, 1.0));
+    const Motor<double> turn = ga::motor_from_line_angle(offset, kPi);
+    check_close(ga::distance(ga::sandwich(ga::point(2.0, 0.0, 0.0), turn), ga::origin<double>()), 0.0,
+                "180 degrees about the z-parallel line through (1,0,0) maps (2,0,0) to the origin");
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 0.0, 5.0), turn), ga::point(1.0, 0.0, 5.0)), 0.0,
+                "... and fixes the points on that line");
+    check_scalar(ga::norm(turn), 1.0, "motor_from_line_angle returns a unit motor");
+    check_motor_unit(turn, "motor_from_line_angle: m * reverse(m) == 1");
+
+    // A screw: rotate about the z axis and rise along it at the same time.
+    const Motor<double> s = ga::screw(ga::line_through_origin(0.0, 0.0, 1.0), q, 2.0);
+    const Trivector<double> screwed = ga::sandwich(ga::point(1.0, 0.0, 0.0), s);
+    check_close(ga::distance(screwed, ga::point(0.0, 1.0, 2.0)), 0.0, "screw turns by 90 about z and rises by 2");
+    check_motor_unit(s, "screw: m * reverse(m) == 1");
+    check_close(ga::distance(ga::sandwich(ga::origin<double>(), ga::screw(ga::line_through_origin(0.0, 0.0, 1.0), 0.0, 3.0)),
+                             ga::point(0.0, 0.0, 3.0)), 0.0, "a screw with no rotation is a translation");
+    check_mv_close(ga::to_multivector(ga::screw(ga::line_through_origin(0.0, 0.0, 1.0), q, 0.0)),
+                   ga::to_multivector(ga::motor_from_line_angle(ga::line_through_origin(0.0, 0.0, 1.0), q)),
+                   "a screw with no rise is a rotation");
+    check_mv_close(ga::to_multivector(ga::screw(Bivector<double>(1, 2, 3, 0, 0, 0), q, 1.0)),
+                   ga::to_multivector(ga::identity_motor<double>()), "an ideal axis gives the identity motor");
+
+    // motor_between takes a plane onto a plane.
+    const Vector<double> from = ga::plane(1.0, 0.0, 0.0, 0.0);
+    const Vector<double> to = ga::plane(0.0, 1.0, 0.0, 0.0);
+    const Motor<double> between = ga::motor_between(from, to);
+    const Vector<double> landed = ga::sandwich(from, between);
+    check_vector(landed, to.e0, to.e1, to.e2, to.e3, "motor_between lands the plane exactly");
+    check_motor_unit(between, "motor_between returns a unit motor");
+    const Motor<double> opposite = ga::motor_between(from, -from);
+    check_vector(ga::sandwich(from, opposite), -from.e0, -from.e1, -from.e2, -from.e3,
+                 "motor_between handles opposite planes with a half turn");
+    check_mv_close(ga::to_multivector(ga::motor_between(from, ga::plane(0.0, 0.0, 0.0, 0.0))),
+                   ga::to_multivector(ga::identity_motor<double>()), "a degenerate target gives the identity");
+
+    // Rotation then translation, and the identity.
+    const Motor<double> rt = ga::motor_from_rotor_translator(ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q),
+                                                             ga::translator(0.0, 0.0, 5.0));
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 0.0, 0.0), rt), ga::point(0.0, 1.0, 5.0)), 0.0,
+                "motor_from_rotor_translator rotates then translates");
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 2.0, 3.0), ga::identity_motor<double>()), ga::point(1.0, 2.0, 3.0)),
+                0.0, "the identity motor moves nothing");
+
+    // Motors compose and invert.
+    const Motor<double> a = ga::screw(ga::line_through_points(ga::point(1.0, 0.0, 0.0), ga::point(1.0, 1.0, 0.0)), 0.6, 1.5);
+    const Motor<double> b = ga::motor_from_line_angle(ga::line_through_origin(1.0, 1.0, 1.0), -0.9);
+    const Trivector<double> p = ga::point(2.0, -1.0, 0.5);
+    check_close(ga::distance(ga::sandwich(p, a * b), ga::sandwich(ga::sandwich(p, b), a)), 0.0,
+                "(a*b) applied once == b applied then a");
+    check_close(ga::distance(ga::sandwich(ga::sandwich(p, a), ga::inverse(a)), p), 0.0, "a motion undoes itself");
+    check_close(ga::distance(ga::sandwich(ga::sandwich(p, a), ga::reverse(a)), p), 0.0, "reverse undoes a unit motor");
+
+    // A rigid motion preserves distances and angles.
+    const Trivector<double> p2 = ga::point(-1.0, 3.0, 2.0);
+    check_close(ga::distance(ga::sandwich(p, a), ga::sandwich(p2, a)), ga::distance(p, p2), "a motor preserves distances");
+    check_close(ga::angle(ga::sandwich(from, a), ga::sandwich(to, a)), ga::angle(from, to), "a motor preserves angles");
+}
+
+void test_exp_log()
+{
+    section("exp/log");
+
+    // exp of zero, of a pure Euclidean bivector, and of a pure ideal one.
+    check_mv_close(ga::to_multivector(ga::exp(Bivector<double>())), ga::to_multivector(ga::identity_motor<double>()),
+                   "exp(0) is the identity motor");
+
+    const Bivector<double> euclid(0, 0, 0, 0.7, -0.2, 0.4);
+    const double theta = std::sqrt(0.49 + 0.04 + 0.16);
+    const Motor<double> fromEuclid = ga::exp(euclid);
+    check_scalar(fromEuclid.scalar, std::cos(theta), "exp of a Euclidean bivector: scalar is cos|B|");
+    check_bivector(fromEuclid.bivector, 0, 0, 0, std::sin(theta) * 0.7 / theta, std::sin(theta) * -0.2 / theta,
+                   std::sin(theta) * 0.4 / theta, "... bivector is sin|B| B/|B|, as in Cl3");
+    check_quadvector(fromEuclid.quadvector, 0.0, "... and there is no e0123 part");
+
+    const Bivector<double> ideal(1.5, -2.0, 0.5, 0, 0, 0);
+    const Motor<double> fromIdeal = ga::exp(ideal);
+    check_scalar(fromIdeal.scalar, 1.0, "exp of an ideal bivector: scalar is exactly 1");
+    check_bivector(fromIdeal.bivector, 1.5, -2.0, 0.5, 0, 0, 0, "... and the series terminates at 1 + B");
+    check_quadvector(fromIdeal.quadvector, 0.0, "... with no e0123 part");
+
+    // A general screw: exp is unit, and log inverts it.
+    const Bivector<double> screwB(0.3, -0.7, 1.1, 0.5, 0.2, -0.9);
+    const Motor<double> m = ga::exp(screwB);
+    check_motor_unit(m, "exp(B) is always a unit motor");
+    check_bivector(ga::log(m), screwB.e01, screwB.e02, screwB.e03, screwB.e12, screwB.e13, screwB.e23,
+                   "log(exp(B)) == B for a general screw", 1e-12);
+    check_mv_close(ga::to_multivector(ga::exp(ga::log(m))), ga::to_multivector(m), "exp(log(m)) == m");
+    check_bivector(ga::log(ga::exp(euclid)), 0, 0, 0, 0.7, -0.2, 0.4, "log(exp(B)) == B for a Euclidean bivector");
+    check_bivector(ga::log(ga::exp(ideal)), 1.5, -2.0, 0.5, 0, 0, 0, "log(exp(B)) == B for an ideal bivector");
+
+    // exp and the constructors agree.
+    const double q = kPi / 2;
+    const Bivector<double> zAxis = ga::line_through_origin(0.0, 0.0, 1.0);
+    check_mv_close(ga::to_multivector(ga::exp(zAxis * Scalar<double>(-q / 2))),
+                   ga::to_multivector(ga::motor_from_line_angle(zAxis, q)), "exp(-(angle/2) L) == motor_from_line_angle");
+    check_bivector(ga::log(ga::translator(2.0, 4.0, 6.0)), -1, -2, -3, 0, 0, 0, "log(translator) is its ideal part");
+    // exp(-(angle/2) L) means the log of a quarter turn about z is -(pi/4) e12.
+    check_bivector(ga::log(ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q)), 0, 0, 0, -q / 2, 0, 0,
+                   "log(rotor) recovers half the angle on the rotation plane");
+
+    // log recovers the axis and angle of a motion.
+    const Motor<double> known = ga::motor_from_line_angle(ga::normalize(ga::line_through_origin(1.0, 2.0, 2.0)), 1.2);
+    const Bivector<double> recovered = ga::log(known);
+    check_close(2 * ga::norm(recovered).value, 1.2, "log recovers the angle, as twice the bivector norm");
+    const std::array<double, 3> axisDir = ga::direction(ga::normalize(recovered));
+    check_close(std::abs(axisDir[0]), 1.0 / 3.0, "log recovers the axis direction x");
+    check_close(std::abs(axisDir[1]), 2.0 / 3.0, "... y");
+    check_close(std::abs(axisDir[2]), 2.0 / 3.0, "... z");
+
+    // Zero motors and the degenerate cases do not produce NaN.
+    check_bivector(ga::log(Motor<double>()), 0, 0, 0, 0, 0, 0, "log of a zero motor returns zero, not NaN");
+    check_bivector(ga::log(ga::identity_motor<double>()), 0, 0, 0, 0, 0, 0, "log(identity) is zero");
+}
+
+void test_slerp()
+{
+    section("slerp");
+
+    const double q = kPi / 2;
+    const Motor<double> a = ga::identity_motor<double>();
+    const Motor<double> b = ga::motor_from_line_angle(ga::line_through_origin(0.0, 0.0, 1.0), q);
+
+    check_mv_close(ga::to_multivector(ga::slerp(a, b, 0.0)), ga::to_multivector(a), "slerp at t = 0 is the start");
+    check_mv_close(ga::to_multivector(ga::slerp(a, b, 1.0)), ga::to_multivector(b), "slerp at t = 1 is the end", 1e-12);
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 0.0, 0.0), ga::slerp(a, b, 0.5)),
+                             ga::sandwich(ga::point(1.0, 0.0, 0.0), ga::motor_from_line_angle(ga::line_through_origin(0.0, 0.0, 1.0), q / 2))),
+                0.0, "slerp at t = 0.5 is the half rotation");
+    check_motor_unit(ga::slerp(a, b, 0.37), "slerp stays on the unit motors");
+
+    // A screw interpolates rotation and translation together.
+    const Motor<double> s = ga::screw(ga::line_through_origin(0.0, 0.0, 1.0), q, 4.0);
+    const Trivector<double> mid = ga::sandwich(ga::point(1.0, 0.0, 0.0), ga::slerp(a, s, 0.5));
+    const std::array<double, 3> midPos = ga::position(mid);
+    check_close(midPos[2], 2.0, "half a screw has risen half the distance");
+    check_close(std::atan2(midPos[1], midPos[0]), q / 2, "... and turned half the angle");
+
+    // The short way round: a negated motor is the same motion.
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 0.0, 0.0), ga::slerp(a, -b, 0.5)),
+                             ga::sandwich(ga::point(1.0, 0.0, 0.0), ga::slerp(a, b, 0.5))), 0.0,
+                "slerp to a negated motor takes the same short path");
+
+    // The rotor and translator overloads.
+    const Rotor<double> r0 = ga::identity_rotor<double>();
+    const Rotor<double> r1 = ga::rotor_from_axis_angle(0.0, 0.0, 1.0, q);
+    check_rotor(ga::slerp(r0, r1, 0.0), 1, 0, 0, 0, "slerp(rotor) at t = 0");
+    check_close(ga::distance(ga::sandwich(ga::point(1.0, 0.0, 0.0), ga::slerp(r0, r1, 1.0)), ga::point(0.0, 1.0, 0.0)), 0.0,
+                "slerp(rotor) at t = 1");
+    static_assert(std::is_same<decltype(ga::slerp(r0, r1, 0.5)), Rotor<double>>::value, "slerp(Rotor, Rotor) returns a Rotor");
+    const Translator<double> t1 = ga::translator(4.0, 0.0, 0.0);
+    check_close(ga::distance(ga::sandwich(ga::origin<double>(), ga::slerp(ga::identity_translator<double>(), t1, 0.25)),
+                             ga::point(1.0, 0.0, 0.0)), 0.0, "slerp(translator) moves at constant speed");
+    static_assert(std::is_same<decltype(ga::slerp(t1, t1, 0.5)), Translator<double>>::value,
+                  "slerp(Translator, Translator) returns a Translator");
+}
+
+void test_geometry()
+{
+    section("geometry");
+
+    // Reflection in the plane x = 0.
+    const Vector<double> mirror = ga::plane(1.0, 0.0, 0.0, 0.0);
+    check_close(ga::distance(ga::reflect(ga::point(1.0, 2.0, 3.0), mirror), ga::point(-1.0, 2.0, 3.0)), 0.0,
+                "reflecting a point in x = 0 negates its x");
+    check(ga::reflect(ga::point(1.0, 2.0, 3.0), mirror).e123 > 0.0, "a reflected point keeps a positive weight");
+    // x + y = 1 is plane(1, 1, 0, -1); reflected it becomes -x + y = 1.
+    const Vector<double> reflectedPlane = ga::reflect(ga::plane(1.0, 1.0, 0.0, -1.0), mirror);
+    check_vector(reflectedPlane, -1, -1, 1, 0, "reflecting x + y = 1 in x = 0 gives -x + y = 1");
+    check_bivector(ga::reflect(ga::line_through_origin(0.0, 0.0, 1.0), mirror), 0, 0, 0, 1, 0, 0,
+                   "the z axis is unchanged by a reflection in x = 0");
+    check_bivector(ga::reflect(ga::line_through_origin(1.0, 0.0, 0.0), mirror), 0, 0, 0, 0, 0, -1,
+                   "the x axis is reversed by a reflection in x = 0");
+    // Two reflections make a rotation.
+    const Vector<double> second = ga::plane(1.0, 1.0, 0.0, 0.0);
+    const Trivector<double> twice = ga::reflect(ga::reflect(ga::point(1.0, 0.0, 0.0), mirror), second);
+    check_close(ga::distance(twice, ga::sandwich(ga::point(1.0, 0.0, 0.0), ga::motor_between(mirror, second) * ga::motor_between(mirror, second))),
+                0.0, "two reflections compose into a rotation by twice the angle");
+    // Reflecting in an unnormalised plane is the same as in a normalised one.
+    check_close(ga::distance(ga::reflect(ga::point(1.0, 2.0, 3.0), mirror * Scalar<double>(7.0)),
+                             ga::reflect(ga::point(1.0, 2.0, 3.0), mirror)), 0.0, "reflect normalises internally");
+
+    // Projection.
+    const Vector<double> z1 = ga::plane(0.0, 0.0, 1.0, -1.0);
+    check_close(ga::distance(ga::project(ga::point(1.0, 2.0, 3.0), z1), ga::point(1.0, 2.0, 1.0)), 0.0,
+                "projecting a point onto z = 1 drops it to z = 1");
+    check(ga::project(ga::point(1.0, 2.0, 3.0), z1).e123 > 0.0, "the projected point keeps a positive weight");
+    const Bivector<double> zAxis = ga::line_through_origin(0.0, 0.0, 1.0);
+    check_close(ga::distance(ga::project(ga::point(1.0, 2.0, 3.0), zAxis), ga::point(0.0, 0.0, 3.0)), 0.0,
+                "projecting a point onto the z axis keeps only z");
+    check(ga::project(ga::point(1.0, 2.0, 3.0), zAxis).e123 > 0.0, "... with a positive weight");
+    const Bivector<double> xLine = ga::line_through_points(ga::point(0.0, -2.0, 0.0), ga::point(1.0, -2.0, 0.0));
+    const Bivector<double> projected = ga::project(xLine, z1);
+    check_close(ga::distance(ga::point(0.0, -2.0, 1.0), projected), 0.0, "projecting a line onto z = 1 lands it in the plane");
+    const std::array<double, 3> projDir = ga::direction(ga::normalize(projected));
+    check_close(std::abs(projDir[0]), 1.0, "... keeping its direction");
+    check_trivector(ga::project(ga::point(1.0, 2.0, 3.0), ga::ideal_plane<double>()), 0, 0, 0, 0,
+                    "projecting onto the ideal plane gives zero, not NaN");
+
+    // Distances.
+    check_close(ga::distance(ga::point(1.0, 2.0, 3.0), ga::point(4.0, 6.0, 3.0)), 5.0, "distance between two points");
+    check_close(ga::distance(ga::point(1.0, 2.0, 3.0), ga::point(1.0, 2.0, 3.0)), 0.0, "a point is zero from itself");
+    check_close(ga::distance(ga::point(1.0, 2.0, 3.0) * Scalar<double>(3.0), ga::point(4.0, 6.0, 3.0) * Scalar<double>(-2.0)),
+                5.0, "distance divides out the weights");
+    check_close(ga::distance(ga::point(1.0, 2.0, 3.0), z1), 2.0, "a point 2 above the plane z = 1");
+    check_close(ga::distance(ga::point(1.0, 2.0, -1.0), z1), -2.0, "... and 2 below it, signed");
+    check_close(ga::distance(ga::point(1.0, 2.0, 1.0), z1), 0.0, "a point on the plane is zero away");
+    check_close(ga::distance(ga::point(1.0, 2.0, 3.0), ga::plane(3.0, 0.0, 0.0, -3.0)), 0.0,
+                "distance normalises the plane internally");
+    check_close(ga::distance(ga::point(1.0, 2.0, 3.0), zAxis), std::sqrt(5.0), "distance from a point to the z axis");
+    check_close(ga::distance(ga::point(0.0, 0.0, 7.0), zAxis), 0.0, "a point on the line is zero away");
+    check_close(ga::distance(ga::ideal_point(1.0, 0.0, 0.0), ga::origin<double>()), 0.0, "an ideal point has no distance");
+
+    // Angles.
+    check_close(ga::angle(ga::plane(1.0, 0.0, 0.0, 0.0), ga::plane(0.0, 1.0, 0.0, 0.0)), kPi / 2, "perpendicular planes");
+    check_close(ga::angle(ga::plane(1.0, 0.0, 0.0, 0.0), ga::plane(1.0, 1.0, 0.0, 0.0)), kPi / 4, "planes at 45 degrees");
+    check_close(ga::angle(ga::plane(1.0, 0.0, 0.0, 0.0), ga::plane(1.0, 0.0, 0.0, -9.0)), 0.0,
+                "parallel planes are at zero degrees whatever their offsets");
+    check_close(ga::angle(zAxis, ga::line_through_origin(1.0, 0.0, 0.0)), kPi / 2, "perpendicular lines");
+    check_close(ga::angle(zAxis, ga::line_through_origin(1.0, 0.0, 1.0)), kPi / 4, "lines at 45 degrees");
+    check_close(ga::angle(zAxis, ga::line_through_points(ga::point(5.0, 5.0, 0.0), ga::point(5.0, 5.0, 1.0))), 0.0,
+                "parallel lines are at zero degrees wherever they are");
+    check_close(ga::angle(ga::ideal_plane<double>(), ga::plane(1.0, 0.0, 0.0, 0.0)), 0.0, "an ideal plane has no angle");
+}
+
+// ---------------------------------------------------------------------------
 // Instantiation sweep
 //
 // Every check above runs on double and asserts about VALUES. A member of a
@@ -1665,6 +2056,37 @@ void instantiate_every_entry_point()
     (void)ga::approx_equal(q, q); (void)ga::approx_equal(m, m); (void)ga::approx_equal(r, r); (void)ga::approx_equal(tr, tr); (void)ga::approx_equal(mo, mo);
     (void)ga::approx_equal(v, v, T(1e-3));
 
+    // Primitives and the accessors.
+    (void)ga::point(T(1), T(2), T(3)); (void)ga::ideal_point(T(1), T(2), T(3)); (void)ga::origin<T>();
+    (void)ga::plane(T(1), T(2), T(3), T(4)); (void)ga::ideal_plane<T>(); (void)ga::line_through_origin(T(1), T(2), T(3));
+    (void)ga::line_through_points(t, t); (void)ga::line_from_planes(v, v); (void)ga::plane_through_points(t, t, t);
+    (void)ga::position(t); (void)ga::direction(t); (void)ga::direction(b); (void)ga::moment(b);
+    (void)ga::normal(v); (void)ga::offset(v);
+    (void)ga::is_ideal(v); (void)ga::is_ideal(b); (void)ga::is_ideal(t);
+
+    // exp, log and the sandwich.
+    (void)ga::exp(b); (void)ga::log(mo); (void)ga::log(r); (void)ga::log(tr);
+    (void)ga::sandwich(v, mo); (void)ga::sandwich(b, mo); (void)ga::sandwich(t, mo); (void)ga::sandwich(m, mo);
+    (void)ga::sandwich(v, r); (void)ga::sandwich(b, r); (void)ga::sandwich(t, r); (void)ga::sandwich(m, r);
+    (void)ga::sandwich(v, tr); (void)ga::sandwich(b, tr); (void)ga::sandwich(t, tr); (void)ga::sandwich(m, tr);
+    (void)ga::rotate(v, r); (void)ga::rotate(b, r); (void)ga::rotate(t, r); (void)ga::rotate(m, r);
+    (void)ga::translate(v, tr); (void)ga::translate(b, tr); (void)ga::translate(t, tr); (void)ga::translate(m, tr);
+    (void)ga::transform(v, mo); (void)ga::transform(b, mo); (void)ga::transform(t, mo); (void)ga::transform(m, mo);
+
+    // Versor construction.
+    (void)ga::identity_rotor<T>(); (void)ga::identity_translator<T>(); (void)ga::identity_motor<T>();
+    (void)ga::translator(T(1), T(2), T(3)); (void)ga::translator_between(t, t);
+    (void)ga::rotor_from_axis_angle(T(0), T(0), T(1), T(1));
+    (void)ga::motor_from_line_angle(b, T(1)); (void)ga::screw(b, T(1), T(2));
+    (void)ga::motor_between(v, v); (void)ga::motor_from_rotor_translator(r, tr);
+    (void)ga::slerp(mo, mo, T(0.5)); (void)ga::slerp(r, r, T(0.5)); (void)ga::slerp(tr, tr, T(0.5));
+
+    // Geometry.
+    (void)ga::reflect(v, v); (void)ga::reflect(b, v); (void)ga::reflect(t, v);
+    (void)ga::project(t, v); (void)ga::project(t, b); (void)ga::project(b, v);
+    (void)ga::distance(t, t); (void)ga::distance(t, v); (void)ga::distance(t, b);
+    (void)ga::angle(v, v); (void)ga::angle(b, b);
+
     // Printing.
     (void)s.to_string(); (void)v.to_string(); (void)b.to_string(); (void)t.to_string(); (void)q.to_string();
     (void)m.to_string(); (void)r.to_string(); (void)tr.to_string(); (void)mo.to_string();
@@ -1755,6 +2177,14 @@ int main()
     test_join_and_meet();
     test_contractions();
     test_comparison();
+
+    test_primitives();
+    test_translator_construction();
+    test_rotor_construction();
+    test_motor_construction();
+    test_exp_log();
+    test_slerp();
+    test_geometry();
 
     test_instantiation_sweep();
 
