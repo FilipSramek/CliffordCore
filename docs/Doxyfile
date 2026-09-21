@@ -2865,7 +2865,7 @@ MSCFILE_DIRS           =
 #---------------------------------------------------------------------------
 
 PROJECT_NAME           = "CliffordCore"
-PROJECT_BRIEF          = "Header-only C++17 3D Clifford algebra, Cl(3,0)"
+PROJECT_BRIEF          = "Header-only C++17 Clifford algebra: Cl(3,0) and Cl(3,0,1)"
 OUTPUT_DIRECTORY       = api
 
 INPUT                  = ../include ../docs
@@ -2921,4 +2921,4 @@ QUIET                  = YES
 # The mainpage lives in include/cliffordcore.hpp. Deliberately NOT setting
 # USE_MDFILE_AS_MAINPAGE: having both produces a duplicate-mainpage warning,
 # and the README targets GitHub readers while the mainpage targets API readers.
-PROJECT_NUMBER         = "0.1.0"
+PROJECT_NUMBER         = "0.2.0"

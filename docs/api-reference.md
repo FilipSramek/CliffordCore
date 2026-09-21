@@ -1,9 +1,16 @@
 # API reference
 
-Every entity lives in `namespace CliffordCore::Cl3`; the snippets below assume
-`namespace ga = CliffordCore::Cl3;`. Every type is
+**This page catalogues Cl(3,0)**, `namespace CliffordCore::Cl3`; the snippets
+below assume `namespace ga = CliffordCore::Cl3;`. Every type is
 `template<typename T>` with `static_assert(std::is_arithmetic<T>::value, ...)`,
 and every function is `constexpr`. `T` is omitted below for readability.
+
+Cl(3,0,1) mirrors this structure one directory over, in
+`cliffordcore/pga/` and `namespace CliffordCore::PGA`, with the same header
+names and the same operation names. What differs is the *meaning* of each type
+and several of the formulas; [pga.md](pga.md) documents those, and the PGA
+section at the end of this page lists what the namespace adds and where the
+signatures differ.
 
 This page is a hand-written catalogue meant to be readable straight from the
 repository. For a generated reference with cross-links, run
@@ -302,3 +309,94 @@ unit rotor: the pseudoscalar is central.
 - `rotor_from_axis_angle(Vector axis, T angle)` → `Rotor`
 - `rotor_between(Vector from, Vector to)` → `Rotor`
 - `slerp(Rotor from, Rotor to, T t)` → `Rotor`
+
+---
+
+## Cl(3,0,1) — `namespace CliffordCore::PGA`
+
+Header `cliffordcore/pga.hpp`, directory `cliffordcore/pga/`. Same layout, same
+operation names, same `constexpr`-everywhere rule. Read [pga.md](pga.md) for the
+conventions; this section is the delta from the Cl(3,0) catalogue above.
+
+### Types
+
+| Type | Grade | Members | Geometry |
+| --- | --- | --- | --- |
+| `Scalar` | 0 | `value` | |
+| `Vector`, `Plane` | 1 | `e0 e1 e2 e3` | a plane |
+| `Bivector`, `Line`, `Twist` | 2 | `e01 e02 e03 e12 e13 e23` | a line |
+| `Trivector`, `Point` | 3 | `e012 e013 e023 e123` | a point |
+| `Quadvector` | 4 | `e0123` | the pseudoscalar |
+| `Multivector` | mixed | the five parts above | |
+| `Rotor` | 0+2 | `scalar, e12, e13, e23` | rotation about an origin axis |
+| `Translator` | 0+2 | `scalar, e01, e02, e03` | translation |
+| `Motor` | 0+2+4 | `scalar, bivector, quadvector` | any rigid motion |
+
+`Rotor`, `Translator` and `Motor` widen implicitly to `Multivector`, and the
+first two to `Motor`. Every narrowing constructor is `explicit`; the named
+forms are `to_rotor`, `to_translator`, `to_motor`, `to_multivector`.
+
+### What the shared headers do differently
+
+- `geometric_product.hpp` — the 16x16 table. Adds `motor_product(Vector, Vector)`
+  and `translator_product`; `Rotor * Rotor`, `Translator * Translator` and
+  `Motor * Motor` all keep their own type.
+- `mixed_products.hpp` — every pair of even types returns `Motor`, everything
+  else `Multivector`. **`Trivector * Trivector` is here and returns a
+  `Multivector`** (grades 0 and 2), not a `Scalar` as in Cl(3,0).
+- `norm.hpp` — adds `ideal_norm(x)` for every type. `norm` sees only the
+  components without `e0`, so every ideal element has zero norm.
+- `normalize.hpp` — no `Quadvector` overload. `normalize(Motor)` divides by the
+  square root of a study number, not by the norm.
+- `inverse.hpp` — no `Quadvector` overload. `Bivector` and `Motor` carry a study
+  number correction; `Multivector` uses the Hitzer–Sangwine n = 4 formula.
+- `dual.hpp` — `dual` is the right complement, not a product with the
+  pseudoscalar, and `undual` is its exact inverse. Both cover all five grades
+  and `Multivector`.
+- `grade.hpp` — adds `grade4`, and `grade0`/`grade2` for `Translator`, plus
+  `grade0`/`grade2`/`grade4` for `Motor`.
+- `contraction.hpp` — the ten non-decreasing pairs among the five blade types.
+- `exp.hpp` / `log.hpp` — `exp(Bivector)` → `Motor`;
+  `log(Motor | Rotor | Translator)` → `Bivector`.
+- `sandwich.hpp` — `sandwich(x, Motor | Rotor | Translator)` for `Vector`,
+  `Bivector`, `Trivector` and `Multivector`, plus `rotate`, `translate` and
+  `transform` as the named forms.
+
+### Headers with no Cl(3,0) counterpart
+
+`regressive_product.hpp`
+
+- `regressive_product(a, b)`, `join(a, b)` — for `(Point, Point)` → `Line`,
+  `(Point, Line)` and `(Line, Point)` → `Plane`, `(Line, Line)` → `Scalar`
+- `meet(a, b)` — the wedge under its geometric name
+
+`primitives.hpp`
+
+- `plane(a, b, c, d)`, `point(x, y, z)`, `ideal_point(dx, dy, dz)`,
+  `origin<T>()`, `ideal_plane<T>()`
+- `line_through_origin(dx, dy, dz)`, `line_through_points(P, Q)`,
+  `line_from_planes(p, q)`, `plane_through_points(P, Q, R)`
+- `position(Point)`, `direction(Point)`, `direction(Line)`, `moment(Line)`,
+  `normal(Plane)`, `offset(Plane)` — all `std::array<T, 3>` except `offset`
+- `is_ideal(x)` for `Plane`, `Line` and `Point`
+
+`motor_construction.hpp` (`rotor_construction.hpp`'s counterpart)
+
+- `identity_rotor<T>()`, `identity_translator<T>()`, `identity_motor<T>()`
+- `translator(dx, dy, dz)`, `translator_between(Point, Point)`
+- `rotor_from_axis_angle(dx, dy, dz, angle)` — note the **direction as three
+  numbers**, not a `Vector`, since a PGA `Vector` is a plane
+- `motor_from_line_angle(Line, angle)`, `screw(Line, angle, distance)`
+- `motor_between(Plane, Plane)`, `motor_from_rotor_translator(Rotor, Translator)`
+- `slerp` for `Motor`, `Rotor` and `Translator`
+
+`geometry.hpp` (same name, different contents)
+
+- `reflect(x, Plane)` for `Plane`, `Line` and `Point`
+- `project(Point, Plane)`, `project(Point, Line)`, `project(Line, Plane)`
+- `distance(Point, Point)`, `distance(Point, Plane)` (signed),
+  `distance(Point, Line)`
+- `angle(Plane, Plane)`, `angle(Line, Line)`
+
+`distance` and `angle` return a raw `T` and are `inline`, not `constexpr` —
+they use `std::acos` and `std::sqrt`. There is no `reject`.

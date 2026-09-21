@@ -3,10 +3,11 @@
 Every sign in CliffordCore follows from a handful of choices made once. This page
 collects them. If a result's sign looks wrong, the answer is almost always here.
 
-**This page is about Cl(3,0)**, `namespace CliffordCore::Cl3`. The planned
-`PGA` and `Cl2` namespaces reuse the type names but not the metric, so none of
-the signs below carry over to them unexamined -- a degenerate `e0^2 = 0` breaks
-the dual and the inverse in particular.
+**This page is about Cl(3,0)**, `namespace CliffordCore::Cl3`. The `PGA`
+namespace reuses the type names but not the metric, so none of the signs below
+carry over to it -- a degenerate `e0^2 = 0` breaks the dual, the inverse and the
+norm in particular. Its conventions are in [pga.md](pga.md), and the same
+warning will apply to the planned `Cl2`.
 
 ## The basis
 
@@ -102,8 +103,8 @@ not provided -- you almost always meant `Vector | Bivector`.
 The left contraction is chosen over the symmetric "fat dot" deliberately. It is
 the product the projection formulas are written with -- `project(v, plane)` is
 `(v _| B) * inverse(B)` -- and it is the one that keeps working in a degenerate
-metric, which will matter when Cl(3,0,1) lands. Committing to that reading now
-means `|` will not quietly change meaning later.
+metric. That bet paid off: `PGA` uses the same reading of `|`, with the same
+projection formulas, and `|` did not have to change meaning between algebras.
 
 `scalar_product(a, b)` is the grade 0 part of any product, and
 `right_contraction` is the reverse-mirror of the left one.
@@ -203,7 +204,9 @@ side by side.
   `exp(Bivector)` and `log(Rotor)`. The series does not close cleanly once odd
   grades are involved, and `log` becomes multivalued.
 - **No `meet` / `join`.** In Cl(3,0) everything passes through the origin, which
-  makes them much less interesting than they are in a projective algebra.
+  makes them much less interesting than they are in a projective algebra. They
+  do exist in [PGA](pga.md), where objects can sit anywhere and the questions
+  they answer are the ones you actually have.
 
 ### A conversion that used to bite
 

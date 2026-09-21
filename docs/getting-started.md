@@ -24,8 +24,14 @@ namespace ga = CliffordCore::Cl3;
 
 Everything lives in `namespace CliffordCore::Cl3`. The alias is the recommended
 spelling: it makes the choice of algebra one visible line, and switching to
-Cl(3,0,1) or Cl(2,0) later is a one-line edit, because those namespaces use the
-same type names.
+Cl(3,0,1) is a one-line edit, because that namespace uses the same type names --
+`#include <cliffordcore/pga.hpp>` and `namespace ga = CliffordCore::PGA;`.
+
+What the names *mean* does change: a `Vector` is a direction in Cl(3,0) and a
+plane in PGA. Read [pga.md](pga.md) before assuming a Cl(3,0) sign survives the
+move. And do not include both umbrellas in one translation unit — mixing two
+algebras in one expression is a bug, which the separate namespaces turn into a
+compile error.
 
 Every header is a valid standalone entry point, and that property is maintained
 deliberately — each one pulls in its own dependencies. Use the umbrella header
