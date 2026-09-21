@@ -5,7 +5,7 @@
  * @brief Stream insertion for every type, delegating to to_string().
  *
  * One-line operator<< for each type, delegating to its to_string(). Kept in
- * its own header so the type headers do not have to pull in <ostream>.
+ * its own header so the type headers do not have to pull in @c \<ostream\>.
  *
  * @author Filip Sramek
  * @version 0.2.0

@@ -8,7 +8,7 @@
  * a Bivector, and a vector with a bivector to a Trivector.
  *
  * @author Filip Sramek
- * @version 0.1.0
+ * @version 0.2.0
  * @date 2026
  * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
  * @note Licensing is not settled yet; see README.md.

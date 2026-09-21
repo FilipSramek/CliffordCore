@@ -11,7 +11,7 @@
  * across Cl(3,0), PGA and Cl(2,0).
  *
  * @author Filip Sramek
- * @version 0.1.0
+ * @version 0.2.0
  * @date 2026
  * @copyright Copyright (c) 2026 Filip Sramek. All rights reserved.
  * @note Licensing is not settled yet; see README.md.

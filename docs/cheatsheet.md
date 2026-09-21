@@ -1,7 +1,7 @@
 # Cheat sheet
 
 One screen, for Cl(3,0). Everything here is verified by compilation and by
-`tests/test_core.cpp`.
+`tests/test_core.cpp`. The Cl(3,0,1) equivalent is at the bottom.
 
 ```cpp
 #include <cliffordcore/cl3.hpp>
@@ -118,4 +118,86 @@ e1^2 = e2^2 = e3^2 = +1        e12^2 = e13^2 = e23^2 = e123^2 = -1
 bivector basis is (xy, xz, yz) = (e1e2, e1e3, e2e3)     -- xz, not zx
 dual(dual(a)) == -a            exp(theta*B) rotates by 2*theta
 sandwich(v, r) = R v ~R        e12 rotates about z, not about x
+```
+
+---
+
+## Cl(3,0,1), on one screen
+
+```cpp
+#include <cliffordcore/pga.hpp>
+namespace ga = CliffordCore::PGA;
+```
+
+Verified by `tests/test_pga.cpp`. Full conventions in [pga.md](pga.md).
+
+### What each grade is
+
+| Type | Is | Alias |
+| --- | --- | --- |
+| `Vector` | a **plane** `a x + b y + c z + d = 0` | `Plane` |
+| `Bivector` | a **line** | `Line`, `Twist` |
+| `Trivector` | a **point** | `Point` |
+| `Quadvector` | the pseudoscalar `e0123` | |
+| `Rotor` / `Translator` / `Motor` | rotation about an origin axis / translation / any rigid motion | |
+
+### Building things
+
+```cpp
+auto p  = ga::plane(a, b, c, d);              // a x + b y + c z + d = 0
+auto P  = ga::point(x, y, z);                 // weight 1
+auto O  = ga::origin<double>();
+auto L  = ga::line_through_points(P, Q);      // or line_from_planes(p, q)
+auto ax = ga::line_through_origin(dx, dy, dz);
+```
+
+### Moving things
+
+```cpp
+auto t = ga::translator(dx, dy, dz);
+auto r = ga::rotor_from_axis_angle(dx, dy, dz, angle);   // axis through the origin
+auto m = ga::motor_from_line_angle(L, angle);            // ANY line
+auto s = ga::screw(L, angle, distance);                  // rotate and slide
+
+auto moved = ga::sandwich(P, m);     // works for planes, lines, points, multivectors
+auto back  = ga::sandwich(moved, ga::reverse(m));
+auto half  = ga::slerp(identity, m, 0.5);
+```
+
+### Asking questions
+
+```cpp
+ga::meet(p, q)            // plane ^ plane -> the line they share
+ga::join(P, Q)            // point v point -> the line through both
+(p ^ P).e0123             // zero iff the point lies on the plane
+ga::distance(P, Q)        // also (P, plane) -- signed -- and (P, line)
+ga::angle(p, q)           // also (line, line)
+ga::project(P, p)         // also (P, line) and (line, plane)
+ga::reflect(P, mirror)
+ga::position(P)           // std::array<T,3>; direction(), normal(), moment()
+ga::is_ideal(x)           // at infinity?
+```
+
+### Components
+
+| Type | Fields |
+| --- | --- |
+| `Vector` | `.e0` `.e1` `.e2` `.e3` |
+| `Bivector` | `.e01` `.e02` `.e03` `.e12` `.e13` `.e23` |
+| `Trivector` | `.e012` `.e013` `.e023` `.e123` |
+| `Quadvector` | `.e0123` |
+| `Rotor` | `.scalar.value` `.e12` `.e13` `.e23` |
+| `Translator` | `.scalar.value` `.e01` `.e02` `.e03` |
+| `Motor` | `.scalar` `.bivector` `.quadvector` |
+| `Multivector` | `.scalar` `.vector` `.bivector` `.trivector` `.quadvector` |
+
+### Signs and traps, in six lines
+
+```text
+e0^2 = 0, e1^2 = e2^2 = e3^2 = +1        e123^2 = -1,  e0123^2 = 0
+point(x,y,z) = e123 - x e023 + y e013 - z e012      x,y,z axes = e23, -e13, e12
+dual is the COMPLEMENT, not *e0123       dual(dual(a)) == -a on grades 1 and 3
+Trivector * Trivector is a Multivector   (grades 0 and 2) -- NOT a Scalar as in Cl3
+norm() ignores every e0 component        ideal_norm() is the other half
+a Motor's inverse/normalize need the study number; reverse(m)/|m|^2 is not enough
 ```
