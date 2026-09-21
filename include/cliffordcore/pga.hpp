@@ -60,5 +60,17 @@
 #include "pga/operations/addition.hpp"
 #include "pga/operations/subtraction.hpp"
 
+// Magnitudes and involutions.
+#include "pga/operations/norm.hpp"
+#include "pga/operations/normalize.hpp"
+#include "pga/operations/reverse.hpp"
+#include "pga/operations/involutions.hpp"
+#include "pga/operations/inverse.hpp"
+
 // Structure.
+#include "pga/operations/dual.hpp"
+#include "pga/operations/regressive_product.hpp"
 #include "pga/operations/grade.hpp"
+#include "pga/operations/contraction.hpp"
+#include "pga/operations/comparison.hpp"
+#include "pga/operations/stream.hpp"
