@@ -179,5 +179,9 @@ degenerate metric. [docs/conventions.md](docs/conventions.md) and
 [docs/pga.md](docs/pga.md) are separate pages for exactly that reason. Further
 API changes are still possible before 1.0.
 
-**No license yet.** Until a LICENSE file lands the code is all rights reserved,
-so this is not yet usable in your own project. That is being resolved.
+## License
+
+Apache License 2.0 -- see [LICENSE](LICENSE) for the full text. You may use,
+modify and redistribute the library, including commercially, provided you keep
+the notice and state your changes; the patent grant and the "AS IS" disclaimer
+come with it. Every header carries `SPDX-License-Identifier: Apache-2.0`.
