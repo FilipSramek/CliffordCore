@@ -1472,6 +1472,14 @@ void test_contractions()
     check_scalar(ga::scalar_product(b, c), (b * c).scalar.value, "scalar_product(B, C)");
     check_scalar(ga::scalar_product(v, b), 0.0, "scalar_product(v, B) is zero");
 
+    // Where the product is already a pure Scalar, scalar_product must still
+    // work. These did not compile until grade0 gained a Scalar overload.
+    check_scalar(ga::scalar_product(Quadvector<double>(2.0), Quadvector<double>(3.0)), 0.0,
+                 "scalar_product of two quadvectors, e0123^2 = 0");
+    check_scalar(ga::scalar_product(Scalar<double>(2.0), Scalar<double>(5.0)), 10.0,
+                 "scalar_product of two scalars");
+    check_scalar(ga::grade0(Scalar<double>(7.0)), 7.0, "grade0(Scalar) is the identity");
+
     // Geometry: the plane x = 0 contracted into the point (1, 2, 3) is the line
     // through the point along x -- the same direction as e23, offset.
     const Bivector<double> perp = test_plane(1, 0, 0, 0) | test_point(1, 2, 3);
@@ -2048,6 +2056,7 @@ void instantiate_every_entry_point()
     (void)ga::right_contraction(b, b); (void)ga::right_contraction(t, b); (void)ga::right_contraction(q, b);
     (void)ga::right_contraction(t, t); (void)ga::right_contraction(q, t); (void)ga::right_contraction(q, q);
     (void)ga::scalar_product(v, v); (void)ga::scalar_product(b, b); (void)ga::scalar_product(m, m); (void)ga::scalar_product(v, b);
+    (void)ga::scalar_product(q, q); (void)ga::scalar_product(s, s); (void)ga::grade0(s);
 
     // Comparison, on every type.
     (void)(s == s); (void)(v == v); (void)(b == b); (void)(t == t); (void)(q == q); (void)(m == m); (void)(r == r); (void)(tr == tr); (void)(mo == mo);
