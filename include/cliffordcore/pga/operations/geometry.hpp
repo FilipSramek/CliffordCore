@@ -14,7 +14,7 @@
  * points do not, which keeps a reflected point's weight positive.
  *
  * The distance and angle functions divide by norms, so they return a raw
- * arithmetic value rather than a Scalar, and they use std::acos and
+ * arithmetic value rather than a Scalar, and they use std::atan2 and
  * std::sqrt, which makes them inline rather than constexpr -- the same
  * exception approx_equal makes.
  *
@@ -205,18 +205,23 @@ namespace CliffordCore::PGA
      * @brief The angle between two planes, in radians.
      * @param a The first plane.
      * @param b The second plane.
-     * @return acos of their normalized dot product, in [0, pi]. Zero if either
+     * @return The angle between their normals, in [0, pi]. Zero if either
      *         plane is ideal. The planes' positions do not matter -- only the
      *         normals, which is what the degenerate metric arranges.
+     *
+     * Computed as atan2(|a ^ b|, a . b) rather than acos(a . b / |a||b|). The
+     * acos form is badly conditioned near 0 and pi -- its slope is
+     * 1/sin(angle) -- so nearly parallel planes lost most of their angle,
+     * and in float all of it. atan2 keeps full relative precision everywhere,
+     * needs no clamp, and does not divide by the norms at all.
      */
     inline T angle(const Vector<T>& a, const Vector<T>& b) {
-        const T na = norm(a).value;
-        const T nb = norm(b).value;
-        if (na == T(0) || nb == T(0)) {
+        if (norm(a).value == T(0) || norm(b).value == T(0)) {
             return T(0);
         }
-        const T c = (a | b).value / (na * nb);
-        return std::acos(c < T(-1) ? T(-1) : (c > T(1) ? T(1) : c));
+        // |a ^ b| is the Euclidean norm of the line where the planes meet:
+        // |a||b| sin(angle). a . b is |a||b| cos(angle).
+        return std::atan2(norm(a ^ b).value, (a | b).value);
     }
 
     template<typename T>
@@ -224,18 +229,22 @@ namespace CliffordCore::PGA
      * @brief The angle between two lines, in radians.
      * @param a The first line.
      * @param b The second line.
-     * @return acos of minus their normalized scalar product, in [0, pi]. The
-     *         minus sign is there because a unit line squares to -1. Zero if
-     *         either line is ideal; skew lines still give the angle between
-     *         their directions.
+     * @return The angle between their directions, in [0, pi]. Zero if either
+     *         line is ideal; skew lines still give the angle between their
+     *         directions.
+     *
+     * Computed with atan2 rather than acos, for the reason given on the plane
+     * overload. Both parts come from the one product a * b: its scalar part is
+     * -|a||b| cos(angle) -- minus, because a unit line squares to -1 -- and the
+     * Euclidean norm of its bivector part is |a||b| sin(angle), the cross
+     * product of the two directions. The ideal parts of a * b, which carry the
+     * lines' positions, are ignored by norm().
      */
     inline T angle(const Bivector<T>& a, const Bivector<T>& b) {
-        const T na = norm(a).value;
-        const T nb = norm(b).value;
-        if (na == T(0) || nb == T(0)) {
+        if (norm(a).value == T(0) || norm(b).value == T(0)) {
             return T(0);
         }
-        const T c = -grade0(a * b).value / (na * nb);
-        return std::acos(c < T(-1) ? T(-1) : (c > T(1) ? T(1) : c));
+        const Multivector<T> product = a * b;
+        return std::atan2(norm(product.bivector).value, -product.scalar.value);
     }
 } // namespace CliffordCore::PGA
