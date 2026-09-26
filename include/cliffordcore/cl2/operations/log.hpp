@@ -22,7 +22,8 @@
 
 // A rotor is a + b e12, a complex number, and its log is the angle it makes
 // with the positive real axis: atan2(b, a) e12. That one call replaces the
-// clamp-then-acos-then-divide sequence Cl(3,0) needs:
+// clamp-then-acos-then-divide sequence Cl(3,0) once used (it now uses atan2
+// too, for the reasons below):
 //
 //   - It agrees with Cl(3,0)'s formula everywhere. That one computes
 //     acos(a) * b/|b|, which for a = cos(phi), b = sin(phi) is
