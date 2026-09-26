@@ -35,7 +35,7 @@ template<typename T>
  */
 class Trivector
 {
-    static_assert(std::is_arithmetic<T>::value, "Trivector can only be instantiated with numeric types.");
+    static_assert(std::is_floating_point<T>::value, "Trivector can only be instantiated with floating-point types.");
 
 public:
     T e123;   ///< The pseudoscalar component (e1e2e3).

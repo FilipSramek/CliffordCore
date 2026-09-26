@@ -32,7 +32,7 @@ namespace CliffordCore::Cl3
      */
     class Rotor
     {
-        static_assert(std::is_arithmetic<T>::value, "Rotor can only be instantiated with numeric types.");
+        static_assert(std::is_floating_point<T>::value, "Rotor can only be instantiated with floating-point types.");
     public:
         Scalar<T> scalar;      ///< The grade 0 part.
         Bivector<T> bivector; ///< The grade 2 part, the rotation plane.

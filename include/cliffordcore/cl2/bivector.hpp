@@ -40,7 +40,7 @@ template<typename T>
  */
 class Bivector
 {
-    static_assert(std::is_arithmetic<T>::value, "Bivector can only be instantiated with numeric types.");
+    static_assert(std::is_floating_point<T>::value, "Bivector can only be instantiated with floating-point types.");
 
 public:
     T xy;   ///< The bivector component (e1e2), which is also the pseudoscalar.
