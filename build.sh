@@ -18,6 +18,9 @@ mkdir -p "$BUILD_DIR"
 # because something else included <string> first" class of bug.
 "$ROOT_DIR/check_headers.sh" || exit 1
 
+# Non-floating-point component types must be rejected, with the right message.
+"$ROOT_DIR/check_compile_fail.sh" || exit 1
+
 shopt -s nullglob
 
 total=0
