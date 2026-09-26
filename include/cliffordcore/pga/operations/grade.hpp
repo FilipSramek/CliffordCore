@@ -31,6 +31,10 @@
 // These are named per grade rather than written as grade<N>(m) because each
 // grade has a different return type, which a single template cannot express
 // without extra machinery.
+//
+// grade0 of a Scalar is the identity. It exists for scalar_product(a, b),
+// which is spelled grade0(a * b): wherever a product is already a pure Scalar
+// -- Quadvector * Quadvector, Scalar * Scalar -- that call needs it to compile.
 
 namespace CliffordCore::PGA
 {
@@ -152,5 +156,15 @@ namespace CliffordCore::PGA
      */
     constexpr Quadvector<T> grade4(const Motor<T>& m) {
         return m.quadvector;
+    }
+
+    template<typename T>
+    /**
+     * @brief Extracts the grade 0 part of a scalar, which is the scalar itself.
+     * @param s The scalar to project.
+     * @return The same scalar.
+     */
+    constexpr Scalar<T> grade0(const Scalar<T>& s) {
+        return s;
     }
 } // namespace CliffordCore::PGA
