@@ -44,7 +44,7 @@ template<typename T>
  */
 class Trivector
 {
-    static_assert(std::is_arithmetic<T>::value, "Trivector can only be instantiated with numeric types.");
+    static_assert(std::is_floating_point<T>::value, "Trivector can only be instantiated with floating-point types.");
 
 public:
     T e012;   ///< The e0e1e2 component (ideal: minus the z coordinate times the weight).

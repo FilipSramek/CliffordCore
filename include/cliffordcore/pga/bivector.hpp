@@ -43,7 +43,7 @@ template<typename T>
  */
 class Bivector
 {
-    static_assert(std::is_arithmetic<T>::value, "Bivector can only be instantiated with numeric types.");
+    static_assert(std::is_floating_point<T>::value, "Bivector can only be instantiated with floating-point types.");
 
 public:
     T e01;   ///< The e0e1 component (ideal: part of the moment).

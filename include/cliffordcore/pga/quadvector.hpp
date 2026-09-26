@@ -38,7 +38,7 @@ template<typename T>
  */
 class Quadvector
 {
-    static_assert(std::is_arithmetic<T>::value, "Quadvector can only be instantiated with numeric types.");
+    static_assert(std::is_floating_point<T>::value, "Quadvector can only be instantiated with floating-point types.");
 
 public:
     T e0123;   ///< The pseudoscalar component (e0e1e2e3).

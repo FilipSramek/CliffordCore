@@ -43,7 +43,7 @@ namespace CliffordCore::PGA
      */
     class Translator
     {
-        static_assert(std::is_arithmetic<T>::value, "Translator can only be instantiated with numeric types.");
+        static_assert(std::is_floating_point<T>::value, "Translator can only be instantiated with floating-point types.");
     public:
         Scalar<T> scalar;   ///< The grade 0 part, 1 for a normalised translator.
         T e01;              ///< The e0e1 component: minus half the x displacement.

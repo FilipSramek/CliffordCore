@@ -36,7 +36,7 @@ template<typename T>
  */
 class Vector
 {
-    static_assert(std::is_arithmetic<T>::value, "Vector can only be instantiated with numeric types.");
+    static_assert(std::is_floating_point<T>::value, "Vector can only be instantiated with floating-point types.");
 
 public:
     T x;   ///< The x-component of the vector.

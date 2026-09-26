@@ -31,7 +31,7 @@ namespace CliffordCore::Cl2
      */
     class Multivector
     {
-        static_assert(std::is_arithmetic<T>::value, "Multivector can only be instantiated with numeric types.");
+        static_assert(std::is_floating_point<T>::value, "Multivector can only be instantiated with floating-point types.");
     public:
         Scalar<T> scalar;        ///< The grade 0 part.
         Vector<T> vector;        ///< The grade 1 part.

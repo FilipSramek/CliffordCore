@@ -38,7 +38,7 @@ template <typename T>
  * @tparam T The arithmetic component type.
  */
 class Scalar {
-    static_assert(std::is_arithmetic<T>::value, "Scalar can only be instantiated with numeric types.");
+    static_assert(std::is_floating_point<T>::value, "Scalar can only be instantiated with floating-point types.");
 
 public:
     T value;   ///< The scalar value.
