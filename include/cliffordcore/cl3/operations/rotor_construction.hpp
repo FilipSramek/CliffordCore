@@ -16,7 +16,6 @@
  */
 
 #include <cmath>
-#include <limits>
 #include "../scalar.hpp"
 #include "../vector.hpp"
 #include "../bivector.hpp"
@@ -74,9 +73,11 @@ namespace CliffordCore::Cl3
      * @param to The target direction. Normalized internally.
      * @return A unit rotor r with sandwich(from, r) parallel to to.
      *
-     * Built as normalize(1 + to*from), the half-angle construction. When the two
-     * directions are opposite the rotation plane is ambiguous, so a perpendicular
-     * plane containing `from` is chosen and the result is a half turn.
+     * Built as normalize(1 + to*from), the half-angle construction, evaluated
+     * so that it stays accurate to a few epsilons however close the two
+     * directions are to opposite. When they are exactly opposite the rotation
+     * plane is ambiguous, so a perpendicular plane containing `from` is chosen
+     * and the result is a half turn.
      */
     constexpr Rotor<T> rotor_between(const Vector<T>& from, const Vector<T>& to) {
         if (norm(from).value == T(0) || norm(to).value == T(0)) {
@@ -85,19 +86,33 @@ namespace CliffordCore::Cl3
 
         const Vector<T> a = normalize(from);
         const Vector<T> b = normalize(to);
-        const T alignment = (a | b).value;
+        const T d = (a | b).value;
 
-        // Opposite directions: every plane containing `a` is a valid half turn,
-        // so pick one that is definitely not degenerate.
-        if (alignment < T(-1) + std::numeric_limits<T>::epsilon() * T(8)) {
+        // The rotor is normalize((1 + a.b) + b ^ a), but both parts are
+        // computed so that neither cancels when a and b are nearly opposite.
+        // Written naively, 1 + a.b and b ^ a both lose a digit for every factor
+        // of ten the angle gets closer to pi, and b ^ a also tilts off the
+        // plane of a -- which is what makes the naive rotor miss its target.
+        //
+        //   b ^ a == (a + b) ^ a exactly, since a ^ a = 0, and a + b is
+        //   computed without rounding when b is close to -a.
+        //   1 + a.b == |a ^ b|^2 / (1 - a.b) exactly, since
+        //   |a ^ b|^2 = 1 - (a.b)^2 for unit vectors; used only when a.b < 0,
+        //   where 1 - a.b is close to 2 and nothing cancels.
+        const Bivector<T> plane = (a + b) ^ a;
+        const T plane_squared = squared_norm(plane).value;
+        const T s = d >= T(0) ? T(1) + d : plane_squared / (T(1) - d);
+
+        // Exactly opposite: both parts vanish, and every plane containing `a`
+        // is a valid half turn, so pick one that is definitely not degenerate.
+        if (s == T(0) && plane_squared == T(0)) {
             const Vector<T> reference =
                 (std::abs(a.x) < T(0.9)) ? Vector<T>(1, 0, 0) : Vector<T>(0, 1, 0);
             // A unit bivector with zero scalar part is exactly a half turn.
             return Rotor<T>(Scalar<T>(0), normalize(a ^ reference));
         }
 
-        const Multivector<T> product = geometric_product(b, a);
-        return normalize(Rotor<T>(product.scalar + Scalar<T>(1), product.bivector));
+        return normalize(Rotor<T>(Scalar<T>(s), plane));
     }
 
     template<typename T>
