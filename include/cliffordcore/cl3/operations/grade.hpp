@@ -27,6 +27,10 @@
 // These are named per grade rather than written as grade<N>(m) because each
 // grade has a different return type, which a single template cannot express
 // without extra machinery.
+//
+// grade0 of a Scalar is the identity. It exists for scalar_product(a, b),
+// which is spelled grade0(a * b): wherever a product is already a pure Scalar
+// -- Trivector * Trivector, Scalar * Scalar -- that call needs it to compile.
 
 namespace CliffordCore::Cl3
 {
@@ -88,5 +92,15 @@ namespace CliffordCore::Cl3
      */
     constexpr Bivector<T> grade2(const Rotor<T>& r) {
         return r.bivector;
+    }
+
+    template<typename T>
+    /**
+     * @brief Extracts the grade 0 part of a scalar, which is the scalar itself.
+     * @param s The scalar to project.
+     * @return The same scalar.
+     */
+    constexpr Scalar<T> grade0(const Scalar<T>& s) {
+        return s;
     }
 } // namespace CliffordCore::Cl3
