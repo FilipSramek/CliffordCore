@@ -18,7 +18,6 @@
  */
 
 #include <cmath>
-#include <limits>
 #include "../scalar.hpp"
 #include "../vector.hpp"
 #include "../bivector.hpp"
@@ -94,8 +93,10 @@ namespace CliffordCore::Cl2
      * @param to The target direction. Normalized internally.
      * @return A unit rotor r with sandwich(from, r) parallel to to.
      *
-     * Built as normalize(1 + to*from), the half-angle construction. When the
-     * two directions are opposite that expression is zero. There is no choice
+     * Built as normalize(1 + to*from), the half-angle construction, evaluated
+     * so that it stays accurate to a few epsilons however close the two
+     * directions are to opposite. When they are exactly opposite that
+     * expression is zero. There is no choice
      * of plane to make in two dimensions -- only which way round -- so the
      * counter-clockwise half turn, rotor_from_angle(pi), is returned.
      */
@@ -106,16 +107,28 @@ namespace CliffordCore::Cl2
 
         const Vector<T> a = normalize(from);
         const Vector<T> b = normalize(to);
-        const T alignment = (a | b).value;
+        const T d = (a | b).value;
 
-        // Opposite directions: a half turn either way. Take the
-        // counter-clockwise one, written exactly rather than via cos(pi/2).
-        if (alignment < T(-1) + std::numeric_limits<T>::epsilon() * T(8)) {
+        // The rotor is normalize((1 + a.b) + b ^ a), but both parts are
+        // computed so that neither cancels when a and b are nearly opposite --
+        // the naive 1 + a.b loses a digit for every factor of ten the angle
+        // gets closer to pi, which float runs out of at about 1e-3 radians.
+        //
+        //   b ^ a == (a + b) ^ a exactly, since a ^ a = 0, and a + b is
+        //   computed without rounding when b is close to -a.
+        //   1 + a.b == |a ^ b|^2 / (1 - a.b) exactly, since
+        //   |a ^ b|^2 = 1 - (a.b)^2 for unit vectors; used only when a.b < 0,
+        //   where 1 - a.b is close to 2 and nothing cancels.
+        const Bivector<T> plane = (a + b) ^ a;
+        const T s = d >= T(0) ? T(1) + d : (plane.xy * plane.xy) / (T(1) - d);
+
+        // Exactly opposite: both parts vanish, and a half turn either way is
+        // correct. Take the counter-clockwise one, written exactly.
+        if (s == T(0) && plane.xy == T(0)) {
             return Rotor<T>(Scalar<T>(0), Bivector<T>(-1));
         }
 
-        const Rotor<T> product = rotor_product(b, a);
-        return normalize(Rotor<T>(product.scalar + Scalar<T>(1), product.bivector));
+        return normalize(Rotor<T>(Scalar<T>(s), plane));
     }
 
     template<typename T>
