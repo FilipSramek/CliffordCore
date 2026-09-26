@@ -85,16 +85,19 @@ near-zero components as `0` so the interesting digits stand out.
 
 ## Choosing the component type
 
-Every type is a template over an arithmetic `T`, enforced by
-`static_assert(std::is_arithmetic<T>::value, ...)`.
+Every type is a template over a floating-point `T`, enforced by
+`static_assert(std::is_floating_point<T>::value, ...)`.
 
 - **`double`** — the default choice, and what the tests use.
 - **`float`** — works, but rotors drift off unit length noticeably faster. See
   the drift section of `examples/03_rotations.cpp` for measured numbers, and
   renormalise periodically.
 - **`long double`** — works.
-- **Integer types** — compile, but `norm`, `normalize`, `exp` and `log` all
-  truncate. Not useful in practice.
+- **Integer types, `bool` and `char`** — rejected at compile time with
+  `"<Type> can only be instantiated with floating-point types."` They used to
+  compile, and `norm`, `normalize`, `inverse`, `exp` and `log` then silently
+  truncated: `norm(Vector<int>(1, 1, 0))` returned `1`. A wrong answer with no
+  diagnostic is worse than a compile error.
 
 ## constexpr
 

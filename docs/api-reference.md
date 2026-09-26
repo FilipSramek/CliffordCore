@@ -2,7 +2,7 @@
 
 **This page catalogues Cl(3,0)**, `namespace CliffordCore::Cl3`; the snippets
 below assume `namespace ga = CliffordCore::Cl3;`. Every type is
-`template<typename T>` with `static_assert(std::is_arithmetic<T>::value, ...)`,
+`template<typename T>` with `static_assert(std::is_floating_point<T>::value, ...)`,
 and every function is `constexpr`. `T` is omitted below for readability.
 
 Cl(3,0,1) mirrors this structure one directory over, in
