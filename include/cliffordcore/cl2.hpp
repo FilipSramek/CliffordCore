@@ -38,3 +38,34 @@
 #include "cl2/bivector.hpp"
 #include "cl2/multivector.hpp"
 #include "cl2/rotor.hpp"
+
+// Products.
+#include "cl2/operations/dot_product.hpp"
+#include "cl2/operations/wedge_product.hpp"
+#include "cl2/operations/contraction.hpp"
+#include "cl2/operations/geometric_product.hpp"
+#include "cl2/operations/mixed_products.hpp"
+
+// Sums.
+#include "cl2/operations/addition.hpp"
+#include "cl2/operations/subtraction.hpp"
+
+// Magnitudes and involutions.
+#include "cl2/operations/norm.hpp"
+#include "cl2/operations/normalize.hpp"
+#include "cl2/operations/reverse.hpp"
+#include "cl2/operations/involutions.hpp"
+#include "cl2/operations/inverse.hpp"
+
+// Structure.
+#include "cl2/operations/dual.hpp"
+#include "cl2/operations/grade.hpp"
+#include "cl2/operations/comparison.hpp"
+#include "cl2/operations/stream.hpp"
+#include "cl2/operations/geometry.hpp"
+
+// Rotations.
+#include "cl2/operations/exp.hpp"
+#include "cl2/operations/log.hpp"
+#include "cl2/operations/sandwich.hpp"
+#include "cl2/operations/rotor_construction.hpp"
