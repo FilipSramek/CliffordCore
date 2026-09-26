@@ -1403,7 +1403,7 @@ void instantiate_every_entry_point()
     (void)ga::right_contraction(v, v); (void)ga::right_contraction(b, v); (void)ga::right_contraction(b, b);
     (void)(v | b); (void)(b | b);
     (void)ga::scalar_product(v, v); (void)ga::scalar_product(b, b);
-    (void)ga::scalar_product(r, r); (void)ga::scalar_product(m, m);
+    (void)ga::scalar_product(r, r); (void)ga::scalar_product(m, m); (void)ga::scalar_product(s, s);
 
     // Magnitudes, involutions, inverses, duality.
     (void)ga::norm(s); (void)ga::norm(v); (void)ga::norm(b); (void)ga::norm(m); (void)ga::norm(r);

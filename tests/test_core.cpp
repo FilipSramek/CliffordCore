@@ -1277,6 +1277,14 @@ void test_contractions()
     check_close(ga::scalar_product(B, C).value, ga::grade0(B * C).value,
                 "scalar_product == grade0 of the product");
 
+    // Where the product is already a pure Scalar, scalar_product must still
+    // work. These did not compile until grade0 gained a Scalar overload.
+    const Trivector<double> t1(2.0), t2(3.0);
+    check_scalar(ga::scalar_product(t1, t2), -6.0, "scalar_product of two trivectors, e123^2 = -1");
+    check_scalar(ga::scalar_product(Scalar<double>(2.0), Scalar<double>(5.0)), 10.0,
+                 "scalar_product of two scalars");
+    check_scalar(ga::grade0(Scalar<double>(7.0)), 7.0, "grade0(Scalar) is the identity");
+
     // Right contraction is the reverse-mirror of the left one.
     check_vector(ga::right_contraction(B, a),
                  ga::reverse(ga::left_contraction(
@@ -1558,6 +1566,7 @@ void instantiate_every_entry_point()
     (void)ga::right_contraction(t, b); (void)ga::right_contraction(t, t);
     (void)(v | b); (void)(v | t); (void)(b | b); (void)(b | t);
     (void)ga::scalar_product(v, v); (void)ga::scalar_product(b, b);
+    (void)ga::scalar_product(t, t); (void)ga::scalar_product(s, s); (void)ga::grade0(s);
 
     // Geometry.
     (void)ga::reflect(v, v); (void)ga::reflect(v, b);
