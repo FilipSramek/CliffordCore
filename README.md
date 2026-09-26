@@ -9,8 +9,8 @@ type names, so switching between them is a one-line edit:
   space, with translations, rotations about arbitrary axes, and the screw
   motions that combine them.
 
-Everything is `constexpr`, templated over any arithmetic type, and dependency
-free.
+Everything is `constexpr`, templated over the floating-point types (`float`,
+`double`, `long double`), and dependency free.
 
 ## Features
 
