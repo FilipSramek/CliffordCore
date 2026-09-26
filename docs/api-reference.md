@@ -287,8 +287,9 @@ Kept apart so the type headers need not include `<ostream>`.
 
 ### `log.hpp`
 
-- `log(Rotor)` → `Bivector` — clamps the scalar part into `[-1, 1]` before
-  `std::acos`; returns a zero bivector when the bivector part is zero
+- `log(Rotor)` → `Bivector` — the half-angle is `std::atan2(|bivector|, scalar)`,
+  accurate at every angle and unaffected by a rotor that has drifted off unit
+  length; returns a zero bivector when the bivector part is zero
 
 Both collide by name with `<cmath>`, so qualify them as `ga::exp` / `ga::log`
 when `using namespace` is in play. The alias makes that the natural spelling
@@ -399,4 +400,4 @@ forms are `to_rotor`, `to_translator`, `to_motor`, `to_multivector`.
 - `angle(Plane, Plane)`, `angle(Line, Line)`
 
 `distance` and `angle` return a raw `T` and are `inline`, not `constexpr` —
-they use `std::acos` and `std::sqrt`. There is no `reject`.
+they use `std::atan2` and `std::sqrt`. There is no `reject`.

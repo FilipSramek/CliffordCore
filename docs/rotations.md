@@ -135,9 +135,12 @@ The `2` is the half-angle from `exp` reappearing. The `dual` undoes the `dual`
 that `rotor_from_axis_angle` applied — up to sign, and the signs work out
 because `dual(dual(x)) == -x` cancels against the `-(angle/2)`.
 
-`log` clamps the rotor's scalar part into `[-1, 1]` before calling `std::acos`.
-That matters: composition drifts, `acos` is undefined outside that range, and
-without the clamp a drifted rotor would yield `NaN`.
+`log` finds the half-angle as `std::atan2(|bivector|, scalar)`. That matters
+twice over. Composition drifts a rotor off unit length, and `atan2` depends only
+on the ratio of the two parts, so a drifted rotor still gives the right angle --
+an `acos` of the scalar part would need a clamp just to avoid `NaN`. And near
+the identity `acos` is badly conditioned: a rotor turning by `1e-3` would lose
+three digits of its angle, and in `float` all of them.
 
 ## Why the sandwich has that shape
 

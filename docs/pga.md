@@ -285,8 +285,8 @@ project(point, plane)              // and (point, line), (line, plane)
 distance(point, point)             // norm(join) / the weights
 distance(point, plane)             // SIGNED: which side you are on
 distance(point, line)              // norm(join) / weight / line norm
-angle(plane, plane)                // acos of the normalized dot
-angle(line, line)                  // acos of minus the normalized scalar product
+angle(plane, plane)                // atan2(|a ^ b|, a . b)
+angle(line, line)                  // atan2(|<a b>_2|, -<a b>_0)
 ```
 
 Projection is `(x ⌊ y) inverse(y)`, the same shape as Cl3's. Reflection needs a
@@ -299,8 +299,10 @@ places, and a line that misses the origin is a perfectly ordinary argument
 everywhere.
 
 `distance` and `angle` return a raw `T` rather than a `Scalar<T>` and are
-`inline` rather than `constexpr`, since they use `std::acos` and `std::sqrt` --
-the same exception `approx_equal` makes.
+`inline` rather than `constexpr`, since they use `std::atan2` and `std::sqrt` --
+the same exception `approx_equal` makes. The angles are `atan2` of a sine and a
+cosine rather than `acos` of a cosine: `acos` loses most of a small angle to
+rounding, and in `float` all of it.
 
 ## What differs from Cl3, in one list
 
