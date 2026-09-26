@@ -23,7 +23,6 @@
  */
 
 #include <cmath>
-#include <limits>
 
 #include "../scalar.hpp"
 #include "../vector.hpp"
@@ -189,8 +188,10 @@ namespace CliffordCore::PGA
      *         translation if they are parallel.
      *
      * Built as normalize(1 + to*from), the half-angle construction -- the same
-     * shape as Cl3's rotor_between. When the planes are opposite the motion is
-     * ambiguous; a half turn about a definitely non-degenerate line is chosen.
+     * shape as Cl3's rotor_between -- evaluated so that it stays accurate to a
+     * few epsilons however close the two normals are to opposite. When they are
+     * exactly opposite the motion is ambiguous; a half turn about a line in the
+     * plane halfway between the two is chosen.
      */
     constexpr Motor<T> motor_between(const Vector<T>& from, const Vector<T>& to) {
         if (norm(from).value == T(0) || norm(to).value == T(0)) {
@@ -199,19 +200,36 @@ namespace CliffordCore::PGA
 
         const Vector<T> a = normalize(from);
         const Vector<T> b = normalize(to);
-        const T alignment = (a | b).value;
+        const T d = (a | b).value;
 
-        // Opposite normals: every line in `a` gives a valid half turn, so pick
-        // one that is definitely not degenerate.
-        if (alignment < T(-1) + std::numeric_limits<T>::epsilon() * T(8)) {
+        // The motor is normalize((1 + a.b) + b ^ a), but both parts are
+        // computed so that neither cancels when the normals are nearly
+        // opposite -- the naive form loses a digit for every factor of ten the
+        // angle gets closer to pi. Exactly as in Cl3's rotor_between:
+        //
+        //   b ^ a == (a + b) ^ a exactly, since a ^ a = 0, and a + b is
+        //   computed without rounding when b is close to -a.
+        //   1 + a.b == |b ^ a|^2 / (1 - a.b) exactly, for unit normals, where
+        //   |.| is the Euclidean norm that ignores e0; used only when a.b < 0,
+        //   where 1 - a.b is close to 2 and nothing cancels.
+        const Bivector<T> line = (a + b) ^ a;
+        const T line_squared = squared_norm(line).value;
+        const T s = d >= T(0) ? T(1) + d : line_squared / (T(1) - d);
+
+        // Exactly opposite normals: a half turn is needed, about a line lying in
+        // the plane halfway between the two. That plane is a - b; when the
+        // planes share an offset it is 2a, and the line lies in `from` itself.
+        // (Taking a line in `from` regardless, as this once did, lands on -from
+        // rather than on `to` whenever the offsets differ.)
+        if (s == T(0) && line_squared == T(0)) {
+            const Vector<T> halfway = a - b;
             const Vector<T> reference = (std::abs(a.e1) < T(0.9))
                 ? plane<T>(T(1), T(0), T(0), T(0))
                 : plane<T>(T(0), T(1), T(0), T(0));
-            return Motor<T>(Scalar<T>(0), normalize(a ^ reference), Quadvector<T>());
+            return Motor<T>(Scalar<T>(0), normalize(halfway ^ reference), Quadvector<T>());
         }
 
-        const Motor<T> product = motor_product(b, a);
-        return normalize(Motor<T>(product.scalar + Scalar<T>(1), product.bivector, product.quadvector));
+        return normalize(Motor<T>(Scalar<T>(s), line, Quadvector<T>()));
     }
 
     template<typename T>
