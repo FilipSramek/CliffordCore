@@ -29,22 +29,24 @@ namespace CliffordCore::Cl3
      * @return The resulting bivector from the logarithm of the rotor r.
      */
     constexpr Bivector<T> log(const Rotor<T>& r) {
-        // A unit rotor has |scalar| <= 1, but rounding in exp() or in repeated
-        // composition can leave it a few ulps outside that range, and std::acos
-        // returns NaN off-domain. Clamp before the call.
-        const T clamped_scalar = r.scalar.value < T(-1) ? T(-1)
-                               : (r.scalar.value > T(1) ? T(1) : r.scalar.value);
+        const T magnitude = r.bivector.magnitude().value;
 
-        Scalar<T> arccos_scalar = Scalar<T> (std::acos(clamped_scalar));
-
-        Scalar<T> Magnitude_bivector = r.bivector.magnitude();
-
-        if (Magnitude_bivector.value == 0) { // Handle the case when the bivector is zero
+        if (magnitude == T(0)) { // Handle the case when the bivector is zero
             return Bivector<T>(0, 0, 0);
         }
 
+        // The half-angle, from both parts of the rotor at once. This used to be
+        // acos(scalar), which is badly conditioned near the identity: its slope
+        // is 1/sin(angle), so a rotor turning by 1e-3 lost three digits, and
+        // float lost the angle altogether. atan2 keeps full relative precision
+        // at every angle, needs no clamp against rounding just outside [-1, 1],
+        // and depends only on the ratio of the two parts, so a rotor that has
+        // drifted off unit length still gives the right angle. Cl(2,0) and
+        // Cl(3,0,1) compute their logs the same way.
+        const T angle = std::atan2(magnitude, r.scalar.value);
+
         // The angle scaled onto the unit bivector that carries the rotation plane.
-        const T scale = arccos_scalar.value / Magnitude_bivector.value;
+        const T scale = angle / magnitude;
 
         return Bivector<T>(
             scale * r.bivector.xy,
