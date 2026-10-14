@@ -31,7 +31,7 @@
 // e12 = e1e2, which is also the pseudoscalar. From that, e12^2 = -1.
 //
 // The whole table, verified against the permutation rule by
-// test_cayley_table_against_permutation_rule:
+// test_cayley_table_against_permutation_rule in tests/cl2/cayley_table.cpp:
 //
 //          1      e1     e2     e12
 //   1   |  1      e1     e2     e12

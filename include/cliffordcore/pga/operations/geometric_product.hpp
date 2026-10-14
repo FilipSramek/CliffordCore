@@ -39,7 +39,8 @@
 // because the product contains e0 twice. The sign of each surviving entry is
 // the parity of the permutation that sorts the concatenated indices, and the
 // table below was generated from exactly that rule and checked against it in
-// tests/test_pga.cpp -- if you edit a term by hand, the test will tell you.
+// tests/pga/cayley_table.cpp -- if you edit a term by hand, the test will
+// tell you.
 //
 // operator* always returns the most general type the product can produce, so
 // there is exactly one operator* per operand pair. Named functions provide the
