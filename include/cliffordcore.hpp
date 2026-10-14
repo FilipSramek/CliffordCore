@@ -102,11 +102,12 @@
  * Every header it lists is also a valid standalone entry point, so include just
  * the one or two you need if compile time matters.
  *
- * Note that `tests/test_core.cpp` and `tests/test_pga.cpp` deliberately do NOT
- * use an umbrella. Their explicit per-header includes are a live check that
- * each header pulls in its own dependencies; an umbrella include would mask
- * exactly that class of bug, which has broken this codebase twice. Each suite
- * is also its own translation unit, so the two algebras never meet in one.
+ * Note that the test suites deliberately do NOT use an umbrella: each algebra's
+ * `tests/<algebra>/support.hpp` includes every one of its headers explicitly.
+ * That is a live check that each header pulls in its own dependencies; an
+ * umbrella include would mask exactly that class of bug, which has broken this
+ * codebase twice. Each algebra's suite is also its own binary, so two algebras
+ * never meet in one translation unit.
  */
 
 /**
