@@ -128,8 +128,9 @@ g++ -std=c++17 -Iinclude your_file.cpp -o your_file
   algebra-independent
 - `examples/` — six runnable programs, from the basic products through
   rotations to a small geometry toolkit, and one on PGA rigid motions
-- `tests/` — one translation unit per algebra; `./build.sh` builds and runs
-  every `tests/*.cpp`
+- `tests/` — one folder per algebra (`cl2/`, `cl3/`, `pga/`) with one file per
+  kind of test, each folder linked into its own binary; `./build.sh` builds and
+  runs them all, `./build.sh pga` just the one
 - `docs/` — guides, a conventions reference per algebra, and a Doxyfile
 
 ## Building

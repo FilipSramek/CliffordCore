@@ -68,7 +68,7 @@ two halves separately.
 
 Of the 256 entries in the 16×16 Cayley table, **64 vanish** because the product
 contains `e0` twice; the remaining 192 take the sign of the permutation that
-sorts the concatenated indices. `tests/test_pga.cpp` checks all 256 against an
+sorts the concatenated indices. `tests/pga/cayley_table.cpp` checks all 256 against an
 independent implementation of that rule, so a hand-edited term in the table
 fails the build.
 

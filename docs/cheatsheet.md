@@ -1,7 +1,7 @@
 # Cheat sheet
 
-One screen, for Cl(3,0). Everything here is verified by compilation and by
-`tests/test_core.cpp`. The Cl(3,0,1) equivalent is at the bottom.
+One screen, for Cl(3,0). Everything here is verified by compilation and by the
+test suite in `tests/cl3/`. The Cl(3,0,1) equivalent is at the bottom.
 
 ```cpp
 #include <cliffordcore/cl3.hpp>
@@ -129,7 +129,7 @@ sandwich(v, r) = R v ~R        e12 rotates about z, not about x
 namespace ga = CliffordCore::PGA;
 ```
 
-Verified by `tests/test_pga.cpp`. Full conventions in [pga.md](pga.md).
+Verified by the test suite in `tests/pga/`. Full conventions in [pga.md](pga.md).
 
 ### What each grade is
 

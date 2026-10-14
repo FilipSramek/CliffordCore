@@ -71,14 +71,23 @@ build task compiles whichever example file is open.
 
 ```bash
 ./build.sh                     # POSIX / Git Bash
-.\build.ps1                    # PowerShell
+./build.sh pga                 # only the suites whose name contains "pga"
+.\build.ps1                    # PowerShell; runs the suites only
 ```
 
-One translation unit per algebra, each its own binary, so the two never meet in
-a single TU. A green run prints `911 checks, 0 failed.` for Cl(3,0) and
-`1741 checks, 0 failed.` for Cl(3,0,1), then `2 test suites, 0 failed.`
-`build.sh` runs `check_headers.sh` first, which compiles all 64 headers alone in
-their own translation units.
+Each algebra has its own folder under `tests/` (`cl2/`, `cl3/` and `pga/`), with
+one file per kind of test: types, products, rotations, properties and so on.
+Every file is its own translation unit, and each folder links into one binary,
+`build/test_<folder>`, so two algebras never meet in one translation unit or one
+binary. The assertion harness they share, `tests/common/harness.hpp`, includes
+no algebra.
+
+A green run prints `4148 checks, 0 failed.` for Cl(2,0), `2729 checks, 0 failed.`
+for Cl(3,0) and `3983 checks, 0 failed.` for Cl(3,0,1), then
+`3 test suites, 0 failed.` Before the suites, `build.sh` runs `check_headers.sh`,
+which compiles all 91 headers alone in their own translation units, and
+`check_compile_fail.sh`, which confirms that non-floating-point component types
+are rejected with the right message.
 
 ## Generated API reference
 
