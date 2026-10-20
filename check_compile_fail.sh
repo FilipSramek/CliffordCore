@@ -6,13 +6,16 @@
 # The library rejects non-floating-point component types with a static_assert.
 # A static_assert is a hard error, not a substitution failure, so the detection
 # idiom the test suites use elsewhere cannot observe it: the only way to test
-# that something is rejected is to try compiling it and watch it fail.
+# that something is rejected is to try compiling it and watch it fail. The
+# *_discarded_* files use the same mechanism to check that ignoring a
+# [[nodiscard]] result is diagnosed: a pragma makes -Wunused-result an error.
 #
 # A bare "it failed" would prove little, though -- a typo fails too. So each
 # file is compiled twice:
 #
 #   1. with -DCC_T=double, where it must COMPILE. This is the control: it
-#      proves the code is otherwise valid.
+#      proves the code is otherwise valid. (In the *_discarded_* files, CC_T
+#      switches the discarded call to a (void) cast.)
 #   2. as written, with its bad component type, where it must FAIL, and the
 #      compiler's output must contain the text on the file's
 #      "// expect-error: ..." line.
