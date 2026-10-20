@@ -49,6 +49,25 @@ void test_normalize()
                 "normalize(Multivector) is unit");
 }
 
+#ifdef NDEBUG
+// Release builds only: with the assert compiled out, normalize() hands a zero
+// back unchanged. See the same test in tests/cl3/unary_ops.cpp, and audit
+// items A1 and A4 in docs/safety-audit.md.
+void test_normalize_zero_release()
+{
+    section("normalize of zero, release build");
+
+    check(ga::normalize(Scalar<double>()) == Scalar<double>(), "normalize(Scalar 0) returns it unchanged");
+    check(ga::normalize(Vector<double>()) == Vector<double>(), "normalize(Vector 0) returns it unchanged");
+    check(ga::normalize(Bivector<double>()) == Bivector<double>(), "normalize(Bivector 0) returns it unchanged");
+    check(ga::normalize(Multivector<double>()) == Multivector<double>(), "normalize(Multivector 0) returns it unchanged");
+    const Rotor<double> zero(Scalar<double>(0.0), Bivector<double>());
+    check(ga::normalize(zero) == zero, "normalize(Rotor 0) returns it unchanged");
+    const Vector<double> tiny(1e-200, 0.0);
+    check(ga::normalize(tiny) == tiny, "normalize(1e-200 e1) returns it unchanged, not unit length");
+}
+#endif
+
 void test_involutions()
 {
     section("involutions");
@@ -163,6 +182,9 @@ void run_unary_ops()
 {
     test_norms();
     test_normalize();
+#ifdef NDEBUG
+    test_normalize_zero_release();
+#endif
     test_involutions();
     test_inverse();
     test_dual();

@@ -96,6 +96,37 @@ void test_normalize()
     check_quadvector(fromRotor.quadvector, 0.0, "normalize(Motor(rotor)) gains no e0123");
 }
 
+#ifdef NDEBUG
+// Release builds only: with the assert compiled out, normalize() hands an
+// element with no Euclidean size -- zero, or ideal -- back unchanged. See the
+// same test in tests/cl3/unary_ops.cpp, and audit items A1 and A4 in
+// docs/safety-audit.md.
+void test_normalize_zero_release()
+{
+    section("normalize of zero or ideal, release build");
+
+    check(ga::normalize(Scalar<double>()) == Scalar<double>(), "normalize(Scalar 0) returns it unchanged");
+    const Vector<double> idealPlane(5.0, 0.0, 0.0, 0.0);
+    check(ga::normalize(idealPlane) == idealPlane, "normalize(ideal plane) returns it unchanged");
+    const Bivector<double> idealLine(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
+    check(ga::normalize(idealLine) == idealLine, "normalize(ideal line) returns it unchanged");
+    const Trivector<double> idealPoint(1.0, 2.0, 3.0, 0.0);
+    check(ga::normalize(idealPoint) == idealPoint, "normalize(ideal point) returns it unchanged");
+    check(ga::normalize(Multivector<double>()) == Multivector<double>(), "normalize(Multivector 0) returns it unchanged");
+    const Rotor<double> zeroRotor(Scalar<double>(0.0), 0.0, 0.0, 0.0);
+    check(ga::normalize(zeroRotor) == zeroRotor, "normalize(Rotor 0) returns it unchanged");
+    const Translator<double> idealTranslator(Scalar<double>(0.0), 1.0, 2.0, 3.0);
+    check(ga::normalize(idealTranslator) == idealTranslator, "normalize(ideal translator) returns it unchanged");
+    const Motor<double> idealMotor(Scalar<double>(0.0), idealLine, Quadvector<double>(1.0));
+    check(ga::normalize(idealMotor) == idealMotor, "normalize(ideal motor) returns it unchanged");
+    // A plane that is NOT ideal takes the same branch once its squared norm
+    // underflows -- audit item A4. (A point would not: its norm is |e123|,
+    // with no square to underflow.)
+    const Vector<double> tiny(0.0, 1e-200, 0.0, 0.0);
+    check(ga::normalize(tiny) == tiny, "normalize(plane with normal 1e-200) returns it unchanged, not unit");
+}
+#endif
+
 void test_involutions()
 {
     section("involutions");
@@ -243,6 +274,9 @@ void run_unary_ops()
 {
     test_norms();
     test_normalize();
+#ifdef NDEBUG
+    test_normalize_zero_release();
+#endif
     test_involutions();
     test_inverse();
     test_dual();

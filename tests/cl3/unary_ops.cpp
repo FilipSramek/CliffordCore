@@ -233,9 +233,35 @@ void test_normalize()
 
     // Normalizing a zero is a precondition violation, not a value: every
     // normalize overload asserts on it. That cannot be checked from inside this
-    // harness, since a tripped assert aborts the process, so these cases are
-    // deliberately not exercised here.
+    // harness, since a tripped assert aborts the process; the release-build
+    // behaviour is checked by test_normalize_zero_release below instead.
 }
+
+#ifdef NDEBUG
+// Release builds only. With the assert compiled out, normalize() hands a zero
+// back unchanged rather than dividing by zero. `./build.sh --variants` builds
+// the suite with -DNDEBUG, the only build that reaches this branch. Returning
+// a value that is not unit length is itself audit item A1 in
+// docs/safety-audit.md; this pins today's behaviour, so that changing it is a
+// deliberate act.
+void test_normalize_zero_release()
+{
+    section("normalize of zero, release build");
+
+    check(ga::normalize(Scalar<double>()) == Scalar<double>(), "normalize(Scalar 0) returns it unchanged");
+    check(ga::normalize(Vector<double>()) == Vector<double>(), "normalize(Vector 0) returns it unchanged");
+    check(ga::normalize(Bivector<double>()) == Bivector<double>(), "normalize(Bivector 0) returns it unchanged");
+    check(ga::normalize(Trivector<double>()) == Trivector<double>(), "normalize(Trivector 0) returns it unchanged");
+    check(ga::normalize(Multivector<double>()) == Multivector<double>(), "normalize(Multivector 0) returns it unchanged");
+    const Rotor<double> zero(Scalar<double>(0.0), Bivector<double>());
+    check(ga::normalize(zero) == zero, "normalize(Rotor 0) returns it unchanged");
+    // A vector that is NOT zero takes the same branch once its squared norm
+    // underflows -- audit item A4. With asserts on, this aborts with "the
+    // vector is zero".
+    const Vector<double> tiny(1e-200, 0.0, 0.0);
+    check(ga::normalize(tiny) == tiny, "normalize(1e-200 e1) returns it unchanged, not unit length");
+}
+#endif
 
 void test_involutions()
 {
@@ -294,6 +320,9 @@ void run_unary_ops()
     test_reverse_all_grades();
     test_inverse_all_grades();
     test_normalize();
+#ifdef NDEBUG
+    test_normalize_zero_release();
+#endif
     test_involutions();
 }
 
