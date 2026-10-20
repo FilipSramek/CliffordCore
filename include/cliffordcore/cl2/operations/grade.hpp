@@ -40,7 +40,7 @@ namespace CliffordCore::Cl2
      * @param m The multivector to project.
      * @return The scalar part.
      */
-    constexpr Scalar<T> grade0(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Scalar<T> grade0(const Multivector<T>& m) noexcept {
         return m.scalar;
     }
 
@@ -50,7 +50,7 @@ namespace CliffordCore::Cl2
      * @param m The multivector to project.
      * @return The vector part.
      */
-    constexpr Vector<T> grade1(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Vector<T> grade1(const Multivector<T>& m) noexcept {
         return m.vector;
     }
 
@@ -60,7 +60,7 @@ namespace CliffordCore::Cl2
      * @param m The multivector to project.
      * @return The bivector part, which is also the pseudoscalar part.
      */
-    constexpr Bivector<T> grade2(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Bivector<T> grade2(const Multivector<T>& m) noexcept {
         return m.bivector;
     }
 
@@ -70,7 +70,7 @@ namespace CliffordCore::Cl2
      * @param r The rotor to project.
      * @return The scalar part.
      */
-    constexpr Scalar<T> grade0(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Scalar<T> grade0(const Rotor<T>& r) noexcept {
         return r.scalar;
     }
 
@@ -80,7 +80,7 @@ namespace CliffordCore::Cl2
      * @param r The rotor to project.
      * @return The bivector part.
      */
-    constexpr Bivector<T> grade2(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Bivector<T> grade2(const Rotor<T>& r) noexcept {
         return r.bivector;
     }
 
@@ -90,7 +90,7 @@ namespace CliffordCore::Cl2
      * @param s The scalar to project.
      * @return The same scalar.
      */
-    constexpr Scalar<T> grade0(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> grade0(const Scalar<T>& s) noexcept {
         return s;
     }
 } // namespace CliffordCore::Cl2

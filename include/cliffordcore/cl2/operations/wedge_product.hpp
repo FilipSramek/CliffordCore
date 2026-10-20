@@ -34,7 +34,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting bivector from the wedge product of vectors a and b.
  */
-constexpr Bivector<T> operator^(const Vector<T>& a, const Vector<T>& b) {
+[[nodiscard]] constexpr Bivector<T> operator^(const Vector<T>& a, const Vector<T>& b) noexcept {
     return Bivector<T>(a.x * b.y - a.y * b.x);   // xy component
 }
 
@@ -45,7 +45,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting bivector from the wedge product of vectors a and b.
  */
-constexpr Bivector<T> wedge_product(const Vector<T>& a, const Vector<T>& b) {
+[[nodiscard]] constexpr Bivector<T> wedge_product(const Vector<T>& a, const Vector<T>& b) noexcept {
     return a ^ b;
 }
 } // namespace CliffordCore::Cl2

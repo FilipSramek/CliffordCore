@@ -44,7 +44,7 @@ namespace CliffordCore::Cl2
      * @param s The scalar to involve.
      * @return The scalar unchanged; grade 0 keeps its sign.
      */
-    constexpr Scalar<T> involute(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> involute(const Scalar<T>& s) noexcept {
         return s;
     }
 
@@ -54,7 +54,7 @@ namespace CliffordCore::Cl2
      * @param v The vector to involve.
      * @return The negated vector; grade 1 flips sign.
      */
-    constexpr Vector<T> involute(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> involute(const Vector<T>& v) noexcept {
         return Vector<T>(-v.x, -v.y);
     }
 
@@ -64,7 +64,7 @@ namespace CliffordCore::Cl2
      * @param b The bivector to involve.
      * @return The bivector unchanged; grade 2 keeps its sign.
      */
-    constexpr Bivector<T> involute(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> involute(const Bivector<T>& b) noexcept {
         return b;
     }
 
@@ -74,7 +74,7 @@ namespace CliffordCore::Cl2
      * @param m The multivector to involve.
      * @return The multivector with its odd grade, 1, negated.
      */
-    constexpr Multivector<T> involute(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> involute(const Multivector<T>& m) noexcept {
         return Multivector<T>(
             m.scalar,
             Vector<T>(-m.vector.x, -m.vector.y),
@@ -89,7 +89,7 @@ namespace CliffordCore::Cl2
      * @return The rotor unchanged. A rotor holds only even grades, which is
      *         exactly what makes rotors closed under the sandwich product.
      */
-    constexpr Rotor<T> involute(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> involute(const Rotor<T>& r) noexcept {
         return r;
     }
 
@@ -103,7 +103,7 @@ namespace CliffordCore::Cl2
      * @param s The scalar to conjugate.
      * @return The scalar unchanged.
      */
-    constexpr Scalar<T> conjugate(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> conjugate(const Scalar<T>& s) noexcept {
         return s;
     }
 
@@ -113,7 +113,7 @@ namespace CliffordCore::Cl2
      * @param v The vector to conjugate.
      * @return The negated vector.
      */
-    constexpr Vector<T> conjugate(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> conjugate(const Vector<T>& v) noexcept {
         return Vector<T>(-v.x, -v.y);
     }
 
@@ -123,7 +123,7 @@ namespace CliffordCore::Cl2
      * @param b The bivector to conjugate.
      * @return The negated bivector.
      */
-    constexpr Bivector<T> conjugate(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> conjugate(const Bivector<T>& b) noexcept {
         return Bivector<T>(-b.xy);
     }
 
@@ -138,7 +138,7 @@ namespace CliffordCore::Cl2
      * no pseudoscalar part survives, unlike Cl(3,0) -- so inverting m is a
      * single division. See inverse.hpp.
      */
-    constexpr Multivector<T> conjugate(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> conjugate(const Multivector<T>& m) noexcept {
         return Multivector<T>(
             m.scalar,
             Vector<T>(-m.vector.x, -m.vector.y),
@@ -153,7 +153,7 @@ namespace CliffordCore::Cl2
      * @return The rotor with its bivector part negated. For a rotor this
      *         coincides with reverse(), since a rotor has no odd grades.
      */
-    constexpr Rotor<T> conjugate(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> conjugate(const Rotor<T>& r) noexcept {
         return Rotor<T>(r.scalar, Bivector<T>(-r.bivector.xy));
     }
 } // namespace CliffordCore::Cl2

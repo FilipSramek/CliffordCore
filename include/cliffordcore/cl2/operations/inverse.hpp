@@ -33,7 +33,7 @@ namespace CliffordCore::Cl2
      * @param s The scalar for which to compute the inverse.
      * @return The inverse scalar to the input scalar.
      */
-    constexpr Scalar<T> inverse(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> inverse(const Scalar<T>& s) noexcept {
         return Scalar<T>(T(1) / s.value);
     }
 
@@ -43,7 +43,7 @@ namespace CliffordCore::Cl2
      * @param v The vector for which to compute the inverse.
      * @return The inverse vector to the input vector.
      */
-    constexpr Vector<T> inverse(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> inverse(const Vector<T>& v) noexcept {
         return v/squared_norm(v);
     }
 
@@ -54,7 +54,7 @@ namespace CliffordCore::Cl2
      * @return The inverse bivector to the input bivector. The pseudoscalar
      *         squares to -1, so the inverse carries a minus sign: b^-1 = -b/|b|^2.
      */
-    constexpr Bivector<T> inverse(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> inverse(const Bivector<T>& b) noexcept {
         return -b/squared_norm(b);
     }
 
@@ -80,7 +80,7 @@ namespace CliffordCore::Cl2
      * example, since (1 + e1)(1 - e1) = 1 - e1^2 = 0. When the denominator is
      * zero this returns a zero multivector rather than dividing by zero.
      */
-    constexpr Multivector<T> inverse(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> inverse(const Multivector<T>& m) noexcept {
         const T a = m.scalar.value;
         const T x = m.vector.x;
         const T y = m.vector.y;
@@ -104,7 +104,7 @@ namespace CliffordCore::Cl2
      *         reverse, which is why rotations undo by reversing. Read as a
      *         complex number, this is the familiar conj(z)/|z|^2.
      */
-    constexpr Rotor<T> inverse(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> inverse(const Rotor<T>& r) noexcept {
         return reverse(r)/squared_norm(r);
     }
 } // namespace CliffordCore::Cl2

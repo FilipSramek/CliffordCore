@@ -40,7 +40,7 @@ namespace CliffordCore::Cl2
         /**
          * @brief Default constructor initializes all components to zero.
          */
-        constexpr Multivector() : scalar(), vector(), bivector() {}
+        constexpr Multivector() noexcept : scalar(), vector(), bivector() {}
 
         /**
          * @brief Constructor initializes the multivector with the provided components.
@@ -48,14 +48,14 @@ namespace CliffordCore::Cl2
          * @param v The vector component.
          * @param b The bivector component.
          */
-        constexpr Multivector(const Scalar<T>& s, const Vector<T>& v, const Bivector<T>& b)
+        constexpr Multivector(const Scalar<T>& s, const Vector<T>& v, const Bivector<T>& b) noexcept
             : scalar(s), vector(v), bivector(b) {}
 
         /**
          * @brief Constructor initializes the multivector with a 2D rotor.
          * @param r The rotor to initialize the multivector with.
          */
-        constexpr Multivector(const Rotor<T>& r)
+        constexpr Multivector(const Rotor<T>& r) noexcept
             : scalar(r.scalar), vector(Vector<T>(0, 0)), bivector(r.bivector) {}
 
         /**
@@ -63,7 +63,7 @@ namespace CliffordCore::Cl2
          * @param other The multivector to add.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator+(const Multivector& other) const {
+        [[nodiscard]] constexpr Multivector operator+(const Multivector& other) const noexcept {
             return Multivector(
                 scalar + other.scalar,
                 vector + other.vector,
@@ -76,7 +76,7 @@ namespace CliffordCore::Cl2
          * @param other The multivector to subtract.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator-(const Multivector& other) const {
+        [[nodiscard]] constexpr Multivector operator-(const Multivector& other) const noexcept {
             return Multivector(
                 scalar - other.scalar,
                 vector - other.vector,
@@ -88,7 +88,7 @@ namespace CliffordCore::Cl2
          * @brief Unary negation operator overload.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator-() const {
+        [[nodiscard]] constexpr Multivector operator-() const noexcept {
             return Multivector(
                 -scalar,
                 -vector,
@@ -101,7 +101,7 @@ namespace CliffordCore::Cl2
          * @param s The scalar to multiply by.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator*(const Scalar<T>& s) const {
+        [[nodiscard]] constexpr Multivector operator*(const Scalar<T>& s) const noexcept {
             return Multivector(
                 scalar * s,
                 vector * s,
@@ -114,7 +114,7 @@ namespace CliffordCore::Cl2
          * @param s The scalar to divide by.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator/(const Scalar<T>& s) const {
+        [[nodiscard]] constexpr Multivector operator/(const Scalar<T>& s) const noexcept {
             return Multivector(
                 scalar / s,
                 vector / s,
@@ -127,7 +127,7 @@ namespace CliffordCore::Cl2
          * @param other The multivector to add.
          * @return A reference to this multivector.
          */
-        constexpr Multivector& operator+=(const Multivector& other) {
+        constexpr Multivector& operator+=(const Multivector& other) noexcept {
             *this = *this + other;
             return *this;
         }
@@ -137,7 +137,7 @@ namespace CliffordCore::Cl2
          * @param other The multivector to subtract.
          * @return A reference to this multivector.
          */
-        constexpr Multivector& operator-=(const Multivector& other) {
+        constexpr Multivector& operator-=(const Multivector& other) noexcept {
             *this = *this - other;
             return *this;
         }
@@ -147,7 +147,7 @@ namespace CliffordCore::Cl2
          * @param s The scalar to multiply by.
          * @return A reference to this multivector.
          */
-        constexpr Multivector& operator*=(const Scalar<T>& s) {
+        constexpr Multivector& operator*=(const Scalar<T>& s) noexcept {
             *this = *this * s;
             return *this;
         }
@@ -157,7 +157,7 @@ namespace CliffordCore::Cl2
          * @param s The scalar to divide by.
          * @return A reference to this multivector.
          */
-        constexpr Multivector& operator/=(const Scalar<T>& s) {
+        constexpr Multivector& operator/=(const Scalar<T>& s) noexcept {
             *this = *this / s;
             return *this;
         }
@@ -166,7 +166,7 @@ namespace CliffordCore::Cl2
          * @brief Returns a string representation of the multivector.
          * @return A string representing the multivector.
          */
-        std::string to_string() const {
+        [[nodiscard]] std::string to_string() const {
             // Parenthesised so the joining " + " is distinguishable from the
             // "+" inside each component.
             return "(" + scalar.to_string() + ") + (" + vector.to_string()
@@ -182,7 +182,7 @@ namespace CliffordCore::Cl2
      * @param m The multivector to scale.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(T value, const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> operator*(T value, const Multivector<T>& m) noexcept {
         return m * Scalar<T>(value);
     }
 } // namespace CliffordCore::Cl2

@@ -50,7 +50,7 @@ namespace CliffordCore::Cl2
      * @brief The rotor that represents no rotation.
      * @return The identity rotor, scalar 1 with a zero bivector.
      */
-    constexpr Rotor<T> identity_rotor() {
+    [[nodiscard]] constexpr Rotor<T> identity_rotor() noexcept {
         return Rotor<T>(Scalar<T>(1), Bivector<T>(0));
     }
 
@@ -61,7 +61,7 @@ namespace CliffordCore::Cl2
      *        positive value: +pi/2 takes e1 to e2.
      * @return The rotor performing that rotation, cos(angle/2) - sin(angle/2) e12.
      */
-    constexpr Rotor<T> rotor_from_angle(T angle) {
+    [[nodiscard]] constexpr Rotor<T> rotor_from_angle(T angle) noexcept {
         return exp(Bivector<T>(-angle / T(2)));
     }
 
@@ -78,7 +78,7 @@ namespace CliffordCore::Cl2
      * r = s + b e12. That form is invariant under r -> -r and under scaling, so
      * it needs neither a normalize() nor a wrap into range.
      */
-    inline T rotor_angle(const Rotor<T>& r) {
+    [[nodiscard]] inline T rotor_angle(const Rotor<T>& r) noexcept {
         const T s = r.scalar.value;
         const T b = r.bivector.xy;
         // + T(0) turns a -0.0 into +0.0, so an exact half turn reports +pi
@@ -100,7 +100,7 @@ namespace CliffordCore::Cl2
      * of plane to make in two dimensions -- only which way round -- so the
      * counter-clockwise half turn, rotor_from_angle(pi), is returned.
      */
-    constexpr Rotor<T> rotor_between(const Vector<T>& from, const Vector<T>& to) {
+    [[nodiscard]] constexpr Rotor<T> rotor_between(const Vector<T>& from, const Vector<T>& to) noexcept {
         if (norm(from).value == T(0) || norm(to).value == T(0)) {
             return identity_rotor<T>();
         }
@@ -143,7 +143,7 @@ namespace CliffordCore::Cl2
      * point away from each other the second is negated first and the result
      * takes the short way round.
      */
-    constexpr Rotor<T> slerp(const Rotor<T>& from, const Rotor<T>& to, T t) {
+    [[nodiscard]] constexpr Rotor<T> slerp(const Rotor<T>& from, const Rotor<T>& to, T t) noexcept {
         const Rotor<T> a = normalize(from);
         Rotor<T> b = normalize(to);
 

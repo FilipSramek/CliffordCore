@@ -43,7 +43,7 @@ namespace CliffordCore::Cl2
      * @param b The bivector for which to compute the exponential.
      * @return The resulting rotor, cos(b.xy) + sin(b.xy) e12. Always unit length.
      */
-    constexpr Rotor<T> exp(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Rotor<T> exp(const Bivector<T>& b) noexcept {
         return Rotor<T>(
             Scalar<T>(std::cos(b.xy)),
             Bivector<T>(std::sin(b.xy))

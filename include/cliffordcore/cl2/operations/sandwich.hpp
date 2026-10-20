@@ -50,7 +50,7 @@ namespace CliffordCore::Cl2
      * @param r The rotor to perform the transformation with.
      * @return The resulting vector after the sandwich product.
      */
-    constexpr Vector<T> sandwich(const Vector<T>& v, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Vector<T> sandwich(const Vector<T>& v, const Rotor<T>& r) noexcept {
         const T s = r.scalar.value;
         const T b = r.bivector.xy;
 
@@ -74,7 +74,7 @@ namespace CliffordCore::Cl2
      * @return The resulting vector after rotation.
      */
     template<typename T>
-    constexpr Vector<T> rotate(const Vector<T>& v, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Vector<T> rotate(const Vector<T>& v, const Rotor<T>& r) noexcept {
         return sandwich(v, r);
     }
 
@@ -88,7 +88,7 @@ namespace CliffordCore::Cl2
      *         so a unit rotor leaves it exactly unchanged. There is only one
      *         plane in two dimensions, and turning it gives the same plane.
      */
-    constexpr Bivector<T> sandwich(const Bivector<T>& b, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Bivector<T> sandwich(const Bivector<T>& b, const Rotor<T>& r) noexcept {
         return grade2(r * b * reverse(r));
     }
 
@@ -100,7 +100,7 @@ namespace CliffordCore::Cl2
      * @return The rotated multivector. Every grade is carried along, so no
      *         projection is needed here.
      */
-    constexpr Multivector<T> sandwich(const Multivector<T>& m, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Multivector<T> sandwich(const Multivector<T>& m, const Rotor<T>& r) noexcept {
         return r * m * reverse(r);
     }
 
@@ -111,7 +111,7 @@ namespace CliffordCore::Cl2
      * @param r The rotor to rotate with.
      * @return The rotated bivector, which for a unit rotor is b itself.
      */
-    constexpr Bivector<T> rotate(const Bivector<T>& b, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Bivector<T> rotate(const Bivector<T>& b, const Rotor<T>& r) noexcept {
         return sandwich(b, r);
     }
 
@@ -122,7 +122,7 @@ namespace CliffordCore::Cl2
      * @param r The rotor to rotate with.
      * @return The rotated multivector.
      */
-    constexpr Multivector<T> rotate(const Multivector<T>& m, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Multivector<T> rotate(const Multivector<T>& m, const Rotor<T>& r) noexcept {
         return sandwich(m, r);
     }
 } // namespace CliffordCore::Cl2

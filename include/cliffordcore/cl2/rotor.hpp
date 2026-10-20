@@ -45,14 +45,14 @@ namespace CliffordCore::Cl2
         /**
          * @brief Default constructor initializes all components to zero.
          */
-        constexpr Rotor() : scalar(), bivector() {}
+        constexpr Rotor() noexcept : scalar(), bivector() {}
 
         /**
          * @brief Constructor initializes the rotor with the provided components.
          * @param s The scalar component.
          * @param b The bivector component.
          */
-        constexpr Rotor(const Scalar<T>& s, const Bivector<T>& b)
+        constexpr Rotor(const Scalar<T>& s, const Bivector<T>& b) noexcept
             : scalar(s), bivector(b) {}
 
         /**
@@ -65,7 +65,7 @@ namespace CliffordCore::Cl2
          * while `multivector + rotor` kept everything. Spell the narrowing out,
          * or use to_rotor(m), which does the same thing by name.
          */
-        constexpr explicit Rotor(const Multivector<T>& m)
+        constexpr explicit Rotor(const Multivector<T>& m) noexcept
             : scalar(m.scalar), bivector(m.bivector) {}
 
         /**
@@ -73,7 +73,7 @@ namespace CliffordCore::Cl2
          * @param other The rotor to add.
          * @return The resulting rotor.
          */
-        constexpr Rotor operator+(const Rotor& other) const {
+        [[nodiscard]] constexpr Rotor operator+(const Rotor& other) const noexcept {
             return Rotor(
                 scalar + other.scalar,
                 bivector + other.bivector
@@ -85,7 +85,7 @@ namespace CliffordCore::Cl2
          * @param other The rotor to subtract.
          * @return The resulting rotor.
          */
-        constexpr Rotor operator-(const Rotor& other) const {
+        [[nodiscard]] constexpr Rotor operator-(const Rotor& other) const noexcept {
             return Rotor(
                 scalar - other.scalar,
                 bivector - other.bivector
@@ -97,7 +97,7 @@ namespace CliffordCore::Cl2
          * @param other The scalar to multiply.
          * @return The resulting rotor.
          */
-        constexpr Rotor operator*(const Scalar<T>& other) const {
+        [[nodiscard]] constexpr Rotor operator*(const Scalar<T>& other) const noexcept {
             return Rotor(
                 scalar * other,
                 bivector * other
@@ -109,7 +109,7 @@ namespace CliffordCore::Cl2
          * @param other The scalar to divide.
          * @return The resulting rotor.
          */
-        constexpr Rotor operator/(const Scalar<T>& other) const {
+        [[nodiscard]] constexpr Rotor operator/(const Scalar<T>& other) const noexcept {
             return Rotor(
                 scalar / other,
                 bivector / other
@@ -121,7 +121,7 @@ namespace CliffordCore::Cl2
          * @param other The rotor to add.
          * @return A reference to this rotor.
          */
-        constexpr Rotor& operator+=(const Rotor& other) {
+        constexpr Rotor& operator+=(const Rotor& other) noexcept {
             *this = *this + other;
             return *this;
         }
@@ -131,7 +131,7 @@ namespace CliffordCore::Cl2
          * @param other The rotor to subtract.
          * @return A reference to this rotor.
          */
-        constexpr Rotor& operator-=(const Rotor& other) {
+        constexpr Rotor& operator-=(const Rotor& other) noexcept {
             *this = *this - other;
             return *this;
         }
@@ -141,7 +141,7 @@ namespace CliffordCore::Cl2
          * @param other The scalar to multiply by.
          * @return A reference to this rotor.
          */
-        constexpr Rotor& operator*=(const Scalar<T>& other) {
+        constexpr Rotor& operator*=(const Scalar<T>& other) noexcept {
             *this = *this * other;
             return *this;
         }
@@ -151,7 +151,7 @@ namespace CliffordCore::Cl2
          * @param other The scalar to divide by.
          * @return A reference to this rotor.
          */
-        constexpr Rotor& operator/=(const Scalar<T>& other) {
+        constexpr Rotor& operator/=(const Scalar<T>& other) noexcept {
             *this = *this / other;
             return *this;
         }
@@ -160,7 +160,7 @@ namespace CliffordCore::Cl2
          * @brief Returns a string representation of the rotor.
          * @return A string representing the rotor.
          */
-        std::string to_string() const {
+        [[nodiscard]] std::string to_string() const {
             return "(" + scalar.to_string() + ") + (" + bivector.to_string() + ")";
         }
     };
@@ -185,7 +185,7 @@ namespace CliffordCore::Cl2
      * @param r The rotor to scale.
      * @return The resulting rotor.
      */
-    constexpr Rotor<T> operator*(T value, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> operator*(T value, const Rotor<T>& r) noexcept {
         return r * Scalar<T>(value);
     }
 } // namespace CliffordCore::Cl2

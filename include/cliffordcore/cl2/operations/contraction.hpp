@@ -62,7 +62,7 @@ namespace CliffordCore::Cl2
      *         Defined wherever a*b has a grade 0 part: not for a vector with a
      *         bivector or a rotor, whose product is a pure vector.
      */
-    constexpr auto scalar_product(const A& a, const B& b) -> decltype(grade0(a * b)) {
+    [[nodiscard]] constexpr auto scalar_product(const A& a, const B& b) noexcept -> decltype(grade0(a * b)) {
         return grade0(a * b);
     }
 
@@ -77,7 +77,7 @@ namespace CliffordCore::Cl2
      * @param b The right vector.
      * @return The resulting scalar. For equal grades this is the dot product.
      */
-    constexpr Scalar<T> left_contraction(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Vector<T>& a, const Vector<T>& b) noexcept {
         return a | b;
     }
 
@@ -90,7 +90,7 @@ namespace CliffordCore::Cl2
      *         and scaled by b. This is the product the projection and
      *         rejection formulas are written with.
      */
-    constexpr Vector<T> left_contraction(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> left_contraction(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return v * b;
     }
 
@@ -101,7 +101,7 @@ namespace CliffordCore::Cl2
      * @param b The right bivector.
      * @return The resulting scalar, -a.xy * b.xy.
      */
-    constexpr Scalar<T> left_contraction(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return a * b;
     }
 
@@ -117,7 +117,7 @@ namespace CliffordCore::Cl2
      * @param b The bivector operand.
      * @return The resulting vector.
      */
-    constexpr Vector<T> operator|(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> operator|(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return left_contraction(v, b);
     }
 
@@ -128,7 +128,7 @@ namespace CliffordCore::Cl2
      * @param b The right bivector.
      * @return The resulting scalar.
      */
-    constexpr Scalar<T> operator|(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> operator|(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return left_contraction(a, b);
     }
 
@@ -143,7 +143,7 @@ namespace CliffordCore::Cl2
      * @param b The right vector.
      * @return The resulting scalar, equal to the left contraction here.
      */
-    constexpr Scalar<T> right_contraction(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Vector<T>& a, const Vector<T>& b) noexcept {
         return a | b;
     }
 
@@ -155,7 +155,7 @@ namespace CliffordCore::Cl2
      * @return The resulting vector. Because e12 anticommutes with vectors, this
      *         is the negation of left_contraction(v, b).
      */
-    constexpr Vector<T> right_contraction(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> right_contraction(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return b * v;
     }
 
@@ -166,7 +166,7 @@ namespace CliffordCore::Cl2
      * @param b The right bivector.
      * @return The resulting scalar, equal to the left contraction here.
      */
-    constexpr Scalar<T> right_contraction(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return a * b;
     }
 } // namespace CliffordCore::Cl2

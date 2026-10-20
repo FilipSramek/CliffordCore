@@ -45,20 +45,20 @@ public:
     /**
      * @brief Default constructor initializes the vector components to zero.
      */
-    constexpr Vector() : x(0), y(0) {}
+    constexpr Vector() noexcept : x(0), y(0) {}
 
     /**
      * @brief Constructor initializes the vector components to the provided values.
      * @param x_val The x-component of the vector.
      * @param y_val The y-component of the vector.
      */
-    constexpr Vector(T x_val, T y_val) : x(x_val), y(y_val) {}
+    constexpr Vector(T x_val, T y_val) noexcept : x(x_val), y(y_val) {}
 
     /**
      * @brief Computes the magnitude (length) of the vector.
      * @return The magnitude as a scalar.
      */
-    constexpr Scalar<T> magnitude() const {
+    [[nodiscard]] constexpr Scalar<T> magnitude() const noexcept {
         return Scalar<T>(std::sqrt(x * x + y * y));
     }
 
@@ -67,7 +67,7 @@ public:
      * @param other The vector to add.
      * @return The resulting vector.
      */
-    constexpr Vector operator+(const Vector& other) const {
+    [[nodiscard]] constexpr Vector operator+(const Vector& other) const noexcept {
         return Vector(x + other.x, y + other.y);
     }
 
@@ -76,7 +76,7 @@ public:
      * @param other The vector to subtract.
      * @return The resulting vector.
      */
-    constexpr Vector operator-(const Vector& other) const {
+    [[nodiscard]] constexpr Vector operator-(const Vector& other) const noexcept {
         return Vector(x - other.x, y - other.y);
     }
 
@@ -85,20 +85,20 @@ public:
      * @param scalar The scalar to multiply with.
      * @return The resulting vector.
      */
-    constexpr Vector operator*(const Scalar<T>& scalar) const;
+    [[nodiscard]] constexpr Vector operator*(const Scalar<T>& scalar) const noexcept;
 
     /**
      * @brief Scalar division operator overload.
      * @param scalar The scalar to divide by.
      * @return The resulting vector.
      */
-    constexpr Vector operator/(const Scalar<T>& scalar) const;
+    [[nodiscard]] constexpr Vector operator/(const Scalar<T>& scalar) const noexcept;
 
     /**
      * @brief Unary negation operator overload.
      * @return The resulting vector.
      */
-    constexpr Vector operator-() const {
+    [[nodiscard]] constexpr Vector operator-() const noexcept {
         return Vector(-x, -y);
     }
 
@@ -107,7 +107,7 @@ public:
      * @param other The vector to add.
      * @return A reference to this vector.
      */
-    constexpr Vector& operator+=(const Vector& other) {
+    constexpr Vector& operator+=(const Vector& other) noexcept {
         x += other.x; y += other.y;
         return *this;
     }
@@ -117,7 +117,7 @@ public:
      * @param other The vector to subtract.
      * @return A reference to this vector.
      */
-    constexpr Vector& operator-=(const Vector& other) {
+    constexpr Vector& operator-=(const Vector& other) noexcept {
         x -= other.x; y -= other.y;
         return *this;
     }
@@ -127,7 +127,7 @@ public:
      * @param value The value to multiply by.
      * @return A reference to this vector.
      */
-    constexpr Vector& operator*=(T value) {
+    constexpr Vector& operator*=(T value) noexcept {
         x *= value; y *= value;
         return *this;
     }
@@ -137,7 +137,7 @@ public:
      * @param value The value to divide by.
      * @return A reference to this vector.
      */
-    constexpr Vector& operator/=(T value) {
+    constexpr Vector& operator/=(T value) noexcept {
         x /= value; y /= value;
         return *this;
     }
@@ -147,20 +147,20 @@ public:
      * @param scalar The scalar to multiply by.
      * @return A reference to this vector.
      */
-    constexpr Vector& operator*=(const Scalar<T>& scalar);
+    constexpr Vector& operator*=(const Scalar<T>& scalar) noexcept;
 
     /**
      * @brief Divides this vector in place by a scalar.
      * @param scalar The scalar to divide by.
      * @return A reference to this vector.
      */
-    constexpr Vector& operator/=(const Scalar<T>& scalar);
+    constexpr Vector& operator/=(const Scalar<T>& scalar) noexcept;
 
     /**
      * @brief Returns a string representation of the vector.
      * @return A string representing the vector.
      */
-    std::string to_string() const {
+    [[nodiscard]] std::string to_string() const {
         return CliffordCore::detail::format_component(x) + "*e1 + "
              + CliffordCore::detail::format_component(y) + "*e2";
     }
@@ -173,22 +173,22 @@ namespace CliffordCore::Cl2
 {
 
     template<typename T>
-    constexpr Vector<T> Vector<T>::operator*(const Scalar<T>& scalar) const {
+    [[nodiscard]] constexpr Vector<T> Vector<T>::operator*(const Scalar<T>& scalar) const noexcept {
         return Vector<T>(x * scalar.value, y * scalar.value);
     }
 
     template<typename T>
-    constexpr Vector<T> Vector<T>::operator/(const Scalar<T>& scalar) const {
+    [[nodiscard]] constexpr Vector<T> Vector<T>::operator/(const Scalar<T>& scalar) const noexcept {
         return Vector<T>(x / scalar.value, y / scalar.value);
     }
 
     template<typename T>
-    constexpr Vector<T>& Vector<T>::operator*=(const Scalar<T>& scalar) {
+    constexpr Vector<T>& Vector<T>::operator*=(const Scalar<T>& scalar) noexcept {
         return *this *= scalar.value;
     }
 
     template<typename T>
-    constexpr Vector<T>& Vector<T>::operator/=(const Scalar<T>& scalar) {
+    constexpr Vector<T>& Vector<T>::operator/=(const Scalar<T>& scalar) noexcept {
         return *this /= scalar.value;
     }
 
@@ -199,7 +199,7 @@ namespace CliffordCore::Cl2
      * @param v The vector to scale.
      * @return The resulting vector, so that 2 * v reads the same as v * 2.
      */
-    constexpr Vector<T> operator*(T value, const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> operator*(T value, const Vector<T>& v) noexcept {
         return Vector<T>(value * v.x, value * v.y);
     }
 } // namespace CliffordCore::Cl2

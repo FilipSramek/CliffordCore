@@ -28,7 +28,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting scalar from the dot product of vectors a and b.
  */
-constexpr Scalar<T> operator|(const Vector<T>& a, const Vector<T>& b) {
+[[nodiscard]] constexpr Scalar<T> operator|(const Vector<T>& a, const Vector<T>& b) noexcept {
     return Scalar<T>(a.x * b.x + a.y * b.y);
 }
 
@@ -39,7 +39,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting scalar from the dot product of vectors a and b.
  */
-constexpr Scalar<T> dot_product(const Vector<T>& a, const Vector<T>& b) {
+[[nodiscard]] constexpr Scalar<T> dot_product(const Vector<T>& a, const Vector<T>& b) noexcept {
     return a | b;
 }
 } // namespace CliffordCore::Cl2

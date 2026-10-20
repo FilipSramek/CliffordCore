@@ -43,7 +43,7 @@ template<typename T>
  * @param s The scalar to compute the dual of.
  * @return The resulting bivector s * e12.
  */
-constexpr Bivector<T> dual(const Scalar<T>& s) {
+[[nodiscard]] constexpr Bivector<T> dual(const Scalar<T>& s) noexcept {
     return Bivector<T>(s.value);
 }
 
@@ -54,7 +54,7 @@ template<typename T>
  * @return The resulting vector v * e12, mapping (x, y) to (-y, x): the
  *         counter-clockwise quarter turn.
  */
-constexpr Vector<T> dual(const Vector<T>& v) {
+[[nodiscard]] constexpr Vector<T> dual(const Vector<T>& v) noexcept {
     return Vector<T>(-v.y, v.x);
 }
 
@@ -64,7 +64,7 @@ template<typename T>
  * @param b The bivector to compute the dual of.
  * @return The resulting scalar. The pseudoscalar squares to -1, hence the sign.
  */
-constexpr Scalar<T> dual(const Bivector<T>& b) {
+[[nodiscard]] constexpr Scalar<T> dual(const Bivector<T>& b) noexcept {
     return Scalar<T>(-b.xy);
 }
 
@@ -75,7 +75,7 @@ template<typename T>
  * @return The resulting multivector m * e12: the scalar and bivector parts
  *         swap places, and the vector part turns a quarter turn.
  */
-constexpr Multivector<T> dual(const Multivector<T>& m) {
+[[nodiscard]] constexpr Multivector<T> dual(const Multivector<T>& m) noexcept {
     return Multivector<T>(
         dual(m.bivector),
         dual(m.vector),

@@ -57,7 +57,7 @@ namespace CliffordCore::Cl2
      * @param b The second vector.
      * @return The resulting multivector from the geometric product = dot_product(a, b) + wedge_product(a, b) so that the scalar part is the dot product and the bivector part is the wedge product.
      */
-    constexpr Multivector<T> geometric_product(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> geometric_product(const Vector<T>& a, const Vector<T>& b) noexcept {
         return Multivector<T>(
             a | b,
             Vector<T>(0, 0),
@@ -74,7 +74,7 @@ namespace CliffordCore::Cl2
      *         result is exactly a rotor -- but it is returned as a Multivector
      *         to match Cl(3,0). Use rotor_product(a, b) for the Rotor spelling.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(a, b);
     }
 
@@ -86,7 +86,7 @@ namespace CliffordCore::Cl2
      * @return The resulting rotor. Same components as geometric_product(a, b),
      *         whose vector part is always zero.
      */
-    constexpr Rotor<T> rotor_product(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Rotor<T> rotor_product(const Vector<T>& a, const Vector<T>& b) noexcept {
         return Rotor<T>(
             a | b,
             a ^ b
@@ -101,7 +101,7 @@ namespace CliffordCore::Cl2
      * @return The resulting multivector. This is the general product of the
      *         algebra; every other product here is a special case of it.
      */
-    constexpr Multivector<T> geometric_product(const Multivector<T>& m, const Multivector<T>& n) {
+    [[nodiscard]] constexpr Multivector<T> geometric_product(const Multivector<T>& m, const Multivector<T>& n) noexcept {
         // Left operand components.
         const T a0  = m.scalar.value;
         const T a1  = m.vector.x, a2 = m.vector.y;
@@ -139,7 +139,7 @@ namespace CliffordCore::Cl2
      * @param n The right multivector.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& m, const Multivector<T>& n) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& m, const Multivector<T>& n) noexcept {
         return geometric_product(m, n);
     }
 
@@ -154,7 +154,7 @@ namespace CliffordCore::Cl2
      * (ac - bd) + (ad + bc) i with i = e12. The even subalgebra of Cl(2,0) is
      * commutative, so unlike in Cl(3,0), r * s == s * r here.
      */
-    constexpr Rotor<T> operator*(const Rotor<T>& r, const Rotor<T>& s) {
+    [[nodiscard]] constexpr Rotor<T> operator*(const Rotor<T>& r, const Rotor<T>& s) noexcept {
         const T r0 = r.scalar.value, r12 = r.bivector.xy;
         const T s0 = s.scalar.value, s12 = s.bivector.xy;
 
@@ -171,7 +171,7 @@ namespace CliffordCore::Cl2
      * @param s The second rotor.
      * @return The resulting rotor, equivalent to applying s then r.
      */
-    constexpr Rotor<T> rotor_product(const Rotor<T>& r, const Rotor<T>& s) {
+    [[nodiscard]] constexpr Rotor<T> rotor_product(const Rotor<T>& r, const Rotor<T>& s) noexcept {
         return r * s;
     }
 } // namespace CliffordCore::Cl2

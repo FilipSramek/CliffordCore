@@ -77,7 +77,7 @@ namespace CliffordCore::Cl2
      * rotor is. To reflect in the line along a direction u instead, negate:
      * -reflect(v, u).
      */
-    constexpr Vector<T> reflect(const Vector<T>& v, const Vector<T>& n) {
+    [[nodiscard]] constexpr Vector<T> reflect(const Vector<T>& v, const Vector<T>& n) noexcept {
         return grade1(-(n * v * inverse(n)));
     }
 
@@ -92,7 +92,7 @@ namespace CliffordCore::Cl2
      * @param u The direction to project onto. Need not be unit length.
      * @return The component of v parallel to u.
      */
-    constexpr Vector<T> project(const Vector<T>& v, const Vector<T>& u) {
+    [[nodiscard]] constexpr Vector<T> project(const Vector<T>& v, const Vector<T>& u) noexcept {
         return (v | u) * inverse(u);
     }
 
@@ -105,7 +105,7 @@ namespace CliffordCore::Cl2
      *         is already a pure vector in two dimensions, so no grade
      *         projection is needed.
      */
-    constexpr Vector<T> reject(const Vector<T>& v, const Vector<T>& u) {
+    [[nodiscard]] constexpr Vector<T> reject(const Vector<T>& v, const Vector<T>& u) noexcept {
         return (v ^ u) * inverse(u);
     }
 
@@ -120,7 +120,7 @@ namespace CliffordCore::Cl2
      * @return (-v.y, v.x). This is exactly dual(v): grade 1 is its own dual
      *         in two dimensions, and multiplying by e12 is the quarter turn.
      */
-    constexpr Vector<T> perp(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> perp(const Vector<T>& v) noexcept {
         return dual(v);
     }
 
@@ -133,7 +133,7 @@ namespace CliffordCore::Cl2
      *         a. This is the component of a ^ b -- the 2D stand-in for the
      *         cross product -- handed back as a Scalar. Halve it for a triangle.
      */
-    constexpr Scalar<T> signed_area(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> signed_area(const Vector<T>& a, const Vector<T>& b) noexcept {
         return Scalar<T>((a ^ b).xy);
     }
 
@@ -148,7 +148,7 @@ namespace CliffordCore::Cl2
      *         different sign convention under a namespace switch is worse than a
      *         different name.
      */
-    inline T angle_between(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] inline T angle_between(const Vector<T>& a, const Vector<T>& b) noexcept {
         // + T(0) turns a -0.0 into +0.0; see the note at the top of the file.
         return std::atan2((a ^ b).xy + T(0), (a | b).value);
     }
@@ -159,7 +159,7 @@ namespace CliffordCore::Cl2
      * @param v The vector. Need not be unit length.
      * @return atan2(v.y, v.x), in (-pi, pi], counter-clockwise positive.
      */
-    inline T angle(const Vector<T>& v) {
+    [[nodiscard]] inline T angle(const Vector<T>& v) noexcept {
         // + T(0) turns a -0.0 into +0.0, so angle(-e1) is +pi, not -pi.
         return std::atan2(v.y + T(0), v.x);
     }

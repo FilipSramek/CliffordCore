@@ -42,7 +42,7 @@ namespace CliffordCore::Cl2
      * @pre s is non-zero; a zero scalar has no sign to preserve and trips an
      *      assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Scalar<T> normalize(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> normalize(const Scalar<T>& s) noexcept {
         const T n = norm(s).value;
         assert(n != T(0) && "normalize: the scalar is zero and has no unit direction");
         if (n == T(0)) {
@@ -59,7 +59,7 @@ namespace CliffordCore::Cl2
      * @pre v is non-zero; a zero vector has no direction to preserve and trips
      *      an assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Vector<T> normalize(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> normalize(const Vector<T>& v) noexcept {
         const T n = norm(v).value;
         assert(n != T(0) && "normalize: the vector is zero and has no unit direction");
         if (n == T(0)) {
@@ -77,7 +77,7 @@ namespace CliffordCore::Cl2
      * @pre b is non-zero; a zero bivector trips an assert. Under NDEBUG it is
      *      returned unchanged instead.
      */
-    constexpr Bivector<T> normalize(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> normalize(const Bivector<T>& b) noexcept {
         const T n = norm(b).value;
         assert(n != T(0) && "normalize: the bivector is zero and has no unit direction");
         if (n == T(0)) {
@@ -94,7 +94,7 @@ namespace CliffordCore::Cl2
      * @pre m is non-zero; a zero multivector trips an assert. Under NDEBUG it is
      *      returned unchanged instead.
      */
-    constexpr Multivector<T> normalize(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> normalize(const Multivector<T>& m) noexcept {
         const T n = norm(m).value;
         assert(n != T(0) && "normalize: the multivector is zero and has no unit direction");
         if (n == T(0)) {
@@ -117,7 +117,7 @@ namespace CliffordCore::Cl2
      * @pre r is non-zero; a zero rotor trips an assert. Under NDEBUG it is
      *      returned unchanged instead.
      */
-    constexpr Rotor<T> normalize(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> normalize(const Rotor<T>& r) noexcept {
         const T n = norm(r).value;
         assert(n != T(0) && "normalize: the rotor is zero and has no unit direction");
         if (n == T(0)) {

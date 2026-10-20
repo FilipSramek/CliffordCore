@@ -46,81 +46,81 @@ public:
     /**
      * @brief Default constructor initializes the scalar value to zero.
      */
-    constexpr Scalar() : value(0) {}
+    constexpr Scalar() noexcept : value(0) {}
     /**
      * @brief Constructor initializes the scalar value to the provided argument.
      * @param val The scalar value.
      */
-    constexpr Scalar(T val) : value(val) {}
+    constexpr Scalar(T val) noexcept : value(val) {}
 
     /**
      * @brief Addition operator overload.
      * @param other The scalar to add.
      * @return The resulting scalar.
      */
-    constexpr Scalar operator+(const Scalar& other) const;
+    [[nodiscard]] constexpr Scalar operator+(const Scalar& other) const noexcept;
 
     /**
      * @brief Subtraction operator overload.
      * @param other The scalar to subtract.
      * @return The resulting scalar.
      */
-    constexpr Scalar operator-(const Scalar& other) const;
+    [[nodiscard]] constexpr Scalar operator-(const Scalar& other) const noexcept;
 
     /**
      * @brief Multiplication operator overload.
      * @param other The scalar to multiply with.
      * @return The resulting scalar.
      */
-    constexpr Scalar operator*(const Scalar& other) const;
+    [[nodiscard]] constexpr Scalar operator*(const Scalar& other) const noexcept;
 
     /**
      * @brief Multiplication of scalar by vector operator overload.
      * @param other The vector to multiply with.
      * @return The resulting vector.
      */
-    constexpr Vector<T> operator*(const Vector<T>& other) const;
+    [[nodiscard]] constexpr Vector<T> operator*(const Vector<T>& other) const noexcept;
 
     /**
      * @brief Multiplication of scalar by bivector operator overload.
      * @param other The bivector to multiply with.
      * @return The resulting bivector.
      */
-    constexpr Bivector<T> operator*(const Bivector<T>& other) const;
+    [[nodiscard]] constexpr Bivector<T> operator*(const Bivector<T>& other) const noexcept;
 
     /**
      * @brief Multiplication of scalar by multivector operator overload.
      * @param other The multivector to multiply with.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& other) const;
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& other) const noexcept;
 
     /**
      * @brief Multiplication of scalar by rotor operator overload.
      * @param other The rotor to multiply with.
      * @return The resulting rotor.
      */
-    constexpr Rotor<T> operator*(const Rotor<T>& other) const;
+    [[nodiscard]] constexpr Rotor<T> operator*(const Rotor<T>& other) const noexcept;
 
     /**
      * @brief Division operator overload.
      * @param other The scalar to divide by.
      * @return The resulting scalar.
      */
-    constexpr Scalar operator/(const Scalar& other) const;
+    [[nodiscard]] constexpr Scalar operator/(const Scalar& other) const noexcept;
 
     /**
      * @brief Unary negation operator overload.
      * @return The resulting scalar.
      */
-    constexpr Scalar operator-() const;
+    [[nodiscard]] constexpr Scalar operator-() const noexcept;
 
     /**
      * @brief Adds another scalar in place.
      * @param other The scalar to add.
      * @return A reference to this scalar.
      */
-    constexpr Scalar& operator+=(const Scalar& other) {
+    constexpr Scalar& operator+=(const Scalar& other) noexcept {
         value += other.value;
         return *this;
     }
@@ -130,7 +130,7 @@ public:
      * @param other The scalar to subtract.
      * @return A reference to this scalar.
      */
-    constexpr Scalar& operator-=(const Scalar& other) {
+    constexpr Scalar& operator-=(const Scalar& other) noexcept {
         value -= other.value;
         return *this;
     }
@@ -140,7 +140,7 @@ public:
      * @param other The scalar to multiply by.
      * @return A reference to this scalar.
      */
-    constexpr Scalar& operator*=(const Scalar& other) {
+    constexpr Scalar& operator*=(const Scalar& other) noexcept {
         value *= other.value;
         return *this;
     }
@@ -150,7 +150,7 @@ public:
      * @param other The scalar to divide by.
      * @return A reference to this scalar.
      */
-    constexpr Scalar& operator/=(const Scalar& other) {
+    constexpr Scalar& operator/=(const Scalar& other) noexcept {
         value /= other.value;
         return *this;
     }
@@ -159,7 +159,7 @@ public:
      * @brief Returns a string representation of the scalar.
      * @return A string representing the scalar.
      */
-    std::string to_string() const {
+    [[nodiscard]] std::string to_string() const {
         return CliffordCore::detail::format_component(value);
     }
 };
@@ -173,32 +173,32 @@ public:
 namespace CliffordCore::Cl2 {
 
 template<typename T>
-constexpr Scalar<T> Scalar<T>::operator+(const Scalar& other) const {
+[[nodiscard]] constexpr Scalar<T> Scalar<T>::operator+(const Scalar& other) const noexcept {
     return Scalar(value + other.value);
 }
 
 template<typename T>
-constexpr Scalar<T> Scalar<T>::operator-(const Scalar& other) const {
+[[nodiscard]] constexpr Scalar<T> Scalar<T>::operator-(const Scalar& other) const noexcept {
     return Scalar(value - other.value);
 }
 
 template<typename T>
-constexpr Scalar<T> Scalar<T>::operator*(const Scalar& other) const {
+[[nodiscard]] constexpr Scalar<T> Scalar<T>::operator*(const Scalar& other) const noexcept {
     return Scalar(value * other.value);
 }
 
 template<typename T>
-constexpr Vector<T> Scalar<T>::operator*(const Vector<T>& other) const {
+[[nodiscard]] constexpr Vector<T> Scalar<T>::operator*(const Vector<T>& other) const noexcept {
     return Vector<T>(value * other.x, value * other.y);
 }
 
 template<typename T>
-constexpr Bivector<T> Scalar<T>::operator*(const Bivector<T>& other) const {
+[[nodiscard]] constexpr Bivector<T> Scalar<T>::operator*(const Bivector<T>& other) const noexcept {
     return Bivector<T>(value * other.xy);
 }
 
 template<typename T>
-constexpr Multivector<T> Scalar<T>::operator*(const Multivector<T>& other) const {
+[[nodiscard]] constexpr Multivector<T> Scalar<T>::operator*(const Multivector<T>& other) const noexcept {
     // Delegate to the per-grade overloads above. Multiplying by the raw `value`
     // would put a T on the left of a class type, for which no operator exists.
     return Multivector<T>(
@@ -209,7 +209,7 @@ constexpr Multivector<T> Scalar<T>::operator*(const Multivector<T>& other) const
 }
 
 template<typename T>
-constexpr Rotor<T> Scalar<T>::operator*(const Rotor<T>& other) const {
+[[nodiscard]] constexpr Rotor<T> Scalar<T>::operator*(const Rotor<T>& other) const noexcept {
     // Same reasoning as the Multivector overload above.
     return Rotor<T>(
         *this * other.scalar,
@@ -218,12 +218,12 @@ constexpr Rotor<T> Scalar<T>::operator*(const Rotor<T>& other) const {
 }
 
 template<typename T>
-constexpr Scalar<T> Scalar<T>::operator/(const Scalar& other) const {
+[[nodiscard]] constexpr Scalar<T> Scalar<T>::operator/(const Scalar& other) const noexcept {
     return Scalar(value / other.value);
 }
 
 template<typename T>
-constexpr Scalar<T> Scalar<T>::operator-() const {
+[[nodiscard]] constexpr Scalar<T> Scalar<T>::operator-() const noexcept {
     return Scalar(-value);
 }
 } // namespace CliffordCore::Cl2

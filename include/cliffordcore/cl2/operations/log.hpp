@@ -50,7 +50,7 @@ namespace CliffordCore::Cl2
      * @return The resulting bivector, atan2(r.bivector.xy, r.scalar.value) e12,
      *         with its component in (-pi, pi]. The zero rotor gives zero.
      */
-    constexpr Bivector<T> log(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Bivector<T> log(const Rotor<T>& r) noexcept {
         return Bivector<T>(std::atan2(r.bivector.xy + T(0), r.scalar.value));
     }
 } // namespace CliffordCore::Cl2
