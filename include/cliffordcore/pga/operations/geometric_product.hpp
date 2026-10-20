@@ -57,7 +57,7 @@ namespace CliffordCore::PGA
      * @return The resulting multivector: the dot product in grade 0 and the
      *         wedge product (their meet) in grade 2. Grades 1, 3 and 4 are zero.
      */
-    constexpr Multivector<T> geometric_product(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> geometric_product(const Vector<T>& a, const Vector<T>& b) noexcept {
         return Multivector<T>(
             a | b,
             Vector<T>(),
@@ -74,7 +74,7 @@ namespace CliffordCore::PGA
      * @param b The second vector.
      * @return The resulting multivector = dot_product(a, b) + wedge_product(a, b).
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(a, b);
     }
 
@@ -88,7 +88,7 @@ namespace CliffordCore::PGA
      *         angle between them, or a translation if they are parallel. Same
      *         components as geometric_product(a, b), whose odd grades are zero.
      */
-    constexpr Motor<T> motor_product(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Motor<T> motor_product(const Vector<T>& a, const Vector<T>& b) noexcept {
         return Motor<T>(a | b, a ^ b, Quadvector<T>());
     }
 
@@ -100,7 +100,7 @@ namespace CliffordCore::PGA
      * @return The resulting multivector. This is the general product of the
      *         algebra; every other product here is a special case of it.
      */
-    constexpr Multivector<T> geometric_product(const Multivector<T>& m, const Multivector<T>& n) {
+    [[nodiscard]] constexpr Multivector<T> geometric_product(const Multivector<T>& m, const Multivector<T>& n) noexcept {
         // Left operand components. `a` is the scalar; a0..a3 are the vector.
         const T a     = m.scalar.value;
         const T a0    = m.vector.e0,     a1    = m.vector.e1,     a2    = m.vector.e2,   a3 = m.vector.e3;
@@ -218,7 +218,7 @@ namespace CliffordCore::PGA
      * @param n The right multivector.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& m, const Multivector<T>& n) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& m, const Multivector<T>& n) noexcept {
         return geometric_product(m, n);
     }
 
@@ -230,7 +230,7 @@ namespace CliffordCore::PGA
      * @return The resulting rotor, equivalent to applying s then r. Rotors
      *         contain no e0, so this is the same closed form as in Cl3.
      */
-    constexpr Rotor<T> operator*(const Rotor<T>& r, const Rotor<T>& s) {
+    [[nodiscard]] constexpr Rotor<T> operator*(const Rotor<T>& r, const Rotor<T>& s) noexcept {
         const T a = r.scalar.value, a12 = r.e12, a13 = r.e13, a23 = r.e23;
         const T b = s.scalar.value, b12 = s.e12, b13 = s.e13, b23 = s.e23;
 
@@ -249,7 +249,7 @@ namespace CliffordCore::PGA
      * @param s The second rotor.
      * @return The resulting rotor, equivalent to applying s then r.
      */
-    constexpr Rotor<T> rotor_product(const Rotor<T>& r, const Rotor<T>& s) {
+    [[nodiscard]] constexpr Rotor<T> rotor_product(const Rotor<T>& r, const Rotor<T>& s) noexcept {
         return r * s;
     }
 
@@ -263,7 +263,7 @@ namespace CliffordCore::PGA
      *         (s1 + a)(s2 + b) = s1 s2 + s1 b + s2 a: for normalised
      *         translators the displacements simply add.
      */
-    constexpr Translator<T> operator*(const Translator<T>& t, const Translator<T>& u) {
+    [[nodiscard]] constexpr Translator<T> operator*(const Translator<T>& t, const Translator<T>& u) noexcept {
         const T a = t.scalar.value;
         const T b = u.scalar.value;
         return Translator<T>(
@@ -281,7 +281,7 @@ namespace CliffordCore::PGA
      * @param u The second translator.
      * @return The resulting translator, equivalent to applying u then t.
      */
-    constexpr Translator<T> translator_product(const Translator<T>& t, const Translator<T>& u) {
+    [[nodiscard]] constexpr Translator<T> translator_product(const Translator<T>& t, const Translator<T>& u) noexcept {
         return t * u;
     }
 
@@ -293,7 +293,7 @@ namespace CliffordCore::PGA
      * @return The resulting motor, equivalent to applying n then m. This is the
      *         even-even block of the 16x16 table above.
      */
-    constexpr Motor<T> operator*(const Motor<T>& m, const Motor<T>& n) {
+    [[nodiscard]] constexpr Motor<T> operator*(const Motor<T>& m, const Motor<T>& n) noexcept {
         const T a     = m.scalar.value;
         const T a01   = m.bivector.e01, a02 = m.bivector.e02, a03 = m.bivector.e03;
         const T a12   = m.bivector.e12, a13 = m.bivector.e13, a23 = m.bivector.e23;
@@ -339,7 +339,7 @@ namespace CliffordCore::PGA
      * @param n The second motor.
      * @return The resulting motor, equivalent to applying n then m.
      */
-    constexpr Motor<T> motor_product(const Motor<T>& m, const Motor<T>& n) {
+    [[nodiscard]] constexpr Motor<T> motor_product(const Motor<T>& m, const Motor<T>& n) noexcept {
         return m * n;
     }
 } // namespace CliffordCore::PGA

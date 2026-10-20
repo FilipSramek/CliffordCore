@@ -44,7 +44,7 @@ namespace CliffordCore::PGA
      * @param m The multivector to project.
      * @return The scalar part.
      */
-    constexpr Scalar<T> grade0(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Scalar<T> grade0(const Multivector<T>& m) noexcept {
         return m.scalar;
     }
 
@@ -54,7 +54,7 @@ namespace CliffordCore::PGA
      * @param m The multivector to project.
      * @return The vector part.
      */
-    constexpr Vector<T> grade1(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Vector<T> grade1(const Multivector<T>& m) noexcept {
         return m.vector;
     }
 
@@ -64,7 +64,7 @@ namespace CliffordCore::PGA
      * @param m The multivector to project.
      * @return The bivector part.
      */
-    constexpr Bivector<T> grade2(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Bivector<T> grade2(const Multivector<T>& m) noexcept {
         return m.bivector;
     }
 
@@ -74,7 +74,7 @@ namespace CliffordCore::PGA
      * @param m The multivector to project.
      * @return The trivector part.
      */
-    constexpr Trivector<T> grade3(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Trivector<T> grade3(const Multivector<T>& m) noexcept {
         return m.trivector;
     }
 
@@ -84,7 +84,7 @@ namespace CliffordCore::PGA
      * @param m The multivector to project.
      * @return The quadvector part.
      */
-    constexpr Quadvector<T> grade4(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Quadvector<T> grade4(const Multivector<T>& m) noexcept {
         return m.quadvector;
     }
 
@@ -94,7 +94,7 @@ namespace CliffordCore::PGA
      * @param r The rotor to project.
      * @return The scalar part.
      */
-    constexpr Scalar<T> grade0(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Scalar<T> grade0(const Rotor<T>& r) noexcept {
         return r.scalar;
     }
 
@@ -104,7 +104,7 @@ namespace CliffordCore::PGA
      * @param r The rotor to project.
      * @return The bivector part, with zero ideal components.
      */
-    constexpr Bivector<T> grade2(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Bivector<T> grade2(const Rotor<T>& r) noexcept {
         return Bivector<T>(0, 0, 0, r.e12, r.e13, r.e23);
     }
 
@@ -114,7 +114,7 @@ namespace CliffordCore::PGA
      * @param t The translator to project.
      * @return The scalar part.
      */
-    constexpr Scalar<T> grade0(const Translator<T>& t) {
+    [[nodiscard]] constexpr Scalar<T> grade0(const Translator<T>& t) noexcept {
         return t.scalar;
     }
 
@@ -124,7 +124,7 @@ namespace CliffordCore::PGA
      * @param t The translator to project.
      * @return The bivector part, with zero Euclidean components.
      */
-    constexpr Bivector<T> grade2(const Translator<T>& t) {
+    [[nodiscard]] constexpr Bivector<T> grade2(const Translator<T>& t) noexcept {
         return Bivector<T>(t.e01, t.e02, t.e03, 0, 0, 0);
     }
 
@@ -134,7 +134,7 @@ namespace CliffordCore::PGA
      * @param m The motor to project.
      * @return The scalar part.
      */
-    constexpr Scalar<T> grade0(const Motor<T>& m) {
+    [[nodiscard]] constexpr Scalar<T> grade0(const Motor<T>& m) noexcept {
         return m.scalar;
     }
 
@@ -144,7 +144,7 @@ namespace CliffordCore::PGA
      * @param m The motor to project.
      * @return The bivector part.
      */
-    constexpr Bivector<T> grade2(const Motor<T>& m) {
+    [[nodiscard]] constexpr Bivector<T> grade2(const Motor<T>& m) noexcept {
         return m.bivector;
     }
 
@@ -154,7 +154,7 @@ namespace CliffordCore::PGA
      * @param m The motor to project.
      * @return The quadvector part.
      */
-    constexpr Quadvector<T> grade4(const Motor<T>& m) {
+    [[nodiscard]] constexpr Quadvector<T> grade4(const Motor<T>& m) noexcept {
         return m.quadvector;
     }
 
@@ -164,7 +164,7 @@ namespace CliffordCore::PGA
      * @param s The scalar to project.
      * @return The same scalar.
      */
-    constexpr Scalar<T> grade0(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> grade0(const Scalar<T>& s) noexcept {
         return s;
     }
 } // namespace CliffordCore::PGA

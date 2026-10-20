@@ -46,20 +46,20 @@ public:
     /**
      * @brief Default constructor initializes the quadvector to zero.
      */
-    constexpr Quadvector() : e0123(0) {}
+    constexpr Quadvector() noexcept : e0123(0) {}
 
     /**
      * @brief Constructor initializes the quadvector with the provided value.
      * @param value The value to initialize the quadvector with.
      */
-    constexpr Quadvector(const T& value) : e0123(value) {}
+    constexpr Quadvector(const T& value) noexcept : e0123(value) {}
 
     /**
      * @brief Addition operator overload.
      * @param other The quadvector to add.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector operator+(const Quadvector& other) const {
+    [[nodiscard]] constexpr Quadvector operator+(const Quadvector& other) const noexcept {
         return Quadvector(e0123 + other.e0123);
     }
 
@@ -68,7 +68,7 @@ public:
      * @param other The quadvector to subtract.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector operator-(const Quadvector& other) const {
+    [[nodiscard]] constexpr Quadvector operator-(const Quadvector& other) const noexcept {
         return Quadvector(e0123 - other.e0123);
     }
 
@@ -79,7 +79,7 @@ public:
      *         of two pseudoscalars vanishes identically. Defined so that every
      *         operand pair has an operator*, as the library promises.
      */
-    constexpr Scalar<T> operator*(const Quadvector& other) const;
+    [[nodiscard]] constexpr Scalar<T> operator*(const Quadvector& other) const noexcept;
 
     // Quadvector is the one PGA grade type with a single-argument converting
     // constructor, so a raw `T` could reach either operator*(Quadvector) or
@@ -92,7 +92,7 @@ public:
      * @param scalar The value to multiply with.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector operator*(T scalar) const {
+    [[nodiscard]] constexpr Quadvector operator*(T scalar) const noexcept {
         return Quadvector(e0123 * scalar);
     }
 
@@ -101,7 +101,7 @@ public:
      * @param scalar The value to divide by.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector operator/(T scalar) const {
+    [[nodiscard]] constexpr Quadvector operator/(T scalar) const noexcept {
         return Quadvector(e0123 / scalar);
     }
 
@@ -110,20 +110,20 @@ public:
      * @param scalar The scalar to multiply with.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector operator*(const Scalar<T>& scalar) const;
+    [[nodiscard]] constexpr Quadvector operator*(const Scalar<T>& scalar) const noexcept;
 
     /**
      * @brief Scalar division operator overload.
      * @param scalar The scalar to divide by.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector operator/(const Scalar<T>& scalar) const;
+    [[nodiscard]] constexpr Quadvector operator/(const Scalar<T>& scalar) const noexcept;
 
     /**
      * @brief Unary negation operator overload.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector operator-() const {
+    [[nodiscard]] constexpr Quadvector operator-() const noexcept {
         return Quadvector(-e0123);
     }
 
@@ -132,7 +132,7 @@ public:
      * @param other The quadvector to add.
      * @return A reference to this quadvector.
      */
-    constexpr Quadvector& operator+=(const Quadvector& other) {
+    constexpr Quadvector& operator+=(const Quadvector& other) noexcept {
         e0123 += other.e0123;
         return *this;
     }
@@ -142,7 +142,7 @@ public:
      * @param other The quadvector to subtract.
      * @return A reference to this quadvector.
      */
-    constexpr Quadvector& operator-=(const Quadvector& other) {
+    constexpr Quadvector& operator-=(const Quadvector& other) noexcept {
         e0123 -= other.e0123;
         return *this;
     }
@@ -152,7 +152,7 @@ public:
      * @param value The value to multiply by.
      * @return A reference to this quadvector.
      */
-    constexpr Quadvector& operator*=(T value) {
+    constexpr Quadvector& operator*=(T value) noexcept {
         e0123 *= value;
         return *this;
     }
@@ -162,7 +162,7 @@ public:
      * @param value The value to divide by.
      * @return A reference to this quadvector.
      */
-    constexpr Quadvector& operator/=(T value) {
+    constexpr Quadvector& operator/=(T value) noexcept {
         e0123 /= value;
         return *this;
     }
@@ -172,20 +172,20 @@ public:
      * @param scalar The scalar to multiply by.
      * @return A reference to this quadvector.
      */
-    constexpr Quadvector& operator*=(const Scalar<T>& scalar);
+    constexpr Quadvector& operator*=(const Scalar<T>& scalar) noexcept;
 
     /**
      * @brief Divides this quadvector in place by a scalar.
      * @param scalar The scalar to divide by.
      * @return A reference to this quadvector.
      */
-    constexpr Quadvector& operator/=(const Scalar<T>& scalar);
+    constexpr Quadvector& operator/=(const Scalar<T>& scalar) noexcept;
 
     /**
      * @brief Returns a string representation of the quadvector.
      * @return A string representing the quadvector.
      */
-    std::string to_string() const {
+    [[nodiscard]] std::string to_string() const {
         return CliffordCore::detail::format_component(e0123) + "*e0123";
     }
 };
@@ -198,7 +198,7 @@ namespace CliffordCore::PGA
 {
 
 template<typename T>
-constexpr Scalar<T> Quadvector<T>::operator*(const Quadvector<T>& other) const {
+[[nodiscard]] constexpr Scalar<T> Quadvector<T>::operator*(const Quadvector<T>& other) const noexcept {
     // e0123 * e0123 contains e0 twice, and e0^2 = 0. Touch `other` so the
     // parameter is not flagged as unused.
     (void)other;
@@ -206,22 +206,22 @@ constexpr Scalar<T> Quadvector<T>::operator*(const Quadvector<T>& other) const {
 }
 
 template<typename T>
-constexpr Quadvector<T> Quadvector<T>::operator*(const Scalar<T>& scalar) const {
+[[nodiscard]] constexpr Quadvector<T> Quadvector<T>::operator*(const Scalar<T>& scalar) const noexcept {
     return Quadvector<T>(e0123 * scalar.value);
 }
 
 template<typename T>
-constexpr Quadvector<T> Quadvector<T>::operator/(const Scalar<T>& scalar) const {
+[[nodiscard]] constexpr Quadvector<T> Quadvector<T>::operator/(const Scalar<T>& scalar) const noexcept {
     return Quadvector<T>(e0123 / scalar.value);
 }
 
 template<typename T>
-constexpr Quadvector<T>& Quadvector<T>::operator*=(const Scalar<T>& scalar) {
+constexpr Quadvector<T>& Quadvector<T>::operator*=(const Scalar<T>& scalar) noexcept {
     return *this *= scalar.value;
 }
 
 template<typename T>
-constexpr Quadvector<T>& Quadvector<T>::operator/=(const Scalar<T>& scalar) {
+constexpr Quadvector<T>& Quadvector<T>::operator/=(const Scalar<T>& scalar) noexcept {
     return *this /= scalar.value;
 }
 
@@ -232,7 +232,7 @@ template<typename T>
  * @param q The quadvector to scale.
  * @return The resulting quadvector.
  */
-constexpr Quadvector<T> operator*(T value, const Quadvector<T>& q) {
+[[nodiscard]] constexpr Quadvector<T> operator*(T value, const Quadvector<T>& q) noexcept {
     return Quadvector<T>(value * q.e0123);
 }
 } // namespace CliffordCore::PGA

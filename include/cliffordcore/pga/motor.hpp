@@ -55,7 +55,7 @@ namespace CliffordCore::PGA
         /**
          * @brief Default constructor initializes all components to zero.
          */
-        constexpr Motor() : scalar(), bivector(), quadvector() {}
+        constexpr Motor() noexcept : scalar(), bivector(), quadvector() {}
 
         /**
          * @brief Constructor initializes the motor with the provided components.
@@ -63,21 +63,21 @@ namespace CliffordCore::PGA
          * @param b The bivector component.
          * @param q The quadvector component.
          */
-        constexpr Motor(const Scalar<T>& s, const Bivector<T>& b, const Quadvector<T>& q)
+        constexpr Motor(const Scalar<T>& s, const Bivector<T>& b, const Quadvector<T>& q) noexcept
             : scalar(s), bivector(b), quadvector(q) {}
 
         /**
          * @brief Constructor widens a rotor to a motor. Nothing is lost.
          * @param r The rotor to widen.
          */
-        constexpr Motor(const Rotor<T>& r)
+        constexpr Motor(const Rotor<T>& r) noexcept
             : scalar(r.scalar), bivector(Bivector<T>(0, 0, 0, r.e12, r.e13, r.e23)), quadvector() {}
 
         /**
          * @brief Constructor widens a translator to a motor. Nothing is lost.
          * @param t The translator to widen.
          */
-        constexpr Motor(const Translator<T>& t)
+        constexpr Motor(const Translator<T>& t) noexcept
             : scalar(t.scalar), bivector(Bivector<T>(t.e01, t.e02, t.e03, 0, 0, 0)), quadvector() {}
 
         /**
@@ -87,7 +87,7 @@ namespace CliffordCore::PGA
          * EXPLICIT on purpose: this discards grades 1 and 3. Spell the
          * narrowing out, or use to_motor(m), which does the same thing by name.
          */
-        constexpr explicit Motor(const Multivector<T>& m)
+        constexpr explicit Motor(const Multivector<T>& m) noexcept
             : scalar(m.scalar), bivector(m.bivector), quadvector(m.quadvector) {}
 
         /**
@@ -95,7 +95,7 @@ namespace CliffordCore::PGA
          * @param other The motor to add.
          * @return The resulting motor.
          */
-        constexpr Motor operator+(const Motor& other) const {
+        [[nodiscard]] constexpr Motor operator+(const Motor& other) const noexcept {
             return Motor(scalar + other.scalar, bivector + other.bivector, quadvector + other.quadvector);
         }
 
@@ -104,7 +104,7 @@ namespace CliffordCore::PGA
          * @param other The motor to subtract.
          * @return The resulting motor.
          */
-        constexpr Motor operator-(const Motor& other) const {
+        [[nodiscard]] constexpr Motor operator-(const Motor& other) const noexcept {
             return Motor(scalar - other.scalar, bivector - other.bivector, quadvector - other.quadvector);
         }
 
@@ -112,7 +112,7 @@ namespace CliffordCore::PGA
          * @brief Unary negation operator overload.
          * @return The resulting motor, which represents the same motion.
          */
-        constexpr Motor operator-() const {
+        [[nodiscard]] constexpr Motor operator-() const noexcept {
             return Motor(-scalar, -bivector, -quadvector);
         }
 
@@ -121,7 +121,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to multiply by.
          * @return The resulting motor.
          */
-        constexpr Motor operator*(const Scalar<T>& other) const {
+        [[nodiscard]] constexpr Motor operator*(const Scalar<T>& other) const noexcept {
             return Motor(scalar * other, bivector * other, quadvector * other);
         }
 
@@ -130,7 +130,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to divide by.
          * @return The resulting motor.
          */
-        constexpr Motor operator/(const Scalar<T>& other) const {
+        [[nodiscard]] constexpr Motor operator/(const Scalar<T>& other) const noexcept {
             return Motor(scalar / other, bivector / other, quadvector / other);
         }
 
@@ -139,7 +139,7 @@ namespace CliffordCore::PGA
          * @param other The motor to add.
          * @return A reference to this motor.
          */
-        constexpr Motor& operator+=(const Motor& other) {
+        constexpr Motor& operator+=(const Motor& other) noexcept {
             *this = *this + other;
             return *this;
         }
@@ -149,7 +149,7 @@ namespace CliffordCore::PGA
          * @param other The motor to subtract.
          * @return A reference to this motor.
          */
-        constexpr Motor& operator-=(const Motor& other) {
+        constexpr Motor& operator-=(const Motor& other) noexcept {
             *this = *this - other;
             return *this;
         }
@@ -159,7 +159,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to multiply by.
          * @return A reference to this motor.
          */
-        constexpr Motor& operator*=(const Scalar<T>& other) {
+        constexpr Motor& operator*=(const Scalar<T>& other) noexcept {
             *this = *this * other;
             return *this;
         }
@@ -169,7 +169,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to divide by.
          * @return A reference to this motor.
          */
-        constexpr Motor& operator/=(const Scalar<T>& other) {
+        constexpr Motor& operator/=(const Scalar<T>& other) noexcept {
             *this = *this / other;
             return *this;
         }
@@ -178,7 +178,7 @@ namespace CliffordCore::PGA
          * @brief Returns a string representation of the motor.
          * @return A string representing the motor.
          */
-        std::string to_string() const {
+        [[nodiscard]] std::string to_string() const {
             return "(" + scalar.to_string() + ") + (" + bivector.to_string()
                  + ") + (" + quadvector.to_string() + ")";
         }
@@ -191,7 +191,7 @@ namespace CliffordCore::PGA
      * @param m The motor to scale.
      * @return The resulting motor.
      */
-    constexpr Motor<T> operator*(T value, const Motor<T>& m) {
+    [[nodiscard]] constexpr Motor<T> operator*(T value, const Motor<T>& m) noexcept {
         return m * Scalar<T>(value);
     }
 } // namespace CliffordCore::PGA

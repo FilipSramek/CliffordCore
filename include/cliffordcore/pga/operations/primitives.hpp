@@ -47,7 +47,7 @@ namespace CliffordCore::PGA
      *        scaled by the length of the normal.
      * @return The vector d e0 + a e1 + b e2 + c e3.
      */
-    constexpr Vector<T> plane(T a, T b, T c, T d) {
+    [[nodiscard]] constexpr Vector<T> plane(T a, T b, T c, T d) noexcept {
         return Vector<T>(d, a, b, c);
     }
 
@@ -61,7 +61,7 @@ namespace CliffordCore::PGA
      *         triple meet of the planes X = x, Y = y and Z = z, so a point
      *         built this way lies on a plane exactly when plane ^ point is zero.
      */
-    constexpr Trivector<T> point(T x, T y, T z) {
+    [[nodiscard]] constexpr Trivector<T> point(T x, T y, T z) noexcept {
         return Trivector<T>(-z, y, -x, T(1));
     }
 
@@ -75,7 +75,7 @@ namespace CliffordCore::PGA
      *         but zero weight. Adding an ideal point to a Euclidean one
      *         translates it; translating an ideal point leaves it unchanged.
      */
-    constexpr Trivector<T> ideal_point(T dx, T dy, T dz) {
+    [[nodiscard]] constexpr Trivector<T> ideal_point(T dx, T dy, T dz) noexcept {
         return Trivector<T>(-dz, dy, -dx, T(0));
     }
 
@@ -84,7 +84,7 @@ namespace CliffordCore::PGA
      * @brief The origin.
      * @return The trivector e123, which is point(0, 0, 0).
      */
-    constexpr Trivector<T> origin() {
+    [[nodiscard]] constexpr Trivector<T> origin() noexcept {
         return Trivector<T>(T(0), T(0), T(0), T(1));
     }
 
@@ -93,7 +93,7 @@ namespace CliffordCore::PGA
      * @brief The plane at infinity.
      * @return The vector e0, the one plane every ideal point lies on.
      */
-    constexpr Vector<T> ideal_plane() {
+    [[nodiscard]] constexpr Vector<T> ideal_plane() noexcept {
         return Vector<T>(T(1), T(0), T(0), T(0));
     }
 
@@ -106,7 +106,7 @@ namespace CliffordCore::PGA
      * @return The bivector dz e12 - dy e13 + dx e23, which has no ideal part.
      *         The x, y and z axes are e23, -e13 and e12.
      */
-    constexpr Bivector<T> line_through_origin(T dx, T dy, T dz) {
+    [[nodiscard]] constexpr Bivector<T> line_through_origin(T dx, T dy, T dz) noexcept {
         return Bivector<T>(T(0), T(0), T(0), dz, -dy, dx);
     }
 
@@ -119,7 +119,7 @@ namespace CliffordCore::PGA
      *         direction from a to b and its norm their distance; it is zero if
      *         the points coincide.
      */
-    constexpr Bivector<T> line_through_points(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> line_through_points(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return join(a, b);
     }
 
@@ -130,7 +130,7 @@ namespace CliffordCore::PGA
      * @param q The second plane.
      * @return p ^ q. Parallel planes give an ideal line; coincident planes give zero.
      */
-    constexpr Bivector<T> line_from_planes(const Vector<T>& p, const Vector<T>& q) {
+    [[nodiscard]] constexpr Bivector<T> line_from_planes(const Vector<T>& p, const Vector<T>& q) noexcept {
         return p ^ q;
     }
 
@@ -142,7 +142,7 @@ namespace CliffordCore::PGA
      * @param c The third point.
      * @return join(join(a, b), c). Zero if the three points are collinear.
      */
-    constexpr Vector<T> plane_through_points(const Trivector<T>& a, const Trivector<T>& b, const Trivector<T>& c) {
+    [[nodiscard]] constexpr Vector<T> plane_through_points(const Trivector<T>& a, const Trivector<T>& b, const Trivector<T>& c) noexcept {
         return join(join(a, b), c);
     }
 
@@ -157,7 +157,7 @@ namespace CliffordCore::PGA
      * @return {x, y, z}, dividing out the weight. An ideal point has no
      *         position; this returns zeroes for one rather than dividing by zero.
      */
-    constexpr std::array<T, 3> position(const Trivector<T>& p) {
+    [[nodiscard]] constexpr std::array<T, 3> position(const Trivector<T>& p) noexcept {
         if (p.e123 == T(0)) {
             return std::array<T, 3>{T(0), T(0), T(0)};
         }
@@ -171,7 +171,7 @@ namespace CliffordCore::PGA
      * @return {dx, dy, dz} straight from the ideal components, without dividing
      *         by the weight.
      */
-    constexpr std::array<T, 3> direction(const Trivector<T>& p) {
+    [[nodiscard]] constexpr std::array<T, 3> direction(const Trivector<T>& p) noexcept {
         return std::array<T, 3>{-p.e023, p.e013, -p.e012};
     }
 
@@ -182,7 +182,7 @@ namespace CliffordCore::PGA
      * @return {dx, dy, dz} from the Euclidean components: {e23, -e13, e12}.
      *         Zero for an ideal line.
      */
-    constexpr std::array<T, 3> direction(const Bivector<T>& l) {
+    [[nodiscard]] constexpr std::array<T, 3> direction(const Bivector<T>& l) noexcept {
         return std::array<T, 3>{l.e23, -l.e13, l.e12};
     }
 
@@ -192,7 +192,7 @@ namespace CliffordCore::PGA
      * @param l The bivector.
      * @return {e01, e02, e03}, the ideal half of the line.
      */
-    constexpr std::array<T, 3> moment(const Bivector<T>& l) {
+    [[nodiscard]] constexpr std::array<T, 3> moment(const Bivector<T>& l) noexcept {
         return std::array<T, 3>{l.e01, l.e02, l.e03};
     }
 
@@ -202,7 +202,7 @@ namespace CliffordCore::PGA
      * @param p The vector.
      * @return {a, b, c} = {e1, e2, e3}. Zero for the ideal plane.
      */
-    constexpr std::array<T, 3> normal(const Vector<T>& p) {
+    [[nodiscard]] constexpr std::array<T, 3> normal(const Vector<T>& p) noexcept {
         return std::array<T, 3>{p.e1, p.e2, p.e3};
     }
 
@@ -212,7 +212,7 @@ namespace CliffordCore::PGA
      * @param p The vector.
      * @return The e0 component, which is the d of a x + b y + c z + d = 0.
      */
-    constexpr Scalar<T> offset(const Vector<T>& p) {
+    [[nodiscard]] constexpr Scalar<T> offset(const Vector<T>& p) noexcept {
         return Scalar<T>(p.e0);
     }
 
@@ -226,7 +226,7 @@ namespace CliffordCore::PGA
      * @param p The vector.
      * @return True if its normal is zero.
      */
-    constexpr bool is_ideal(const Vector<T>& p) {
+    [[nodiscard]] constexpr bool is_ideal(const Vector<T>& p) noexcept {
         return p.e1 == T(0) && p.e2 == T(0) && p.e3 == T(0);
     }
 
@@ -236,7 +236,7 @@ namespace CliffordCore::PGA
      * @param l The bivector.
      * @return True if its direction is zero.
      */
-    constexpr bool is_ideal(const Bivector<T>& l) {
+    [[nodiscard]] constexpr bool is_ideal(const Bivector<T>& l) noexcept {
         return l.e12 == T(0) && l.e13 == T(0) && l.e23 == T(0);
     }
 
@@ -246,7 +246,7 @@ namespace CliffordCore::PGA
      * @param p The trivector.
      * @return True if its weight is zero.
      */
-    constexpr bool is_ideal(const Trivector<T>& p) {
+    [[nodiscard]] constexpr bool is_ideal(const Trivector<T>& p) noexcept {
         return p.e123 == T(0);
     }
 } // namespace CliffordCore::PGA

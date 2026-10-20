@@ -53,7 +53,7 @@ namespace CliffordCore::PGA
         /**
          * @brief Default constructor initializes all components to zero.
          */
-        constexpr Translator() : scalar(), e01(0), e02(0), e03(0) {}
+        constexpr Translator() noexcept : scalar(), e01(0), e02(0), e03(0) {}
 
         /**
          * @brief Constructor initializes the translator with the provided components.
@@ -62,7 +62,7 @@ namespace CliffordCore::PGA
          * @param e02_val The e02 component.
          * @param e03_val The e03 component.
          */
-        constexpr Translator(const Scalar<T>& s, T e01_val, T e02_val, T e03_val)
+        constexpr Translator(const Scalar<T>& s, T e01_val, T e02_val, T e03_val) noexcept
             : scalar(s), e01(e01_val), e02(e02_val), e03(e03_val) {}
 
         /**
@@ -72,7 +72,7 @@ namespace CliffordCore::PGA
          * EXPLICIT on purpose: this discards every grade 1, 3 and 4 component
          * and the Euclidean half of grade 2. Use to_translator(m) to say so by name.
          */
-        constexpr explicit Translator(const Multivector<T>& m)
+        constexpr explicit Translator(const Multivector<T>& m) noexcept
             : scalar(m.scalar), e01(m.bivector.e01), e02(m.bivector.e02), e03(m.bivector.e03) {}
 
         /**
@@ -82,7 +82,7 @@ namespace CliffordCore::PGA
          * EXPLICIT on purpose: this discards the motor's rotation -- the
          * Euclidean bivector components and e0123. Use to_translator(m) to say so by name.
          */
-        constexpr explicit Translator(const Motor<T>& m)
+        constexpr explicit Translator(const Motor<T>& m) noexcept
             : scalar(m.scalar), e01(m.bivector.e01), e02(m.bivector.e02), e03(m.bivector.e03) {}
 
         /**
@@ -90,7 +90,7 @@ namespace CliffordCore::PGA
          * @param other The translator to add.
          * @return The resulting translator.
          */
-        constexpr Translator operator+(const Translator& other) const {
+        [[nodiscard]] constexpr Translator operator+(const Translator& other) const noexcept {
             return Translator(scalar + other.scalar, e01 + other.e01, e02 + other.e02, e03 + other.e03);
         }
 
@@ -99,7 +99,7 @@ namespace CliffordCore::PGA
          * @param other The translator to subtract.
          * @return The resulting translator.
          */
-        constexpr Translator operator-(const Translator& other) const {
+        [[nodiscard]] constexpr Translator operator-(const Translator& other) const noexcept {
             return Translator(scalar - other.scalar, e01 - other.e01, e02 - other.e02, e03 - other.e03);
         }
 
@@ -107,7 +107,7 @@ namespace CliffordCore::PGA
          * @brief Unary negation operator overload.
          * @return The resulting translator, which represents the same translation.
          */
-        constexpr Translator operator-() const {
+        [[nodiscard]] constexpr Translator operator-() const noexcept {
             return Translator(-scalar, -e01, -e02, -e03);
         }
 
@@ -116,7 +116,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to multiply by.
          * @return The resulting translator.
          */
-        constexpr Translator operator*(const Scalar<T>& other) const {
+        [[nodiscard]] constexpr Translator operator*(const Scalar<T>& other) const noexcept {
             return Translator(scalar * other, e01 * other.value, e02 * other.value, e03 * other.value);
         }
 
@@ -125,7 +125,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to divide by.
          * @return The resulting translator.
          */
-        constexpr Translator operator/(const Scalar<T>& other) const {
+        [[nodiscard]] constexpr Translator operator/(const Scalar<T>& other) const noexcept {
             return Translator(scalar / other, e01 / other.value, e02 / other.value, e03 / other.value);
         }
 
@@ -134,7 +134,7 @@ namespace CliffordCore::PGA
          * @param other The translator to add.
          * @return A reference to this translator.
          */
-        constexpr Translator& operator+=(const Translator& other) {
+        constexpr Translator& operator+=(const Translator& other) noexcept {
             *this = *this + other;
             return *this;
         }
@@ -144,7 +144,7 @@ namespace CliffordCore::PGA
          * @param other The translator to subtract.
          * @return A reference to this translator.
          */
-        constexpr Translator& operator-=(const Translator& other) {
+        constexpr Translator& operator-=(const Translator& other) noexcept {
             *this = *this - other;
             return *this;
         }
@@ -154,7 +154,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to multiply by.
          * @return A reference to this translator.
          */
-        constexpr Translator& operator*=(const Scalar<T>& other) {
+        constexpr Translator& operator*=(const Scalar<T>& other) noexcept {
             *this = *this * other;
             return *this;
         }
@@ -164,7 +164,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to divide by.
          * @return A reference to this translator.
          */
-        constexpr Translator& operator/=(const Scalar<T>& other) {
+        constexpr Translator& operator/=(const Scalar<T>& other) noexcept {
             *this = *this / other;
             return *this;
         }
@@ -173,7 +173,7 @@ namespace CliffordCore::PGA
          * @brief Returns a string representation of the translator.
          * @return A string representing the translator.
          */
-        std::string to_string() const {
+        [[nodiscard]] std::string to_string() const {
             return "(" + scalar.to_string() + ") + ("
                  + CliffordCore::detail::format_component(e01) + "*e01 + "
                  + CliffordCore::detail::format_component(e02) + "*e02 + "
@@ -188,7 +188,7 @@ namespace CliffordCore::PGA
      * @param t The translator to scale.
      * @return The resulting translator.
      */
-    constexpr Translator<T> operator*(T value, const Translator<T>& t) {
+    [[nodiscard]] constexpr Translator<T> operator*(T value, const Translator<T>& t) noexcept {
         return t * Scalar<T>(value);
     }
 } // namespace CliffordCore::PGA

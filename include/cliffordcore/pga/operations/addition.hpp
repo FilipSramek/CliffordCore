@@ -55,7 +55,7 @@ namespace CliffordCore::PGA
          * @param s The scalar to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Scalar<T>& s) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Scalar<T>& s) noexcept {
             return Multivector<T>(s, Vector<T>(), Bivector<T>(), Trivector<T>(), Quadvector<T>());
         }
 
@@ -65,7 +65,7 @@ namespace CliffordCore::PGA
          * @param v The vector to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Vector<T>& v) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Vector<T>& v) noexcept {
             return Multivector<T>(Scalar<T>(), v, Bivector<T>(), Trivector<T>(), Quadvector<T>());
         }
 
@@ -75,7 +75,7 @@ namespace CliffordCore::PGA
          * @param b The bivector to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Bivector<T>& b) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Bivector<T>& b) noexcept {
             return Multivector<T>(Scalar<T>(), Vector<T>(), b, Trivector<T>(), Quadvector<T>());
         }
 
@@ -85,7 +85,7 @@ namespace CliffordCore::PGA
          * @param t The trivector to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Trivector<T>& t) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Trivector<T>& t) noexcept {
             return Multivector<T>(Scalar<T>(), Vector<T>(), Bivector<T>(), t, Quadvector<T>());
         }
 
@@ -95,7 +95,7 @@ namespace CliffordCore::PGA
          * @param q The quadvector to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Quadvector<T>& q) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Quadvector<T>& q) noexcept {
             return Multivector<T>(Scalar<T>(), Vector<T>(), Bivector<T>(), Trivector<T>(), q);
         }
 
@@ -105,7 +105,7 @@ namespace CliffordCore::PGA
          * @param m The multivector.
          * @return The same multivector.
          */
-        constexpr Multivector<T> promote(const Multivector<T>& m) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Multivector<T>& m) noexcept {
             return m;
         }
     } // namespace detail
@@ -121,7 +121,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -132,7 +132,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -143,7 +143,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -154,7 +154,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Quadvector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -165,7 +165,7 @@ namespace CliffordCore::PGA
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -176,7 +176,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -187,7 +187,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -198,7 +198,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Quadvector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -209,7 +209,7 @@ namespace CliffordCore::PGA
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -220,7 +220,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -231,7 +231,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -242,7 +242,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Quadvector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -253,7 +253,7 @@ namespace CliffordCore::PGA
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -264,7 +264,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -275,7 +275,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -286,7 +286,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Quadvector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -297,7 +297,7 @@ namespace CliffordCore::PGA
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Quadvector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Quadvector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -308,7 +308,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Quadvector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Quadvector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -319,7 +319,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Quadvector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Quadvector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -330,7 +330,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Quadvector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Quadvector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -341,7 +341,7 @@ namespace CliffordCore::PGA
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -352,7 +352,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -363,7 +363,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -374,7 +374,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -385,7 +385,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Quadvector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -396,7 +396,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -407,7 +407,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -418,7 +418,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -429,7 +429,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -440,7 +440,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Quadvector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Quadvector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -454,7 +454,7 @@ namespace CliffordCore::PGA
      * @param r The rotor to widen.
      * @return The equivalent motor; nothing is lost.
      */
-    constexpr Motor<T> to_motor(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Motor<T> to_motor(const Rotor<T>& r) noexcept {
         return Motor<T>(r);
     }
 
@@ -464,7 +464,7 @@ namespace CliffordCore::PGA
      * @param t The translator to widen.
      * @return The equivalent motor; nothing is lost.
      */
-    constexpr Motor<T> to_motor(const Translator<T>& t) {
+    [[nodiscard]] constexpr Motor<T> to_motor(const Translator<T>& t) noexcept {
         return Motor<T>(t);
     }
 
@@ -475,7 +475,7 @@ namespace CliffordCore::PGA
      * @return A motor built from the even grades of m. Grades 1 and 3 are
      *         discarded, since a motor cannot hold them.
      */
-    constexpr Motor<T> to_motor(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Motor<T> to_motor(const Multivector<T>& m) noexcept {
         return Motor<T>(m);
     }
 
@@ -486,7 +486,7 @@ namespace CliffordCore::PGA
      * @return A rotor built from the scalar and the Euclidean bivector
      *         components of m. Everything else is discarded.
      */
-    constexpr Rotor<T> to_rotor(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Rotor<T> to_rotor(const Multivector<T>& m) noexcept {
         return Rotor<T>(m);
     }
 
@@ -497,7 +497,7 @@ namespace CliffordCore::PGA
      * @return A rotor built from the scalar and the Euclidean bivector
      *         components of m. The translation is discarded.
      */
-    constexpr Rotor<T> to_rotor(const Motor<T>& m) {
+    [[nodiscard]] constexpr Rotor<T> to_rotor(const Motor<T>& m) noexcept {
         return Rotor<T>(m);
     }
 
@@ -508,7 +508,7 @@ namespace CliffordCore::PGA
      * @return A translator built from the scalar and the ideal bivector
      *         components of m. Everything else is discarded.
      */
-    constexpr Translator<T> to_translator(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Translator<T> to_translator(const Multivector<T>& m) noexcept {
         return Translator<T>(m);
     }
 
@@ -519,7 +519,7 @@ namespace CliffordCore::PGA
      * @return A translator built from the scalar and the ideal bivector
      *         components of m. The rotation is discarded.
      */
-    constexpr Translator<T> to_translator(const Motor<T>& m) {
+    [[nodiscard]] constexpr Translator<T> to_translator(const Motor<T>& m) noexcept {
         return Translator<T>(m);
     }
 
@@ -529,7 +529,7 @@ namespace CliffordCore::PGA
      * @param r The rotor to widen.
      * @return The equivalent multivector.
      */
-    constexpr Multivector<T> to_multivector(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Multivector<T> to_multivector(const Rotor<T>& r) noexcept {
         return Multivector<T>(r);
     }
 
@@ -539,7 +539,7 @@ namespace CliffordCore::PGA
      * @param t The translator to widen.
      * @return The equivalent multivector.
      */
-    constexpr Multivector<T> to_multivector(const Translator<T>& t) {
+    [[nodiscard]] constexpr Multivector<T> to_multivector(const Translator<T>& t) noexcept {
         return Multivector<T>(t);
     }
 
@@ -549,7 +549,7 @@ namespace CliffordCore::PGA
      * @param m The motor to widen.
      * @return The equivalent multivector.
      */
-    constexpr Multivector<T> to_multivector(const Motor<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> to_multivector(const Motor<T>& m) noexcept {
         return Multivector<T>(m);
     }
 } // namespace CliffordCore::PGA

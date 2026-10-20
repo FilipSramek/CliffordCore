@@ -48,7 +48,7 @@ namespace CliffordCore::PGA
         /**
          * @brief Default constructor initializes all components to zero.
          */
-        constexpr Multivector() : scalar(), vector(), bivector(), trivector(), quadvector() {}
+        constexpr Multivector() noexcept : scalar(), vector(), bivector(), trivector(), quadvector() {}
 
         /**
          * @brief Constructor initializes the multivector with the provided components.
@@ -59,14 +59,14 @@ namespace CliffordCore::PGA
          * @param q The quadvector component.
          */
         constexpr Multivector(const Scalar<T>& s, const Vector<T>& v, const Bivector<T>& b,
-                              const Trivector<T>& t, const Quadvector<T>& q)
+                              const Trivector<T>& t, const Quadvector<T>& q) noexcept
             : scalar(s), vector(v), bivector(b), trivector(t), quadvector(q) {}
 
         /**
          * @brief Constructor widens a rotor to a multivector.
          * @param r The rotor to widen.
          */
-        constexpr Multivector(const Rotor<T>& r)
+        constexpr Multivector(const Rotor<T>& r) noexcept
             : scalar(r.scalar), vector(), bivector(Bivector<T>(0, 0, 0, r.e12, r.e13, r.e23)),
               trivector(), quadvector() {}
 
@@ -74,7 +74,7 @@ namespace CliffordCore::PGA
          * @brief Constructor widens a translator to a multivector.
          * @param t The translator to widen.
          */
-        constexpr Multivector(const Translator<T>& t)
+        constexpr Multivector(const Translator<T>& t) noexcept
             : scalar(t.scalar), vector(), bivector(Bivector<T>(t.e01, t.e02, t.e03, 0, 0, 0)),
               trivector(), quadvector() {}
 
@@ -82,7 +82,7 @@ namespace CliffordCore::PGA
          * @brief Constructor widens a motor to a multivector.
          * @param m The motor to widen.
          */
-        constexpr Multivector(const Motor<T>& m)
+        constexpr Multivector(const Motor<T>& m) noexcept
             : scalar(m.scalar), vector(), bivector(m.bivector), trivector(), quadvector(m.quadvector) {}
 
         /**
@@ -90,7 +90,7 @@ namespace CliffordCore::PGA
          * @param other The multivector to add.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator+(const Multivector& other) const {
+        [[nodiscard]] constexpr Multivector operator+(const Multivector& other) const noexcept {
             return Multivector(
                 scalar + other.scalar,
                 vector + other.vector,
@@ -105,7 +105,7 @@ namespace CliffordCore::PGA
          * @param other The multivector to subtract.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator-(const Multivector& other) const {
+        [[nodiscard]] constexpr Multivector operator-(const Multivector& other) const noexcept {
             return Multivector(
                 scalar - other.scalar,
                 vector - other.vector,
@@ -119,7 +119,7 @@ namespace CliffordCore::PGA
          * @brief Unary negation operator overload.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator-() const {
+        [[nodiscard]] constexpr Multivector operator-() const noexcept {
             return Multivector(-scalar, -vector, -bivector, -trivector, -quadvector);
         }
 
@@ -128,7 +128,7 @@ namespace CliffordCore::PGA
          * @param s The scalar to multiply by.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator*(const Scalar<T>& s) const {
+        [[nodiscard]] constexpr Multivector operator*(const Scalar<T>& s) const noexcept {
             return Multivector(scalar * s, vector * s, bivector * s, trivector * s, quadvector * s);
         }
 
@@ -137,7 +137,7 @@ namespace CliffordCore::PGA
          * @param s The scalar to divide by.
          * @return The resulting multivector.
          */
-        constexpr Multivector operator/(const Scalar<T>& s) const {
+        [[nodiscard]] constexpr Multivector operator/(const Scalar<T>& s) const noexcept {
             return Multivector(scalar / s, vector / s, bivector / s, trivector / s, quadvector / s);
         }
 
@@ -146,7 +146,7 @@ namespace CliffordCore::PGA
          * @param other The multivector to add.
          * @return A reference to this multivector.
          */
-        constexpr Multivector& operator+=(const Multivector& other) {
+        constexpr Multivector& operator+=(const Multivector& other) noexcept {
             *this = *this + other;
             return *this;
         }
@@ -156,7 +156,7 @@ namespace CliffordCore::PGA
          * @param other The multivector to subtract.
          * @return A reference to this multivector.
          */
-        constexpr Multivector& operator-=(const Multivector& other) {
+        constexpr Multivector& operator-=(const Multivector& other) noexcept {
             *this = *this - other;
             return *this;
         }
@@ -166,7 +166,7 @@ namespace CliffordCore::PGA
          * @param s The scalar to multiply by.
          * @return A reference to this multivector.
          */
-        constexpr Multivector& operator*=(const Scalar<T>& s) {
+        constexpr Multivector& operator*=(const Scalar<T>& s) noexcept {
             *this = *this * s;
             return *this;
         }
@@ -176,7 +176,7 @@ namespace CliffordCore::PGA
          * @param s The scalar to divide by.
          * @return A reference to this multivector.
          */
-        constexpr Multivector& operator/=(const Scalar<T>& s) {
+        constexpr Multivector& operator/=(const Scalar<T>& s) noexcept {
             *this = *this / s;
             return *this;
         }
@@ -185,7 +185,7 @@ namespace CliffordCore::PGA
          * @brief Returns a string representation of the multivector.
          * @return A string representing the multivector.
          */
-        std::string to_string() const {
+        [[nodiscard]] std::string to_string() const {
             // Parenthesised so the joining " + " is distinguishable from the
             // "+" inside each component.
             return "(" + scalar.to_string() + ") + (" + vector.to_string()
@@ -201,7 +201,7 @@ namespace CliffordCore::PGA
      * @param m The multivector to scale.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(T value, const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> operator*(T value, const Multivector<T>& m) noexcept {
         return m * Scalar<T>(value);
     }
 } // namespace CliffordCore::PGA

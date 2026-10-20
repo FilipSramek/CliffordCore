@@ -45,7 +45,7 @@ namespace CliffordCore::PGA
      * @param s The scalar.
      * @return The same scalar: grade 0 is even.
      */
-    constexpr Scalar<T> involute(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> involute(const Scalar<T>& s) noexcept {
         return s;
     }
 
@@ -55,7 +55,7 @@ namespace CliffordCore::PGA
      * @param v The vector.
      * @return The negated vector: grade 1 is odd.
      */
-    constexpr Vector<T> involute(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> involute(const Vector<T>& v) noexcept {
         return -v;
     }
 
@@ -65,7 +65,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return The same bivector: grade 2 is even.
      */
-    constexpr Bivector<T> involute(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> involute(const Bivector<T>& b) noexcept {
         return b;
     }
 
@@ -75,7 +75,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return The negated trivector: grade 3 is odd.
      */
-    constexpr Trivector<T> involute(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Trivector<T> involute(const Trivector<T>& t) noexcept {
         return -t;
     }
 
@@ -85,7 +85,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return The same quadvector: grade 4 is even.
      */
-    constexpr Quadvector<T> involute(const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Quadvector<T> involute(const Quadvector<T>& q) noexcept {
         return q;
     }
 
@@ -95,7 +95,7 @@ namespace CliffordCore::PGA
      * @param m The multivector.
      * @return The multivector with its odd grades (1 and 3) negated.
      */
-    constexpr Multivector<T> involute(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> involute(const Multivector<T>& m) noexcept {
         return Multivector<T>(m.scalar, -m.vector, m.bivector, -m.trivector, m.quadvector);
     }
 
@@ -105,7 +105,7 @@ namespace CliffordCore::PGA
      * @param r The rotor.
      * @return The same rotor: it has only even grades.
      */
-    constexpr Rotor<T> involute(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> involute(const Rotor<T>& r) noexcept {
         return r;
     }
 
@@ -115,7 +115,7 @@ namespace CliffordCore::PGA
      * @param t The translator.
      * @return The same translator: it has only even grades.
      */
-    constexpr Translator<T> involute(const Translator<T>& t) {
+    [[nodiscard]] constexpr Translator<T> involute(const Translator<T>& t) noexcept {
         return t;
     }
 
@@ -125,7 +125,7 @@ namespace CliffordCore::PGA
      * @param m The motor.
      * @return The same motor: it has only even grades.
      */
-    constexpr Motor<T> involute(const Motor<T>& m) {
+    [[nodiscard]] constexpr Motor<T> involute(const Motor<T>& m) noexcept {
         return m;
     }
 
@@ -139,7 +139,7 @@ namespace CliffordCore::PGA
      * @param s The scalar.
      * @return The same scalar.
      */
-    constexpr Scalar<T> conjugate(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> conjugate(const Scalar<T>& s) noexcept {
         return s;
     }
 
@@ -149,7 +149,7 @@ namespace CliffordCore::PGA
      * @param v The vector.
      * @return The negated vector.
      */
-    constexpr Vector<T> conjugate(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> conjugate(const Vector<T>& v) noexcept {
         return -v;
     }
 
@@ -159,7 +159,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return The negated bivector.
      */
-    constexpr Bivector<T> conjugate(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> conjugate(const Bivector<T>& b) noexcept {
         return -b;
     }
 
@@ -169,7 +169,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return The same trivector: grade 3 is fixed by conjugation.
      */
-    constexpr Trivector<T> conjugate(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Trivector<T> conjugate(const Trivector<T>& t) noexcept {
         return t;
     }
 
@@ -179,7 +179,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return The same quadvector: grade 4 is fixed by conjugation.
      */
-    constexpr Quadvector<T> conjugate(const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Quadvector<T> conjugate(const Quadvector<T>& q) noexcept {
         return q;
     }
 
@@ -190,7 +190,7 @@ namespace CliffordCore::PGA
      * @return The multivector with grades 1 and 2 negated. Equal to
      *         reverse(involute(m)), and to involute(reverse(m)).
      */
-    constexpr Multivector<T> conjugate(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> conjugate(const Multivector<T>& m) noexcept {
         return Multivector<T>(m.scalar, -m.vector, -m.bivector, m.trivector, m.quadvector);
     }
 
@@ -200,7 +200,7 @@ namespace CliffordCore::PGA
      * @param r The rotor.
      * @return The rotor with its bivector part negated; for a rotor this is the reverse.
      */
-    constexpr Rotor<T> conjugate(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> conjugate(const Rotor<T>& r) noexcept {
         return reverse(r);
     }
 
@@ -210,7 +210,7 @@ namespace CliffordCore::PGA
      * @param t The translator.
      * @return The translator with its ideal part negated; for a translator this is the reverse.
      */
-    constexpr Translator<T> conjugate(const Translator<T>& t) {
+    [[nodiscard]] constexpr Translator<T> conjugate(const Translator<T>& t) noexcept {
         return reverse(t);
     }
 
@@ -220,7 +220,7 @@ namespace CliffordCore::PGA
      * @param m The motor.
      * @return The motor with its bivector part negated; for a motor this is the reverse.
      */
-    constexpr Motor<T> conjugate(const Motor<T>& m) {
+    [[nodiscard]] constexpr Motor<T> conjugate(const Motor<T>& m) noexcept {
         return reverse(m);
     }
 } // namespace CliffordCore::PGA

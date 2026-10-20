@@ -48,7 +48,7 @@ namespace CliffordCore::PGA
      *         part is the direction from a to b and its norm their distance;
      *         it is zero iff the points coincide.
      */
-    constexpr Bivector<T> regressive_product(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> regressive_product(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return undual(dual(a) ^ dual(b));
     }
 
@@ -61,7 +61,7 @@ namespace CliffordCore::PGA
      *         norm is the distance from the point to the line, scaled by
      *         their norms.
      */
-    constexpr Vector<T> regressive_product(const Trivector<T>& t, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> regressive_product(const Trivector<T>& t, const Bivector<T>& b) noexcept {
         return undual(dual(t) ^ dual(b));
     }
 
@@ -72,7 +72,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return The resulting vector; zero iff the point lies on the line.
      */
-    constexpr Vector<T> regressive_product(const Bivector<T>& b, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> regressive_product(const Bivector<T>& b, const Trivector<T>& t) noexcept {
         return undual(dual(b) ^ dual(t));
     }
 
@@ -83,7 +83,7 @@ namespace CliffordCore::PGA
      * @param b The second bivector.
      * @return The resulting scalar; zero iff the lines are coplanar.
      */
-    constexpr Scalar<T> regressive_product(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> regressive_product(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return undual(dual(a) ^ dual(b));
     }
 
@@ -98,7 +98,7 @@ namespace CliffordCore::PGA
      * @param b The second trivector.
      * @return regressive_product(a, b).
      */
-    constexpr Bivector<T> join(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> join(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return regressive_product(a, b);
     }
 
@@ -109,7 +109,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return regressive_product(t, b).
      */
-    constexpr Vector<T> join(const Trivector<T>& t, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> join(const Trivector<T>& t, const Bivector<T>& b) noexcept {
         return regressive_product(t, b);
     }
 
@@ -120,7 +120,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return regressive_product(b, t).
      */
-    constexpr Vector<T> join(const Bivector<T>& b, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> join(const Bivector<T>& b, const Trivector<T>& t) noexcept {
         return regressive_product(b, t);
     }
 
@@ -131,7 +131,7 @@ namespace CliffordCore::PGA
      * @param b The second bivector.
      * @return regressive_product(a, b).
      */
-    constexpr Scalar<T> join(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> join(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return regressive_product(a, b);
     }
 
@@ -142,7 +142,7 @@ namespace CliffordCore::PGA
      * @param b The second vector.
      * @return a ^ b.
      */
-    constexpr Bivector<T> meet(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> meet(const Vector<T>& a, const Vector<T>& b) noexcept {
         return a ^ b;
     }
 
@@ -153,7 +153,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return v ^ b.
      */
-    constexpr Trivector<T> meet(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Trivector<T> meet(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return v ^ b;
     }
 
@@ -164,7 +164,7 @@ namespace CliffordCore::PGA
      * @param v The vector.
      * @return b ^ v.
      */
-    constexpr Trivector<T> meet(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Trivector<T> meet(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return b ^ v;
     }
 } // namespace CliffordCore::PGA

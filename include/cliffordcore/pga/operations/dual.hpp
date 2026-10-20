@@ -49,7 +49,7 @@ namespace CliffordCore::PGA
      * @param s The scalar.
      * @return The quadvector s e0123.
      */
-    constexpr Quadvector<T> dual(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Quadvector<T> dual(const Scalar<T>& s) noexcept {
         return Quadvector<T>(s.value);
     }
 
@@ -62,7 +62,7 @@ namespace CliffordCore::PGA
      *         point (its normal direction); the dual of the ideal plane e0 is
      *         the origin.
      */
-    constexpr Trivector<T> dual(const Vector<T>& v) {
+    [[nodiscard]] constexpr Trivector<T> dual(const Vector<T>& v) noexcept {
         return Trivector<T>(-v.e3, v.e2, -v.e1, v.e0);
     }
 
@@ -73,7 +73,7 @@ namespace CliffordCore::PGA
      * @return The bivector with e01 -> +e23, e02 -> -e13, e03 -> +e12,
      *         e12 -> +e03, e13 -> -e02, e23 -> +e01.
      */
-    constexpr Bivector<T> dual(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> dual(const Bivector<T>& b) noexcept {
         return Bivector<T>(b.e23, -b.e13, b.e12, b.e03, -b.e02, b.e01);
     }
 
@@ -83,7 +83,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return The vector with e012 -> +e3, e013 -> -e2, e023 -> +e1, e123 -> -e0.
      */
-    constexpr Vector<T> dual(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> dual(const Trivector<T>& t) noexcept {
         return Vector<T>(-t.e123, t.e023, -t.e013, t.e012);
     }
 
@@ -93,7 +93,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return The scalar with the same coefficient.
      */
-    constexpr Scalar<T> dual(const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Scalar<T> dual(const Quadvector<T>& q) noexcept {
         return Scalar<T>(q.e0123);
     }
 
@@ -103,7 +103,7 @@ namespace CliffordCore::PGA
      * @param m The multivector.
      * @return The multivector whose grade 4 - k part is the dual of m's grade k part.
      */
-    constexpr Multivector<T> dual(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> dual(const Multivector<T>& m) noexcept {
         return Multivector<T>(
             dual(m.quadvector),
             dual(m.trivector),
@@ -123,7 +123,7 @@ namespace CliffordCore::PGA
      * @param s The scalar.
      * @return dual(s): the sign is unchanged on even grades.
      */
-    constexpr Quadvector<T> undual(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Quadvector<T> undual(const Scalar<T>& s) noexcept {
         return dual(s);
     }
 
@@ -133,7 +133,7 @@ namespace CliffordCore::PGA
      * @param v The vector.
      * @return -dual(v): grade 1 flips sign under a double dual.
      */
-    constexpr Trivector<T> undual(const Vector<T>& v) {
+    [[nodiscard]] constexpr Trivector<T> undual(const Vector<T>& v) noexcept {
         return Trivector<T>(v.e3, -v.e2, v.e1, -v.e0);
     }
 
@@ -143,7 +143,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return dual(b): the sign is unchanged on even grades.
      */
-    constexpr Bivector<T> undual(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> undual(const Bivector<T>& b) noexcept {
         return dual(b);
     }
 
@@ -153,7 +153,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return -dual(t): grade 3 flips sign under a double dual.
      */
-    constexpr Vector<T> undual(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> undual(const Trivector<T>& t) noexcept {
         return Vector<T>(t.e123, -t.e023, t.e013, -t.e012);
     }
 
@@ -163,7 +163,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return dual(q): the sign is unchanged on even grades.
      */
-    constexpr Scalar<T> undual(const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Scalar<T> undual(const Quadvector<T>& q) noexcept {
         return dual(q);
     }
 
@@ -173,7 +173,7 @@ namespace CliffordCore::PGA
      * @param m The multivector.
      * @return The multivector with undual(dual(m)) == m.
      */
-    constexpr Multivector<T> undual(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> undual(const Multivector<T>& m) noexcept {
         return Multivector<T>(
             undual(m.quadvector),
             undual(m.trivector),

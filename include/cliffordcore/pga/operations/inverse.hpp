@@ -52,7 +52,7 @@ namespace CliffordCore::PGA
      * @param s The scalar for which to compute the inverse.
      * @return 1 / s.
      */
-    constexpr Scalar<T> inverse(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> inverse(const Scalar<T>& s) noexcept {
         return Scalar<T>(T(1) / s.value);
     }
 
@@ -64,7 +64,7 @@ namespace CliffordCore::PGA
      *         length of its normal. An ideal plane has no inverse; this
      *         returns zero for one.
      */
-    constexpr Vector<T> inverse(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> inverse(const Vector<T>& v) noexcept {
         const T a = squared_norm(v).value;
         if (a == T(0)) {
             return Vector<T>();
@@ -81,7 +81,7 @@ namespace CliffordCore::PGA
      *         as in Cl3; for a general bivector the e0123 correction matters.
      *         An ideal line has no inverse; this returns zero for one.
      */
-    constexpr Bivector<T> inverse(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> inverse(const Bivector<T>& b) noexcept {
         const T a = squared_norm(b).value;
         if (a == T(0)) {
             return Bivector<T>();
@@ -108,7 +108,7 @@ namespace CliffordCore::PGA
      *         times its reverse is its squared weight. An ideal point has no
      *         inverse; this returns zero for one.
      */
-    constexpr Trivector<T> inverse(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Trivector<T> inverse(const Trivector<T>& t) noexcept {
         const T a = squared_norm(t).value;
         if (a == T(0)) {
             return Trivector<T>();
@@ -131,7 +131,7 @@ namespace CliffordCore::PGA
      * values. The denominator is zero exactly when m has no inverse (e0, for
      * instance), and zero is returned then rather than NaN.
      */
-    constexpr Multivector<T> inverse(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> inverse(const Multivector<T>& m) noexcept {
         const Multivector<T> conj = conjugate(m);
         const Multivector<T> n = m * conj;
         const Multivector<T> nPrime(n.scalar, n.vector, n.bivector, -n.trivector, -n.quadvector);
@@ -151,7 +151,7 @@ namespace CliffordCore::PGA
      * @return reverse(r) / squared_norm(r), since r * reverse(r) = |r|^2. For
      *         a unit rotor this is just the reverse.
      */
-    constexpr Rotor<T> inverse(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> inverse(const Rotor<T>& r) noexcept {
         const T a = squared_norm(r).value;
         if (a == T(0)) {
             return Rotor<T>();
@@ -168,7 +168,7 @@ namespace CliffordCore::PGA
      *         is just the reverse: the opposite translation. A purely ideal
      *         translator has no inverse; this returns zero for one.
      */
-    constexpr Translator<T> inverse(const Translator<T>& t) {
+    [[nodiscard]] constexpr Translator<T> inverse(const Translator<T>& t) noexcept {
         const T a = squared_norm(t).value;
         if (a == T(0)) {
             return Translator<T>();
@@ -186,7 +186,7 @@ namespace CliffordCore::PGA
      *         keeps m * inverse(m) = 1. A purely ideal motor has no inverse;
      *         this returns zero for one.
      */
-    constexpr Motor<T> inverse(const Motor<T>& m) {
+    [[nodiscard]] constexpr Motor<T> inverse(const Motor<T>& m) noexcept {
         const T a = squared_norm(m).value;
         if (a == T(0)) {
             return Motor<T>();

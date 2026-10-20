@@ -55,7 +55,7 @@ namespace CliffordCore::PGA
      *         1 + b exactly; a purely Euclidean one gives a rotation about a
      *         line through the origin, by twice the bivector's norm.
      */
-    constexpr Motor<T> exp(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Motor<T> exp(const Bivector<T>& b) noexcept {
         const T theta = norm(b).value;
 
         if (theta == T(0)) {

@@ -48,7 +48,7 @@ namespace CliffordCore::PGA
          * @param r The rotor to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Rotor<T>& r) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Rotor<T>& r) noexcept {
             return Multivector<T>(r);
         }
 
@@ -58,7 +58,7 @@ namespace CliffordCore::PGA
          * @param t The translator to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Translator<T>& t) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Translator<T>& t) noexcept {
             return Multivector<T>(t);
         }
 
@@ -68,7 +68,7 @@ namespace CliffordCore::PGA
          * @param m The motor to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Motor<T>& m) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Motor<T>& m) noexcept {
             return Multivector<T>(m);
         }
     } // namespace detail
@@ -84,7 +84,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -95,7 +95,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Trivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -106,7 +106,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Quadvector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -117,7 +117,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Multivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -128,7 +128,7 @@ namespace CliffordCore::PGA
      * @param b The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Rotor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Rotor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -139,7 +139,7 @@ namespace CliffordCore::PGA
      * @param b The translator operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Translator<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Translator<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -150,7 +150,7 @@ namespace CliffordCore::PGA
      * @param b The motor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& a, const Motor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& a, const Motor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -161,7 +161,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -172,7 +172,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector, carrying grades 0, 2 and 4.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -183,7 +183,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Trivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -194,7 +194,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Quadvector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -205,7 +205,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Multivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -216,7 +216,7 @@ namespace CliffordCore::PGA
      * @param b The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Rotor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Rotor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -227,7 +227,7 @@ namespace CliffordCore::PGA
      * @param b The translator operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Translator<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Translator<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -238,7 +238,7 @@ namespace CliffordCore::PGA
      * @param b The motor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Motor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Motor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -249,7 +249,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -260,7 +260,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -271,7 +271,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector, carrying grades 0 and 2 -- two points multiply to a scalar plus an ideal line, not to a scalar as in Cl3.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -282,7 +282,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& a, const Quadvector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -293,7 +293,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& a, const Multivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -304,7 +304,7 @@ namespace CliffordCore::PGA
      * @param b The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& a, const Rotor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& a, const Rotor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -315,7 +315,7 @@ namespace CliffordCore::PGA
      * @param b The translator operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& a, const Translator<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& a, const Translator<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -326,7 +326,7 @@ namespace CliffordCore::PGA
      * @param b The motor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& a, const Motor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& a, const Motor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -337,7 +337,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Quadvector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Quadvector<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -348,7 +348,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Quadvector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Quadvector<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -359,7 +359,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Quadvector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Quadvector<T>& a, const Trivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -370,7 +370,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Quadvector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Quadvector<T>& a, const Multivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -381,7 +381,7 @@ namespace CliffordCore::PGA
      * @param b The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Quadvector<T>& a, const Rotor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Quadvector<T>& a, const Rotor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -392,7 +392,7 @@ namespace CliffordCore::PGA
      * @param b The translator operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Quadvector<T>& a, const Translator<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Quadvector<T>& a, const Translator<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -403,7 +403,7 @@ namespace CliffordCore::PGA
      * @param b The motor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Quadvector<T>& a, const Motor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Quadvector<T>& a, const Motor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -414,7 +414,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -425,7 +425,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -436,7 +436,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& a, const Trivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -447,7 +447,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& a, const Quadvector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -458,7 +458,7 @@ namespace CliffordCore::PGA
      * @param b The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& a, const Rotor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& a, const Rotor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -469,7 +469,7 @@ namespace CliffordCore::PGA
      * @param b The translator operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& a, const Translator<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& a, const Translator<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -480,7 +480,7 @@ namespace CliffordCore::PGA
      * @param b The motor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& a, const Motor<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& a, const Motor<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -491,7 +491,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -502,7 +502,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -513,7 +513,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& a, const Trivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -524,7 +524,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& a, const Quadvector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -535,7 +535,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& a, const Multivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -546,7 +546,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Translator<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Translator<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -557,7 +557,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Translator<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Translator<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -568,7 +568,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Translator<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Translator<T>& a, const Trivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -579,7 +579,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Translator<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Translator<T>& a, const Quadvector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -590,7 +590,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Translator<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Translator<T>& a, const Multivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -601,7 +601,7 @@ namespace CliffordCore::PGA
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Motor<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Motor<T>& a, const Vector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -612,7 +612,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Motor<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Motor<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -623,7 +623,7 @@ namespace CliffordCore::PGA
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Motor<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Motor<T>& a, const Trivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -634,7 +634,7 @@ namespace CliffordCore::PGA
      * @param b The quadvector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Motor<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Motor<T>& a, const Quadvector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -645,7 +645,7 @@ namespace CliffordCore::PGA
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Motor<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Motor<T>& a, const Multivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -661,7 +661,7 @@ namespace CliffordCore::PGA
      * @return The resulting motor, equivalent to applying b then a. The even
      *         subalgebra is closed, so narrowing the general product loses nothing.
      */
-    constexpr Motor<T> operator*(const Rotor<T>& a, const Translator<T>& b) {
+    [[nodiscard]] constexpr Motor<T> operator*(const Rotor<T>& a, const Translator<T>& b) noexcept {
         return Motor<T>(geometric_product(detail::promote(a), detail::promote(b)));
     }
 
@@ -673,7 +673,7 @@ namespace CliffordCore::PGA
      * @return The resulting motor, equivalent to applying b then a. The even
      *         subalgebra is closed, so narrowing the general product loses nothing.
      */
-    constexpr Motor<T> operator*(const Rotor<T>& a, const Motor<T>& b) {
+    [[nodiscard]] constexpr Motor<T> operator*(const Rotor<T>& a, const Motor<T>& b) noexcept {
         return Motor<T>(geometric_product(detail::promote(a), detail::promote(b)));
     }
 
@@ -685,7 +685,7 @@ namespace CliffordCore::PGA
      * @return The resulting motor, equivalent to applying b then a. The even
      *         subalgebra is closed, so narrowing the general product loses nothing.
      */
-    constexpr Motor<T> operator*(const Translator<T>& a, const Rotor<T>& b) {
+    [[nodiscard]] constexpr Motor<T> operator*(const Translator<T>& a, const Rotor<T>& b) noexcept {
         return Motor<T>(geometric_product(detail::promote(a), detail::promote(b)));
     }
 
@@ -697,7 +697,7 @@ namespace CliffordCore::PGA
      * @return The resulting motor, equivalent to applying b then a. The even
      *         subalgebra is closed, so narrowing the general product loses nothing.
      */
-    constexpr Motor<T> operator*(const Translator<T>& a, const Motor<T>& b) {
+    [[nodiscard]] constexpr Motor<T> operator*(const Translator<T>& a, const Motor<T>& b) noexcept {
         return Motor<T>(geometric_product(detail::promote(a), detail::promote(b)));
     }
 
@@ -709,7 +709,7 @@ namespace CliffordCore::PGA
      * @return The resulting motor, equivalent to applying b then a. The even
      *         subalgebra is closed, so narrowing the general product loses nothing.
      */
-    constexpr Motor<T> operator*(const Motor<T>& a, const Rotor<T>& b) {
+    [[nodiscard]] constexpr Motor<T> operator*(const Motor<T>& a, const Rotor<T>& b) noexcept {
         return Motor<T>(geometric_product(detail::promote(a), detail::promote(b)));
     }
 
@@ -721,7 +721,7 @@ namespace CliffordCore::PGA
      * @return The resulting motor, equivalent to applying b then a. The even
      *         subalgebra is closed, so narrowing the general product loses nothing.
      */
-    constexpr Motor<T> operator*(const Motor<T>& a, const Translator<T>& b) {
+    [[nodiscard]] constexpr Motor<T> operator*(const Motor<T>& a, const Translator<T>& b) noexcept {
         return Motor<T>(geometric_product(detail::promote(a), detail::promote(b)));
     }
 
@@ -735,7 +735,7 @@ namespace CliffordCore::PGA
      *         translator by twice the vector from b to a. Same components as
      *         a * b, whose odd grades are zero.
      */
-    constexpr Motor<T> motor_product(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Motor<T> motor_product(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return Motor<T>(geometric_product(detail::promote(a), detail::promote(b)));
     }
 
@@ -750,7 +750,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting trivector, the grade 3 part of their product.
      */
-    constexpr Trivector<T> operator^(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Trivector<T> operator^(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(v), detail::promote(b)).trivector;
     }
 
@@ -762,7 +762,7 @@ namespace CliffordCore::PGA
      * @return The resulting trivector. The wedge is graded-commutative here, so
      *         this equals v ^ b.
      */
-    constexpr Trivector<T> operator^(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Trivector<T> operator^(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return geometric_product(detail::promote(b), detail::promote(v)).trivector;
     }
 
@@ -775,7 +775,7 @@ namespace CliffordCore::PGA
      *         its coefficient is a x + b y + c z + d, so it is zero iff the
      *         point lies on the plane.
      */
-    constexpr Quadvector<T> operator^(const Vector<T>& v, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Quadvector<T> operator^(const Vector<T>& v, const Trivector<T>& t) noexcept {
         return geometric_product(detail::promote(v), detail::promote(t)).quadvector;
     }
 
@@ -786,7 +786,7 @@ namespace CliffordCore::PGA
      * @param v The vector operand.
      * @return The resulting quadvector, equal to -(v ^ t).
      */
-    constexpr Quadvector<T> operator^(const Trivector<T>& t, const Vector<T>& v) {
+    [[nodiscard]] constexpr Quadvector<T> operator^(const Trivector<T>& t, const Vector<T>& v) noexcept {
         return geometric_product(detail::promote(t), detail::promote(v)).quadvector;
     }
 
@@ -798,7 +798,7 @@ namespace CliffordCore::PGA
      * @return The resulting quadvector. Zero iff the two lines are coplanar
      *         (they meet or are parallel); non-zero for skew lines.
      */
-    constexpr Quadvector<T> operator^(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Quadvector<T> operator^(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b)).quadvector;
     }
 
@@ -809,7 +809,7 @@ namespace CliffordCore::PGA
      * @param b The bivector operand.
      * @return The resulting trivector.
      */
-    constexpr Trivector<T> wedge_product(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Trivector<T> wedge_product(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return v ^ b;
     }
 
@@ -820,7 +820,7 @@ namespace CliffordCore::PGA
      * @param v The vector operand.
      * @return The resulting trivector.
      */
-    constexpr Trivector<T> wedge_product(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Trivector<T> wedge_product(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return b ^ v;
     }
 
@@ -831,7 +831,7 @@ namespace CliffordCore::PGA
      * @param t The trivector operand.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector<T> wedge_product(const Vector<T>& v, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Quadvector<T> wedge_product(const Vector<T>& v, const Trivector<T>& t) noexcept {
         return v ^ t;
     }
 
@@ -842,7 +842,7 @@ namespace CliffordCore::PGA
      * @param v The vector operand.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector<T> wedge_product(const Trivector<T>& t, const Vector<T>& v) {
+    [[nodiscard]] constexpr Quadvector<T> wedge_product(const Trivector<T>& t, const Vector<T>& v) noexcept {
         return t ^ v;
     }
 
@@ -853,7 +853,7 @@ namespace CliffordCore::PGA
      * @param b The second bivector.
      * @return The resulting quadvector.
      */
-    constexpr Quadvector<T> wedge_product(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Quadvector<T> wedge_product(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return a ^ b;
     }
 } // namespace CliffordCore::PGA

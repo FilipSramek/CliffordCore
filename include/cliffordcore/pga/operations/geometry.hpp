@@ -55,7 +55,7 @@ namespace CliffordCore::PGA
      * @param mirror The plane to reflect in. Need not be normalized.
      * @return The reflected plane, -p x p^-1.
      */
-    constexpr Vector<T> reflect(const Vector<T>& x, const Vector<T>& mirror) {
+    [[nodiscard]] constexpr Vector<T> reflect(const Vector<T>& x, const Vector<T>& mirror) noexcept {
         return -grade1(mirror * x * inverse(mirror));
     }
 
@@ -67,7 +67,7 @@ namespace CliffordCore::PGA
      * @return The reflected line, -p x p^-1. A line lying in the mirror is
      *         unchanged up to orientation; one perpendicular to it is reversed.
      */
-    constexpr Bivector<T> reflect(const Bivector<T>& x, const Vector<T>& mirror) {
+    [[nodiscard]] constexpr Bivector<T> reflect(const Bivector<T>& x, const Vector<T>& mirror) noexcept {
         return -grade2(mirror * x * inverse(mirror));
     }
 
@@ -80,7 +80,7 @@ namespace CliffordCore::PGA
      *         planes and lines here, which is what keeps a reflected point's
      *         weight positive rather than flipping it.
      */
-    constexpr Trivector<T> reflect(const Trivector<T>& x, const Vector<T>& mirror) {
+    [[nodiscard]] constexpr Trivector<T> reflect(const Trivector<T>& x, const Vector<T>& mirror) noexcept {
         return grade3(mirror * x * inverse(mirror));
     }
 
@@ -96,7 +96,7 @@ namespace CliffordCore::PGA
      * @return The closest point of the plane to x: (onto _| x) * onto,
      *         normalized by the plane's squared norm.
      */
-    constexpr Trivector<T> project(const Trivector<T>& x, const Vector<T>& onto) {
+    [[nodiscard]] constexpr Trivector<T> project(const Trivector<T>& x, const Vector<T>& onto) noexcept {
         const T n = squared_norm(onto).value;
         if (n == T(0)) {
             return Trivector<T>();
@@ -112,7 +112,7 @@ namespace CliffordCore::PGA
      * @return The closest point of the line to x. An ideal line has no
      *         projection; zero is returned for one.
      */
-    constexpr Trivector<T> project(const Trivector<T>& x, const Bivector<T>& onto) {
+    [[nodiscard]] constexpr Trivector<T> project(const Trivector<T>& x, const Bivector<T>& onto) noexcept {
         const T n = squared_norm(onto).value;
         if (n == T(0)) {
             return Trivector<T>();
@@ -129,7 +129,7 @@ namespace CliffordCore::PGA
      * @return The line in the plane closest to x, with the same orientation
      *         as x. An ideal plane gives zero.
      */
-    constexpr Bivector<T> project(const Bivector<T>& x, const Vector<T>& onto) {
+    [[nodiscard]] constexpr Bivector<T> project(const Bivector<T>& x, const Vector<T>& onto) noexcept {
         const T n = squared_norm(onto).value;
         if (n == T(0)) {
             return Bivector<T>();
@@ -153,7 +153,7 @@ namespace CliffordCore::PGA
      *         either point is ideal, since a point at infinity has no distance
      *         to anything.
      */
-    inline T distance(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] inline T distance(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         const T wa = a.e123;
         const T wb = b.e123;
         if (wa == T(0) || wb == T(0)) {
@@ -172,7 +172,7 @@ namespace CliffordCore::PGA
      *         on the side the normal points away from. Zero if the point is
      *         ideal or the plane has no normal.
      */
-    inline T distance(const Trivector<T>& p, const Vector<T>& pl) {
+    [[nodiscard]] inline T distance(const Trivector<T>& p, const Vector<T>& pl) noexcept {
         const T w = p.e123;
         const T n = norm(pl).value;
         if (w == T(0) || n == T(0)) {
@@ -191,7 +191,7 @@ namespace CliffordCore::PGA
      *         is the perpendicular distance. Zero if the point is ideal or the
      *         line is.
      */
-    inline T distance(const Trivector<T>& p, const Bivector<T>& l) {
+    [[nodiscard]] inline T distance(const Trivector<T>& p, const Bivector<T>& l) noexcept {
         const T w = p.e123;
         const T n = norm(l).value;
         if (w == T(0) || n == T(0)) {
@@ -219,7 +219,7 @@ namespace CliffordCore::PGA
      * and in float all of it. atan2 keeps full relative precision everywhere,
      * needs no clamp, and does not divide by the norms at all.
      */
-    inline T angle(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] inline T angle(const Vector<T>& a, const Vector<T>& b) noexcept {
         if (norm(a).value == T(0) || norm(b).value == T(0)) {
             return T(0);
         }
@@ -244,7 +244,7 @@ namespace CliffordCore::PGA
      * product of the two directions. The ideal parts of a * b, which carry the
      * lines' positions, are ignored by norm().
      */
-    inline T angle(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] inline T angle(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         if (norm(a).value == T(0) || norm(b).value == T(0)) {
             return T(0);
         }

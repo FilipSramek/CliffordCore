@@ -54,7 +54,7 @@ namespace CliffordCore::PGA
         /**
          * @brief Default constructor initializes all components to zero.
          */
-        constexpr Rotor() : scalar(), e12(0), e13(0), e23(0) {}
+        constexpr Rotor() noexcept : scalar(), e12(0), e13(0), e23(0) {}
 
         /**
          * @brief Constructor initializes the rotor with the provided components.
@@ -63,7 +63,7 @@ namespace CliffordCore::PGA
          * @param e13_val The e13 component.
          * @param e23_val The e23 component.
          */
-        constexpr Rotor(const Scalar<T>& s, T e12_val, T e13_val, T e23_val)
+        constexpr Rotor(const Scalar<T>& s, T e12_val, T e13_val, T e23_val) noexcept
             : scalar(s), e12(e12_val), e13(e13_val), e23(e23_val) {}
 
         /**
@@ -74,7 +74,7 @@ namespace CliffordCore::PGA
          * and the ideal half of grade 2. Spell the narrowing out, or use
          * to_rotor(m), which does the same thing by name.
          */
-        constexpr explicit Rotor(const Multivector<T>& m)
+        constexpr explicit Rotor(const Multivector<T>& m) noexcept
             : scalar(m.scalar), e12(m.bivector.e12), e13(m.bivector.e13), e23(m.bivector.e23) {}
 
         /**
@@ -84,7 +84,7 @@ namespace CliffordCore::PGA
          * EXPLICIT on purpose: this discards the motor's translation -- the
          * ideal bivector components and e0123. Use to_rotor(m) to say so by name.
          */
-        constexpr explicit Rotor(const Motor<T>& m)
+        constexpr explicit Rotor(const Motor<T>& m) noexcept
             : scalar(m.scalar), e12(m.bivector.e12), e13(m.bivector.e13), e23(m.bivector.e23) {}
 
         /**
@@ -92,7 +92,7 @@ namespace CliffordCore::PGA
          * @param other The rotor to add.
          * @return The resulting rotor.
          */
-        constexpr Rotor operator+(const Rotor& other) const {
+        [[nodiscard]] constexpr Rotor operator+(const Rotor& other) const noexcept {
             return Rotor(scalar + other.scalar, e12 + other.e12, e13 + other.e13, e23 + other.e23);
         }
 
@@ -101,7 +101,7 @@ namespace CliffordCore::PGA
          * @param other The rotor to subtract.
          * @return The resulting rotor.
          */
-        constexpr Rotor operator-(const Rotor& other) const {
+        [[nodiscard]] constexpr Rotor operator-(const Rotor& other) const noexcept {
             return Rotor(scalar - other.scalar, e12 - other.e12, e13 - other.e13, e23 - other.e23);
         }
 
@@ -109,7 +109,7 @@ namespace CliffordCore::PGA
          * @brief Unary negation operator overload.
          * @return The resulting rotor, which represents the same rotation.
          */
-        constexpr Rotor operator-() const {
+        [[nodiscard]] constexpr Rotor operator-() const noexcept {
             return Rotor(-scalar, -e12, -e13, -e23);
         }
 
@@ -118,7 +118,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to multiply by.
          * @return The resulting rotor.
          */
-        constexpr Rotor operator*(const Scalar<T>& other) const {
+        [[nodiscard]] constexpr Rotor operator*(const Scalar<T>& other) const noexcept {
             return Rotor(scalar * other, e12 * other.value, e13 * other.value, e23 * other.value);
         }
 
@@ -127,7 +127,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to divide by.
          * @return The resulting rotor.
          */
-        constexpr Rotor operator/(const Scalar<T>& other) const {
+        [[nodiscard]] constexpr Rotor operator/(const Scalar<T>& other) const noexcept {
             return Rotor(scalar / other, e12 / other.value, e13 / other.value, e23 / other.value);
         }
 
@@ -136,7 +136,7 @@ namespace CliffordCore::PGA
          * @param other The rotor to add.
          * @return A reference to this rotor.
          */
-        constexpr Rotor& operator+=(const Rotor& other) {
+        constexpr Rotor& operator+=(const Rotor& other) noexcept {
             *this = *this + other;
             return *this;
         }
@@ -146,7 +146,7 @@ namespace CliffordCore::PGA
          * @param other The rotor to subtract.
          * @return A reference to this rotor.
          */
-        constexpr Rotor& operator-=(const Rotor& other) {
+        constexpr Rotor& operator-=(const Rotor& other) noexcept {
             *this = *this - other;
             return *this;
         }
@@ -156,7 +156,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to multiply by.
          * @return A reference to this rotor.
          */
-        constexpr Rotor& operator*=(const Scalar<T>& other) {
+        constexpr Rotor& operator*=(const Scalar<T>& other) noexcept {
             *this = *this * other;
             return *this;
         }
@@ -166,7 +166,7 @@ namespace CliffordCore::PGA
          * @param other The scalar to divide by.
          * @return A reference to this rotor.
          */
-        constexpr Rotor& operator/=(const Scalar<T>& other) {
+        constexpr Rotor& operator/=(const Scalar<T>& other) noexcept {
             *this = *this / other;
             return *this;
         }
@@ -175,7 +175,7 @@ namespace CliffordCore::PGA
          * @brief Returns a string representation of the rotor.
          * @return A string representing the rotor.
          */
-        std::string to_string() const {
+        [[nodiscard]] std::string to_string() const {
             return "(" + scalar.to_string() + ") + ("
                  + CliffordCore::detail::format_component(e12) + "*e12 + "
                  + CliffordCore::detail::format_component(e13) + "*e13 + "
@@ -190,7 +190,7 @@ namespace CliffordCore::PGA
      * @param r The rotor to scale.
      * @return The resulting rotor.
      */
-    constexpr Rotor<T> operator*(T value, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> operator*(T value, const Rotor<T>& r) noexcept {
         return r * Scalar<T>(value);
     }
 } // namespace CliffordCore::PGA

@@ -34,7 +34,7 @@ namespace CliffordCore::PGA
      * @param s The scalar.
      * @return The same scalar: grade 0 is unchanged by reversion.
      */
-    constexpr Scalar<T> reverse(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> reverse(const Scalar<T>& s) noexcept {
         return s;
     }
 
@@ -44,7 +44,7 @@ namespace CliffordCore::PGA
      * @param v The vector.
      * @return The same vector: grade 1 is unchanged by reversion.
      */
-    constexpr Vector<T> reverse(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> reverse(const Vector<T>& v) noexcept {
         return v;
     }
 
@@ -54,7 +54,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return The negated bivector: grade 2 changes sign under reversion.
      */
-    constexpr Bivector<T> reverse(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> reverse(const Bivector<T>& b) noexcept {
         return -b;
     }
 
@@ -64,7 +64,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return The negated trivector: grade 3 changes sign under reversion.
      */
-    constexpr Trivector<T> reverse(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Trivector<T> reverse(const Trivector<T>& t) noexcept {
         return -t;
     }
 
@@ -74,7 +74,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return The same quadvector: grade 4 is unchanged by reversion.
      */
-    constexpr Quadvector<T> reverse(const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Quadvector<T> reverse(const Quadvector<T>& q) noexcept {
         return q;
     }
 
@@ -84,7 +84,7 @@ namespace CliffordCore::PGA
      * @param m The multivector.
      * @return The multivector with its grade 2 and grade 3 parts negated.
      */
-    constexpr Multivector<T> reverse(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> reverse(const Multivector<T>& m) noexcept {
         return Multivector<T>(m.scalar, m.vector, -m.bivector, -m.trivector, m.quadvector);
     }
 
@@ -94,7 +94,7 @@ namespace CliffordCore::PGA
      * @param r The rotor.
      * @return The rotor with its bivector part negated: the inverse rotation for a unit rotor.
      */
-    constexpr Rotor<T> reverse(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> reverse(const Rotor<T>& r) noexcept {
         return Rotor<T>(r.scalar, -r.e12, -r.e13, -r.e23);
     }
 
@@ -104,7 +104,7 @@ namespace CliffordCore::PGA
      * @param t The translator.
      * @return The translator with its ideal part negated: the opposite translation for a normalised translator.
      */
-    constexpr Translator<T> reverse(const Translator<T>& t) {
+    [[nodiscard]] constexpr Translator<T> reverse(const Translator<T>& t) noexcept {
         return Translator<T>(t.scalar, -t.e01, -t.e02, -t.e03);
     }
 
@@ -114,7 +114,7 @@ namespace CliffordCore::PGA
      * @param m The motor.
      * @return The motor with its bivector part negated and e0123 kept: the inverse motion for a unit motor.
      */
-    constexpr Motor<T> reverse(const Motor<T>& m) {
+    [[nodiscard]] constexpr Motor<T> reverse(const Motor<T>& m) noexcept {
         return Motor<T>(m.scalar, -m.bivector, m.quadvector);
     }
 } // namespace CliffordCore::PGA

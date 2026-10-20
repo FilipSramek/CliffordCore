@@ -44,7 +44,7 @@ namespace CliffordCore::PGA
      * @return The bivector (screw) with exp of it equal to m. For a pure
      *         translator this is the ideal bivector b with m = 1 + b.
      */
-    constexpr Bivector<T> log(const Motor<T>& m) {
+    [[nodiscard]] constexpr Bivector<T> log(const Motor<T>& m) noexcept {
         const Bivector<T>& b = m.bivector;
         const T n = norm(b).value;
 
@@ -88,7 +88,7 @@ namespace CliffordCore::PGA
      * @return The Euclidean bivector with exp of it equal to r. This is the
      *         Cl3 case: no ideal part in, none out.
      */
-    constexpr Bivector<T> log(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Bivector<T> log(const Rotor<T>& r) noexcept {
         return log(Motor<T>(r));
     }
 
@@ -99,7 +99,7 @@ namespace CliffordCore::PGA
      * @return The ideal bivector with exp of it equal to t, which is t's ideal
      *         part divided by its scalar.
      */
-    constexpr Bivector<T> log(const Translator<T>& t) {
+    [[nodiscard]] constexpr Bivector<T> log(const Translator<T>& t) noexcept {
         return log(Motor<T>(t));
     }
 } // namespace CliffordCore::PGA

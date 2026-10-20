@@ -52,7 +52,7 @@ namespace CliffordCore::PGA
      * @brief The rotor that represents no rotation.
      * @return The identity rotor, scalar 1 with a zero bivector.
      */
-    constexpr Rotor<T> identity_rotor() {
+    [[nodiscard]] constexpr Rotor<T> identity_rotor() noexcept {
         return Rotor<T>(Scalar<T>(1), T(0), T(0), T(0));
     }
 
@@ -61,7 +61,7 @@ namespace CliffordCore::PGA
      * @brief The translator that represents no translation.
      * @return The identity translator, scalar 1 with a zero ideal part.
      */
-    constexpr Translator<T> identity_translator() {
+    [[nodiscard]] constexpr Translator<T> identity_translator() noexcept {
         return Translator<T>(Scalar<T>(1), T(0), T(0), T(0));
     }
 
@@ -70,7 +70,7 @@ namespace CliffordCore::PGA
      * @brief The motor that represents no motion.
      * @return The identity motor, scalar 1 with everything else zero.
      */
-    constexpr Motor<T> identity_motor() {
+    [[nodiscard]] constexpr Motor<T> identity_motor() noexcept {
         return Motor<T>(Scalar<T>(1), Bivector<T>(), Quadvector<T>());
     }
 
@@ -88,7 +88,7 @@ namespace CliffordCore::PGA
      *         two-sided sandwich needs; the minus sign is fixed by the point
      *         convention in primitives.hpp.
      */
-    constexpr Translator<T> translator(T dx, T dy, T dz) {
+    [[nodiscard]] constexpr Translator<T> translator(T dx, T dy, T dz) noexcept {
         return Translator<T>(Scalar<T>(1), -dx / T(2), -dy / T(2), -dz / T(2));
     }
 
@@ -101,7 +101,7 @@ namespace CliffordCore::PGA
      *         Points of zero weight have no position, so the identity is
      *         returned if either is ideal.
      */
-    constexpr Translator<T> translator_between(const Trivector<T>& from, const Trivector<T>& to) {
+    [[nodiscard]] constexpr Translator<T> translator_between(const Trivector<T>& from, const Trivector<T>& to) noexcept {
         if (from.e123 == T(0) || to.e123 == T(0)) {
             return identity_translator<T>();
         }
@@ -126,7 +126,7 @@ namespace CliffordCore::PGA
      *         zero. For an axis that misses the origin, use
      *         motor_from_line_angle with a line built by line_through_points.
      */
-    constexpr Rotor<T> rotor_from_axis_angle(T dx, T dy, T dz, T angle) {
+    [[nodiscard]] constexpr Rotor<T> rotor_from_axis_angle(T dx, T dy, T dz, T angle) noexcept {
         const T length = std::sqrt(dx * dx + dy * dy + dz * dz);
         if (length == T(0)) {
             return identity_rotor<T>();
@@ -147,7 +147,7 @@ namespace CliffordCore::PGA
      * @return exp(-(angle/2) * normalize(axis)), or the identity motor if the
      *         line is ideal.
      */
-    constexpr Motor<T> motor_from_line_angle(const Bivector<T>& axis, T angle) {
+    [[nodiscard]] constexpr Motor<T> motor_from_line_angle(const Bivector<T>& axis, T angle) noexcept {
         if (norm(axis).value == T(0)) {
             return identity_motor<T>();
         }
@@ -163,7 +163,7 @@ namespace CliffordCore::PGA
      * @return The motor performing both at once. Chasles' theorem says every
      *         rigid motion is one of these. An ideal axis gives the identity.
      */
-    constexpr Motor<T> screw(const Bivector<T>& axis, T angle, T distance) {
+    [[nodiscard]] constexpr Motor<T> screw(const Bivector<T>& axis, T angle, T distance) noexcept {
         if (norm(axis).value == T(0)) {
             return identity_motor<T>();
         }
@@ -193,7 +193,7 @@ namespace CliffordCore::PGA
      * exactly opposite the motion is ambiguous; a half turn about a line in the
      * plane halfway between the two is chosen.
      */
-    constexpr Motor<T> motor_between(const Vector<T>& from, const Vector<T>& to) {
+    [[nodiscard]] constexpr Motor<T> motor_between(const Vector<T>& from, const Vector<T>& to) noexcept {
         if (norm(from).value == T(0) || norm(to).value == T(0)) {
             return identity_motor<T>();
         }
@@ -239,7 +239,7 @@ namespace CliffordCore::PGA
      * @param t The translation, applied second.
      * @return The motor t * r, which rotates and then translates.
      */
-    constexpr Motor<T> motor_from_rotor_translator(const Rotor<T>& r, const Translator<T>& t) {
+    [[nodiscard]] constexpr Motor<T> motor_from_rotor_translator(const Rotor<T>& r, const Translator<T>& t) noexcept {
         return t * r;
     }
 
@@ -261,7 +261,7 @@ namespace CliffordCore::PGA
      * the rotation and the translation stay coupled, which is what makes it
      * the right thing for animating a rigid body.
      */
-    constexpr Motor<T> slerp(const Motor<T>& from, const Motor<T>& to, T t) {
+    [[nodiscard]] constexpr Motor<T> slerp(const Motor<T>& from, const Motor<T>& to, T t) noexcept {
         const Motor<T> a = normalize(from);
         Motor<T> b = normalize(to);
 
@@ -288,7 +288,7 @@ namespace CliffordCore::PGA
      *         overload, narrowed back to a Rotor since no translation can
      *         appear between two rotations about the origin.
      */
-    constexpr Rotor<T> slerp(const Rotor<T>& from, const Rotor<T>& to, T t) {
+    [[nodiscard]] constexpr Rotor<T> slerp(const Rotor<T>& from, const Rotor<T>& to, T t) noexcept {
         return Rotor<T>(slerp(Motor<T>(from), Motor<T>(to), t));
     }
 
@@ -301,7 +301,7 @@ namespace CliffordCore::PGA
      * @return The interpolated translator, which moves along a straight line
      *         at constant speed.
      */
-    constexpr Translator<T> slerp(const Translator<T>& from, const Translator<T>& to, T t) {
+    [[nodiscard]] constexpr Translator<T> slerp(const Translator<T>& from, const Translator<T>& to, T t) noexcept {
         return Translator<T>(slerp(Motor<T>(from), Motor<T>(to), t));
     }
 } // namespace CliffordCore::PGA

@@ -44,7 +44,7 @@ namespace CliffordCore::PGA
      * @param b The right scalar.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Scalar<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Scalar<T>& a, const Scalar<T>& b) noexcept {
         return a.value == b.value;
     }
 
@@ -55,7 +55,7 @@ namespace CliffordCore::PGA
      * @param b The right vector.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Vector<T>& a, const Vector<T>& b) noexcept {
         return a.e0 == b.e0
             && a.e1 == b.e1
             && a.e2 == b.e2
@@ -69,7 +69,7 @@ namespace CliffordCore::PGA
      * @param b The right bivector.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return a.e01 == b.e01
             && a.e02 == b.e02
             && a.e03 == b.e03
@@ -85,7 +85,7 @@ namespace CliffordCore::PGA
      * @param b The right trivector.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return a.e012 == b.e012
             && a.e013 == b.e013
             && a.e023 == b.e023
@@ -99,7 +99,7 @@ namespace CliffordCore::PGA
      * @param b The right quadvector.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Quadvector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Quadvector<T>& a, const Quadvector<T>& b) noexcept {
         return a.e0123 == b.e0123;
     }
 
@@ -110,7 +110,7 @@ namespace CliffordCore::PGA
      * @param b The right multivector.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Multivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Multivector<T>& a, const Multivector<T>& b) noexcept {
         return a.scalar == b.scalar
             && a.vector == b.vector
             && a.bivector == b.bivector
@@ -125,7 +125,7 @@ namespace CliffordCore::PGA
      * @param b The right rotor.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Rotor<T>& a, const Rotor<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Rotor<T>& a, const Rotor<T>& b) noexcept {
         return a.scalar.value == b.scalar.value
             && a.e12 == b.e12
             && a.e13 == b.e13
@@ -139,7 +139,7 @@ namespace CliffordCore::PGA
      * @param b The right translator.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Translator<T>& a, const Translator<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Translator<T>& a, const Translator<T>& b) noexcept {
         return a.scalar.value == b.scalar.value
             && a.e01 == b.e01
             && a.e02 == b.e02
@@ -153,7 +153,7 @@ namespace CliffordCore::PGA
      * @param b The right motor.
      * @return True if every component is bit-identical.
      */
-    constexpr bool operator==(const Motor<T>& a, const Motor<T>& b) {
+    [[nodiscard]] constexpr bool operator==(const Motor<T>& a, const Motor<T>& b) noexcept {
         return a.scalar == b.scalar
             && a.bivector == b.bivector
             && a.quadvector == b.quadvector;
@@ -161,39 +161,39 @@ namespace CliffordCore::PGA
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Scalar<T>& a, const Scalar<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Scalar<T>& a, const Scalar<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Vector<T>& a, const Vector<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Vector<T>& a, const Vector<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Bivector<T>& a, const Bivector<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Bivector<T>& a, const Bivector<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Trivector<T>& a, const Trivector<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Trivector<T>& a, const Trivector<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Quadvector<T>& a, const Quadvector<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Quadvector<T>& a, const Quadvector<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Multivector<T>& a, const Multivector<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Multivector<T>& a, const Multivector<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Rotor<T>& a, const Rotor<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Rotor<T>& a, const Rotor<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Translator<T>& a, const Translator<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Translator<T>& a, const Translator<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /** @brief Negation of operator==. @param a Left. @param b Right. @return True if not exactly equal. */
-    constexpr bool operator!=(const Motor<T>& a, const Motor<T>& b) { return !(a == b); }
+    [[nodiscard]] constexpr bool operator!=(const Motor<T>& a, const Motor<T>& b) noexcept { return !(a == b); }
 
     template<typename T>
     /**
@@ -203,8 +203,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Scalar<T>& a, const Scalar<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Scalar<T>& a, const Scalar<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return CliffordCore::detail::close(a.value, b.value, tolerance);
     }
 
@@ -216,8 +216,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Vector<T>& a, const Vector<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Vector<T>& a, const Vector<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return CliffordCore::detail::close(a.e0, b.e0, tolerance)
             && CliffordCore::detail::close(a.e1, b.e1, tolerance)
             && CliffordCore::detail::close(a.e2, b.e2, tolerance)
@@ -232,8 +232,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Bivector<T>& a, const Bivector<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Bivector<T>& a, const Bivector<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return CliffordCore::detail::close(a.e01, b.e01, tolerance)
             && CliffordCore::detail::close(a.e02, b.e02, tolerance)
             && CliffordCore::detail::close(a.e03, b.e03, tolerance)
@@ -250,8 +250,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Trivector<T>& a, const Trivector<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Trivector<T>& a, const Trivector<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return CliffordCore::detail::close(a.e012, b.e012, tolerance)
             && CliffordCore::detail::close(a.e013, b.e013, tolerance)
             && CliffordCore::detail::close(a.e023, b.e023, tolerance)
@@ -266,8 +266,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Quadvector<T>& a, const Quadvector<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Quadvector<T>& a, const Quadvector<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return CliffordCore::detail::close(a.e0123, b.e0123, tolerance);
     }
 
@@ -279,8 +279,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Multivector<T>& a, const Multivector<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Multivector<T>& a, const Multivector<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return approx_equal(a.scalar, b.scalar, tolerance)
             && approx_equal(a.vector, b.vector, tolerance)
             && approx_equal(a.bivector, b.bivector, tolerance)
@@ -296,8 +296,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Rotor<T>& a, const Rotor<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Rotor<T>& a, const Rotor<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return CliffordCore::detail::close(a.scalar.value, b.scalar.value, tolerance)
             && CliffordCore::detail::close(a.e12, b.e12, tolerance)
             && CliffordCore::detail::close(a.e13, b.e13, tolerance)
@@ -312,8 +312,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Translator<T>& a, const Translator<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Translator<T>& a, const Translator<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return CliffordCore::detail::close(a.scalar.value, b.scalar.value, tolerance)
             && CliffordCore::detail::close(a.e01, b.e01, tolerance)
             && CliffordCore::detail::close(a.e02, b.e02, tolerance)
@@ -328,8 +328,8 @@ namespace CliffordCore::PGA
      * @param tolerance The largest per-component difference still considered equal.
      * @return True if every component agrees to within the tolerance.
      */
-    inline bool approx_equal(const Motor<T>& a, const Motor<T>& b,
-                             T tolerance = CliffordCore::detail::default_tolerance<T>()) {
+    [[nodiscard]] inline bool approx_equal(const Motor<T>& a, const Motor<T>& b,
+                             T tolerance = CliffordCore::detail::default_tolerance<T>()) noexcept {
         return approx_equal(a.scalar, b.scalar, tolerance)
             && approx_equal(a.bivector, b.bivector, tolerance)
             && approx_equal(a.quadvector, b.quadvector, tolerance);

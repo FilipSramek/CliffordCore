@@ -63,7 +63,7 @@ namespace CliffordCore::PGA
      * @param b The right operand.
      * @return The grade 0 part of a*b, the one piece every product shares.
      */
-    constexpr auto scalar_product(const A& a, const B& b) -> decltype(grade0(a * b)) {
+    [[nodiscard]] constexpr auto scalar_product(const A& a, const B& b) noexcept -> decltype(grade0(a * b)) {
         return grade0(a * b);
     }
 
@@ -78,7 +78,7 @@ namespace CliffordCore::PGA
      * @param b The right vector.
      * @return The resulting scalar. For equal grades this is the dot product.
      */
-    constexpr Scalar<T> left_contraction(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Vector<T>& a, const Vector<T>& b) noexcept {
         return a | b;
     }
 
@@ -89,7 +89,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return The grade 1 part of v*b: the plane through the line perpendicular to v.
      */
-    constexpr Vector<T> left_contraction(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> left_contraction(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return grade1(v * b);
     }
 
@@ -100,7 +100,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return The grade 2 part of v*t: the line through the point perpendicular to v.
      */
-    constexpr Bivector<T> left_contraction(const Vector<T>& v, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Bivector<T> left_contraction(const Vector<T>& v, const Trivector<T>& t) noexcept {
         return grade2(v * t);
     }
 
@@ -111,7 +111,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return The grade 3 part of v*q: an ideal point, the plane's normal direction.
      */
-    constexpr Trivector<T> left_contraction(const Vector<T>& v, const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Trivector<T> left_contraction(const Vector<T>& v, const Quadvector<T>& q) noexcept {
         return grade3(v * q);
     }
 
@@ -122,7 +122,7 @@ namespace CliffordCore::PGA
      * @param b The right bivector.
      * @return The grade 0 part of a*b: minus the dot product of their directions.
      */
-    constexpr Scalar<T> left_contraction(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return grade0(a * b);
     }
 
@@ -133,7 +133,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return The grade 1 part of b*t: the plane through the point perpendicular to b.
      */
-    constexpr Vector<T> left_contraction(const Bivector<T>& b, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> left_contraction(const Bivector<T>& b, const Trivector<T>& t) noexcept {
         return grade1(b * t);
     }
 
@@ -144,7 +144,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return The grade 2 part of b*q: an ideal line.
      */
-    constexpr Bivector<T> left_contraction(const Bivector<T>& b, const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Bivector<T> left_contraction(const Bivector<T>& b, const Quadvector<T>& q) noexcept {
         return grade2(b * q);
     }
 
@@ -155,7 +155,7 @@ namespace CliffordCore::PGA
      * @param b The right trivector.
      * @return The grade 0 part of a*b: minus the product of their weights.
      */
-    constexpr Scalar<T> left_contraction(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return grade0(a * b);
     }
 
@@ -166,7 +166,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return The grade 1 part of t*q: an ideal plane.
      */
-    constexpr Vector<T> left_contraction(const Trivector<T>& t, const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Vector<T> left_contraction(const Trivector<T>& t, const Quadvector<T>& q) noexcept {
         return grade1(t * q);
     }
 
@@ -177,7 +177,7 @@ namespace CliffordCore::PGA
      * @param b The right quadvector.
      * @return Zero, always: e0123 squares to zero.
      */
-    constexpr Scalar<T> left_contraction(const Quadvector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Quadvector<T>& a, const Quadvector<T>& b) noexcept {
         return a * b;
     }
 
@@ -190,7 +190,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return left_contraction(v, b).
      */
-    constexpr Vector<T> operator|(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> operator|(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return left_contraction(v, b);
     }
 
@@ -201,7 +201,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return left_contraction(v, t).
      */
-    constexpr Bivector<T> operator|(const Vector<T>& v, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Bivector<T> operator|(const Vector<T>& v, const Trivector<T>& t) noexcept {
         return left_contraction(v, t);
     }
 
@@ -212,7 +212,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return left_contraction(v, q).
      */
-    constexpr Trivector<T> operator|(const Vector<T>& v, const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Trivector<T> operator|(const Vector<T>& v, const Quadvector<T>& q) noexcept {
         return left_contraction(v, q);
     }
 
@@ -223,7 +223,7 @@ namespace CliffordCore::PGA
      * @param b The right bivector.
      * @return left_contraction(a, b).
      */
-    constexpr Scalar<T> operator|(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> operator|(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return left_contraction(a, b);
     }
 
@@ -234,7 +234,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return left_contraction(b, t).
      */
-    constexpr Vector<T> operator|(const Bivector<T>& b, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> operator|(const Bivector<T>& b, const Trivector<T>& t) noexcept {
         return left_contraction(b, t);
     }
 
@@ -245,7 +245,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return left_contraction(b, q).
      */
-    constexpr Bivector<T> operator|(const Bivector<T>& b, const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Bivector<T> operator|(const Bivector<T>& b, const Quadvector<T>& q) noexcept {
         return left_contraction(b, q);
     }
 
@@ -256,7 +256,7 @@ namespace CliffordCore::PGA
      * @param b The right trivector.
      * @return left_contraction(a, b).
      */
-    constexpr Scalar<T> operator|(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> operator|(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return left_contraction(a, b);
     }
 
@@ -267,7 +267,7 @@ namespace CliffordCore::PGA
      * @param q The quadvector.
      * @return left_contraction(t, q).
      */
-    constexpr Vector<T> operator|(const Trivector<T>& t, const Quadvector<T>& q) {
+    [[nodiscard]] constexpr Vector<T> operator|(const Trivector<T>& t, const Quadvector<T>& q) noexcept {
         return left_contraction(t, q);
     }
 
@@ -278,7 +278,7 @@ namespace CliffordCore::PGA
      * @param b The right quadvector.
      * @return left_contraction(a, b), which is zero.
      */
-    constexpr Scalar<T> operator|(const Quadvector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> operator|(const Quadvector<T>& a, const Quadvector<T>& b) noexcept {
         return left_contraction(a, b);
     }
 
@@ -293,7 +293,7 @@ namespace CliffordCore::PGA
      * @param b The right vector.
      * @return The resulting scalar, equal to the left contraction for equal grades.
      */
-    constexpr Scalar<T> right_contraction(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Vector<T>& a, const Vector<T>& b) noexcept {
         return a | b;
     }
 
@@ -304,7 +304,7 @@ namespace CliffordCore::PGA
      * @param v The vector.
      * @return The grade 1 part of b*v.
      */
-    constexpr Vector<T> right_contraction(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> right_contraction(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return grade1(b * v);
     }
 
@@ -315,7 +315,7 @@ namespace CliffordCore::PGA
      * @param v The vector.
      * @return The grade 2 part of t*v.
      */
-    constexpr Bivector<T> right_contraction(const Trivector<T>& t, const Vector<T>& v) {
+    [[nodiscard]] constexpr Bivector<T> right_contraction(const Trivector<T>& t, const Vector<T>& v) noexcept {
         return grade2(t * v);
     }
 
@@ -326,7 +326,7 @@ namespace CliffordCore::PGA
      * @param v The vector.
      * @return The grade 3 part of q*v.
      */
-    constexpr Trivector<T> right_contraction(const Quadvector<T>& q, const Vector<T>& v) {
+    [[nodiscard]] constexpr Trivector<T> right_contraction(const Quadvector<T>& q, const Vector<T>& v) noexcept {
         return grade3(q * v);
     }
 
@@ -337,7 +337,7 @@ namespace CliffordCore::PGA
      * @param b The right bivector.
      * @return The grade 0 part of a*b.
      */
-    constexpr Scalar<T> right_contraction(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return grade0(a * b);
     }
 
@@ -348,7 +348,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return The grade 1 part of t*b.
      */
-    constexpr Vector<T> right_contraction(const Trivector<T>& t, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> right_contraction(const Trivector<T>& t, const Bivector<T>& b) noexcept {
         return grade1(t * b);
     }
 
@@ -359,7 +359,7 @@ namespace CliffordCore::PGA
      * @param b The bivector.
      * @return The grade 2 part of q*b.
      */
-    constexpr Bivector<T> right_contraction(const Quadvector<T>& q, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> right_contraction(const Quadvector<T>& q, const Bivector<T>& b) noexcept {
         return grade2(q * b);
     }
 
@@ -370,7 +370,7 @@ namespace CliffordCore::PGA
      * @param b The right trivector.
      * @return The grade 0 part of a*b.
      */
-    constexpr Scalar<T> right_contraction(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return grade0(a * b);
     }
 
@@ -381,7 +381,7 @@ namespace CliffordCore::PGA
      * @param t The trivector.
      * @return The grade 1 part of q*t.
      */
-    constexpr Vector<T> right_contraction(const Quadvector<T>& q, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> right_contraction(const Quadvector<T>& q, const Trivector<T>& t) noexcept {
         return grade1(q * t);
     }
 
@@ -392,7 +392,7 @@ namespace CliffordCore::PGA
      * @param b The right quadvector.
      * @return Zero, always.
      */
-    constexpr Scalar<T> right_contraction(const Quadvector<T>& a, const Quadvector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Quadvector<T>& a, const Quadvector<T>& b) noexcept {
         return a * b;
     }
 } // namespace CliffordCore::PGA

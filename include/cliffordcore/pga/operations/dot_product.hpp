@@ -32,7 +32,7 @@ template<typename T>
  * @return The resulting scalar: the dot product of the two normals. The e0
  *         components do not contribute.
  */
-constexpr Scalar<T> operator|(const Vector<T>& a, const Vector<T>& b) {
+[[nodiscard]] constexpr Scalar<T> operator|(const Vector<T>& a, const Vector<T>& b) noexcept {
     return Scalar<T>(a.e1 * b.e1 + a.e2 * b.e2 + a.e3 * b.e3);
 }
 
@@ -43,7 +43,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting scalar from the dot product of vectors a and b.
  */
-constexpr Scalar<T> dot_product(const Vector<T>& a, const Vector<T>& b) {
+[[nodiscard]] constexpr Scalar<T> dot_product(const Vector<T>& a, const Vector<T>& b) noexcept {
     return a | b;
 }
 } // namespace CliffordCore::PGA

@@ -56,7 +56,7 @@ public:
     /**
      * @brief Default constructor initializes the bivector components to zero.
      */
-    constexpr Bivector() : e01(0), e02(0), e03(0), e12(0), e13(0), e23(0) {}
+    constexpr Bivector() noexcept : e01(0), e02(0), e03(0), e12(0), e13(0), e23(0) {}
 
     /**
      * @brief Constructor initializes the bivector components to the provided values.
@@ -67,14 +67,14 @@ public:
      * @param e13_val The e13 component.
      * @param e23_val The e23 component.
      */
-    constexpr Bivector(T e01_val, T e02_val, T e03_val, T e12_val, T e13_val, T e23_val)
+    constexpr Bivector(T e01_val, T e02_val, T e03_val, T e12_val, T e13_val, T e23_val) noexcept
         : e01(e01_val), e02(e02_val), e03(e03_val), e12(e12_val), e13(e13_val), e23(e23_val) {}
 
     /**
      * @brief Computes the Euclidean magnitude of the bivector: the length of the line's direction.
      * @return The magnitude as a scalar. The ideal components do not contribute, because e0^2 = 0.
      */
-    constexpr Scalar<T> magnitude() const {
+    [[nodiscard]] constexpr Scalar<T> magnitude() const noexcept {
         return Scalar<T>(std::sqrt(e12 * e12 + e13 * e13 + e23 * e23));
     }
 
@@ -83,7 +83,7 @@ public:
      * @param other The bivector to add.
      * @return The resulting bivector.
      */
-    constexpr Bivector operator+(const Bivector& other) const {
+    [[nodiscard]] constexpr Bivector operator+(const Bivector& other) const noexcept {
         return Bivector(
             e01 + other.e01, e02 + other.e02, e03 + other.e03,
             e12 + other.e12, e13 + other.e13, e23 + other.e23
@@ -95,7 +95,7 @@ public:
      * @param other The bivector to subtract.
      * @return The resulting bivector.
      */
-    constexpr Bivector operator-(const Bivector& other) const {
+    [[nodiscard]] constexpr Bivector operator-(const Bivector& other) const noexcept {
         return Bivector(
             e01 - other.e01, e02 - other.e02, e03 - other.e03,
             e12 - other.e12, e13 - other.e13, e23 - other.e23
@@ -107,20 +107,20 @@ public:
      * @param scalar The scalar to multiply with.
      * @return The resulting bivector.
      */
-    constexpr Bivector operator*(const Scalar<T>& scalar) const;
+    [[nodiscard]] constexpr Bivector operator*(const Scalar<T>& scalar) const noexcept;
 
     /**
      * @brief Scalar division operator overload.
      * @param scalar The scalar to divide by.
      * @return The resulting bivector.
      */
-    constexpr Bivector operator/(const Scalar<T>& scalar) const;
+    [[nodiscard]] constexpr Bivector operator/(const Scalar<T>& scalar) const noexcept;
 
     /**
      * @brief Unary negation operator overload.
      * @return The resulting bivector.
      */
-    constexpr Bivector operator-() const {
+    [[nodiscard]] constexpr Bivector operator-() const noexcept {
         return Bivector(-e01, -e02, -e03, -e12, -e13, -e23);
     }
 
@@ -129,7 +129,7 @@ public:
      * @param other The bivector to add.
      * @return A reference to this bivector.
      */
-    constexpr Bivector& operator+=(const Bivector& other) {
+    constexpr Bivector& operator+=(const Bivector& other) noexcept {
         e01 += other.e01; e02 += other.e02; e03 += other.e03;
         e12 += other.e12; e13 += other.e13; e23 += other.e23;
         return *this;
@@ -140,7 +140,7 @@ public:
      * @param other The bivector to subtract.
      * @return A reference to this bivector.
      */
-    constexpr Bivector& operator-=(const Bivector& other) {
+    constexpr Bivector& operator-=(const Bivector& other) noexcept {
         e01 -= other.e01; e02 -= other.e02; e03 -= other.e03;
         e12 -= other.e12; e13 -= other.e13; e23 -= other.e23;
         return *this;
@@ -151,7 +151,7 @@ public:
      * @param value The value to multiply by.
      * @return A reference to this bivector.
      */
-    constexpr Bivector& operator*=(T value) {
+    constexpr Bivector& operator*=(T value) noexcept {
         e01 *= value; e02 *= value; e03 *= value;
         e12 *= value; e13 *= value; e23 *= value;
         return *this;
@@ -162,7 +162,7 @@ public:
      * @param value The value to divide by.
      * @return A reference to this bivector.
      */
-    constexpr Bivector& operator/=(T value) {
+    constexpr Bivector& operator/=(T value) noexcept {
         e01 /= value; e02 /= value; e03 /= value;
         e12 /= value; e13 /= value; e23 /= value;
         return *this;
@@ -173,20 +173,20 @@ public:
      * @param scalar The scalar to multiply by.
      * @return A reference to this bivector.
      */
-    constexpr Bivector& operator*=(const Scalar<T>& scalar);
+    constexpr Bivector& operator*=(const Scalar<T>& scalar) noexcept;
 
     /**
      * @brief Divides this bivector in place by a scalar.
      * @param scalar The scalar to divide by.
      * @return A reference to this bivector.
      */
-    constexpr Bivector& operator/=(const Scalar<T>& scalar);
+    constexpr Bivector& operator/=(const Scalar<T>& scalar) noexcept;
 
     /**
      * @brief Returns a string representation of the bivector.
      * @return A string representing the bivector.
      */
-    std::string to_string() const {
+    [[nodiscard]] std::string to_string() const {
         return CliffordCore::detail::format_component(e01) + "*e01 + "
              + CliffordCore::detail::format_component(e02) + "*e02 + "
              + CliffordCore::detail::format_component(e03) + "*e03 + "
@@ -218,7 +218,7 @@ namespace CliffordCore::PGA
 {
 
     template<typename T>
-    constexpr Bivector<T> Bivector<T>::operator*(const Scalar<T>& scalar) const {
+    [[nodiscard]] constexpr Bivector<T> Bivector<T>::operator*(const Scalar<T>& scalar) const noexcept {
         return Bivector<T>(
             e01 * scalar.value, e02 * scalar.value, e03 * scalar.value,
             e12 * scalar.value, e13 * scalar.value, e23 * scalar.value
@@ -226,7 +226,7 @@ namespace CliffordCore::PGA
     }
 
     template<typename T>
-    constexpr Bivector<T> Bivector<T>::operator/(const Scalar<T>& scalar) const {
+    [[nodiscard]] constexpr Bivector<T> Bivector<T>::operator/(const Scalar<T>& scalar) const noexcept {
         return Bivector<T>(
             e01 / scalar.value, e02 / scalar.value, e03 / scalar.value,
             e12 / scalar.value, e13 / scalar.value, e23 / scalar.value
@@ -234,12 +234,12 @@ namespace CliffordCore::PGA
     }
 
     template<typename T>
-    constexpr Bivector<T>& Bivector<T>::operator*=(const Scalar<T>& scalar) {
+    constexpr Bivector<T>& Bivector<T>::operator*=(const Scalar<T>& scalar) noexcept {
         return *this *= scalar.value;
     }
 
     template<typename T>
-    constexpr Bivector<T>& Bivector<T>::operator/=(const Scalar<T>& scalar) {
+    constexpr Bivector<T>& Bivector<T>::operator/=(const Scalar<T>& scalar) noexcept {
         return *this /= scalar.value;
     }
 
@@ -250,7 +250,7 @@ namespace CliffordCore::PGA
      * @param b The bivector to scale.
      * @return The resulting bivector.
      */
-    constexpr Bivector<T> operator*(T value, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> operator*(T value, const Bivector<T>& b) noexcept {
         return Bivector<T>(
             value * b.e01, value * b.e02, value * b.e03,
             value * b.e12, value * b.e13, value * b.e23

@@ -54,7 +54,7 @@ namespace CliffordCore::PGA
      * @pre s is non-zero; a zero scalar has no sign to preserve and trips an
      *      assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Scalar<T> normalize(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> normalize(const Scalar<T>& s) noexcept {
         const T n = norm(s).value;
         assert(n != T(0) && "normalize: the scalar is zero and has no unit direction");
         if (n == T(0)) {
@@ -71,7 +71,7 @@ namespace CliffordCore::PGA
      * @pre v is not ideal; an ideal plane has no normal to scale and trips an
      *      assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Vector<T> normalize(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> normalize(const Vector<T>& v) noexcept {
         const T n = norm(v).value;
         assert(n != T(0) && "normalize: the plane is ideal and has no unit normal");
         if (n == T(0)) {
@@ -88,7 +88,7 @@ namespace CliffordCore::PGA
      * @pre b is not ideal; an ideal line has no direction to scale and trips
      *      an assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Bivector<T> normalize(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> normalize(const Bivector<T>& b) noexcept {
         const T n = norm(b).value;
         assert(n != T(0) && "normalize: the line is ideal and has no unit direction");
         if (n == T(0)) {
@@ -106,7 +106,7 @@ namespace CliffordCore::PGA
      * @pre t is not ideal; an ideal point has no weight to scale and trips an
      *      assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Trivector<T> normalize(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Trivector<T> normalize(const Trivector<T>& t) noexcept {
         const T n = norm(t).value;
         assert(n != T(0) && "normalize: the point is ideal and has no unit weight");
         if (n == T(0)) {
@@ -123,7 +123,7 @@ namespace CliffordCore::PGA
      * @pre m has a non-zero Euclidean norm; a purely ideal multivector trips
      *      an assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Multivector<T> normalize(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> normalize(const Multivector<T>& m) noexcept {
         const T n = norm(m).value;
         assert(n != T(0) && "normalize: the multivector is ideal and has no unit form");
         if (n == T(0)) {
@@ -140,7 +140,7 @@ namespace CliffordCore::PGA
      * @pre r is non-zero; a zero rotor trips an assert. Under NDEBUG it is
      *      returned unchanged instead.
      */
-    constexpr Rotor<T> normalize(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> normalize(const Rotor<T>& r) noexcept {
         const T n = norm(r).value;
         assert(n != T(0) && "normalize: the rotor is zero and has no unit form");
         if (n == T(0)) {
@@ -157,7 +157,7 @@ namespace CliffordCore::PGA
      * @pre t has a non-zero scalar; a purely ideal translator trips an
      *      assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Translator<T> normalize(const Translator<T>& t) {
+    [[nodiscard]] constexpr Translator<T> normalize(const Translator<T>& t) noexcept {
         const T n = t.scalar.value;
         assert(n != T(0) && "normalize: the translator has a zero scalar and no unit form");
         if (n == T(0)) {
@@ -177,7 +177,7 @@ namespace CliffordCore::PGA
      * @pre m has a non-zero Euclidean norm; a purely ideal motor trips an
      *      assert. Under NDEBUG it is returned unchanged instead.
      */
-    constexpr Motor<T> normalize(const Motor<T>& m) {
+    [[nodiscard]] constexpr Motor<T> normalize(const Motor<T>& m) noexcept {
         const T a = squared_norm(m).value;
         assert(a != T(0) && "normalize: the motor is ideal and has no unit form");
         if (a == T(0)) {

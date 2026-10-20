@@ -55,7 +55,7 @@ public:
     /**
      * @brief Default constructor initializes the trivector components to zero.
      */
-    constexpr Trivector() : e012(0), e013(0), e023(0), e123(0) {}
+    constexpr Trivector() noexcept : e012(0), e013(0), e023(0), e123(0) {}
 
     /**
      * @brief Constructor initializes the trivector components to the provided values.
@@ -64,14 +64,14 @@ public:
      * @param e023_val The e023 component.
      * @param e123_val The e123 component.
      */
-    constexpr Trivector(T e012_val, T e013_val, T e023_val, T e123_val)
+    constexpr Trivector(T e012_val, T e013_val, T e023_val, T e123_val) noexcept
         : e012(e012_val), e013(e013_val), e023(e023_val), e123(e123_val) {}
 
     /**
      * @brief Computes the Euclidean magnitude of the trivector: the absolute weight.
      * @return The magnitude as a scalar. The ideal components do not contribute, because e0^2 = 0.
      */
-    constexpr Scalar<T> magnitude() const {
+    [[nodiscard]] constexpr Scalar<T> magnitude() const noexcept {
         return Scalar<T>(std::sqrt(e123 * e123));
     }
 
@@ -80,7 +80,7 @@ public:
      * @param other The trivector to add.
      * @return The resulting trivector.
      */
-    constexpr Trivector operator+(const Trivector& other) const {
+    [[nodiscard]] constexpr Trivector operator+(const Trivector& other) const noexcept {
         return Trivector(e012 + other.e012, e013 + other.e013, e023 + other.e023, e123 + other.e123);
     }
 
@@ -89,7 +89,7 @@ public:
      * @param other The trivector to subtract.
      * @return The resulting trivector.
      */
-    constexpr Trivector operator-(const Trivector& other) const {
+    [[nodiscard]] constexpr Trivector operator-(const Trivector& other) const noexcept {
         return Trivector(e012 - other.e012, e013 - other.e013, e023 - other.e023, e123 - other.e123);
     }
 
@@ -98,20 +98,20 @@ public:
      * @param scalar The scalar to multiply with.
      * @return The resulting trivector.
      */
-    constexpr Trivector operator*(const Scalar<T>& scalar) const;
+    [[nodiscard]] constexpr Trivector operator*(const Scalar<T>& scalar) const noexcept;
 
     /**
      * @brief Scalar division operator overload.
      * @param scalar The scalar to divide by.
      * @return The resulting trivector.
      */
-    constexpr Trivector operator/(const Scalar<T>& scalar) const;
+    [[nodiscard]] constexpr Trivector operator/(const Scalar<T>& scalar) const noexcept;
 
     /**
      * @brief Unary negation operator overload.
      * @return The resulting trivector.
      */
-    constexpr Trivector operator-() const {
+    [[nodiscard]] constexpr Trivector operator-() const noexcept {
         return Trivector(-e012, -e013, -e023, -e123);
     }
 
@@ -120,7 +120,7 @@ public:
      * @param other The trivector to add.
      * @return A reference to this trivector.
      */
-    constexpr Trivector& operator+=(const Trivector& other) {
+    constexpr Trivector& operator+=(const Trivector& other) noexcept {
         e012 += other.e012; e013 += other.e013; e023 += other.e023; e123 += other.e123;
         return *this;
     }
@@ -130,7 +130,7 @@ public:
      * @param other The trivector to subtract.
      * @return A reference to this trivector.
      */
-    constexpr Trivector& operator-=(const Trivector& other) {
+    constexpr Trivector& operator-=(const Trivector& other) noexcept {
         e012 -= other.e012; e013 -= other.e013; e023 -= other.e023; e123 -= other.e123;
         return *this;
     }
@@ -140,7 +140,7 @@ public:
      * @param value The value to multiply by.
      * @return A reference to this trivector.
      */
-    constexpr Trivector& operator*=(T value) {
+    constexpr Trivector& operator*=(T value) noexcept {
         e012 *= value; e013 *= value; e023 *= value; e123 *= value;
         return *this;
     }
@@ -150,7 +150,7 @@ public:
      * @param value The value to divide by.
      * @return A reference to this trivector.
      */
-    constexpr Trivector& operator/=(T value) {
+    constexpr Trivector& operator/=(T value) noexcept {
         e012 /= value; e013 /= value; e023 /= value; e123 /= value;
         return *this;
     }
@@ -160,20 +160,20 @@ public:
      * @param scalar The scalar to multiply by.
      * @return A reference to this trivector.
      */
-    constexpr Trivector& operator*=(const Scalar<T>& scalar);
+    constexpr Trivector& operator*=(const Scalar<T>& scalar) noexcept;
 
     /**
      * @brief Divides this trivector in place by a scalar.
      * @param scalar The scalar to divide by.
      * @return A reference to this trivector.
      */
-    constexpr Trivector& operator/=(const Scalar<T>& scalar);
+    constexpr Trivector& operator/=(const Scalar<T>& scalar) noexcept;
 
     /**
      * @brief Returns a string representation of the trivector.
      * @return A string representing the trivector.
      */
-    std::string to_string() const {
+    [[nodiscard]] std::string to_string() const {
         return CliffordCore::detail::format_component(e012) + "*e012 + "
              + CliffordCore::detail::format_component(e013) + "*e013 + "
              + CliffordCore::detail::format_component(e023) + "*e023 + "
@@ -196,22 +196,22 @@ namespace CliffordCore::PGA
 {
 
     template<typename T>
-    constexpr Trivector<T> Trivector<T>::operator*(const Scalar<T>& scalar) const {
+    [[nodiscard]] constexpr Trivector<T> Trivector<T>::operator*(const Scalar<T>& scalar) const noexcept {
         return Trivector<T>(e012 * scalar.value, e013 * scalar.value, e023 * scalar.value, e123 * scalar.value);
     }
 
     template<typename T>
-    constexpr Trivector<T> Trivector<T>::operator/(const Scalar<T>& scalar) const {
+    [[nodiscard]] constexpr Trivector<T> Trivector<T>::operator/(const Scalar<T>& scalar) const noexcept {
         return Trivector<T>(e012 / scalar.value, e013 / scalar.value, e023 / scalar.value, e123 / scalar.value);
     }
 
     template<typename T>
-    constexpr Trivector<T>& Trivector<T>::operator*=(const Scalar<T>& scalar) {
+    constexpr Trivector<T>& Trivector<T>::operator*=(const Scalar<T>& scalar) noexcept {
         return *this *= scalar.value;
     }
 
     template<typename T>
-    constexpr Trivector<T>& Trivector<T>::operator/=(const Scalar<T>& scalar) {
+    constexpr Trivector<T>& Trivector<T>::operator/=(const Scalar<T>& scalar) noexcept {
         return *this /= scalar.value;
     }
 
@@ -222,7 +222,7 @@ namespace CliffordCore::PGA
      * @param t The trivector to scale.
      * @return The resulting trivector.
      */
-    constexpr Trivector<T> operator*(T value, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Trivector<T> operator*(T value, const Trivector<T>& t) noexcept {
         return Trivector<T>(value * t.e012, value * t.e013, value * t.e023, value * t.e123);
     }
 } // namespace CliffordCore::PGA

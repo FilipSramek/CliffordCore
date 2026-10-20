@@ -34,7 +34,7 @@ template<typename T>
  * @return The resulting bivector, with components in lexicographic order
  *         (e01, e02, e03, e12, e13, e23); each is a_i b_j - a_j b_i.
  */
-constexpr Bivector<T> operator^(const Vector<T>& a, const Vector<T>& b) {
+[[nodiscard]] constexpr Bivector<T> operator^(const Vector<T>& a, const Vector<T>& b) noexcept {
     return Bivector<T>(
         a.e0 * b.e1 - a.e1 * b.e0,
         a.e0 * b.e2 - a.e2 * b.e0,
@@ -52,7 +52,7 @@ template<typename T>
  * @param b The second vector.
  * @return The resulting bivector: the line in which the planes intersect.
  */
-constexpr Bivector<T> wedge_product(const Vector<T>& a, const Vector<T>& b) {
+[[nodiscard]] constexpr Bivector<T> wedge_product(const Vector<T>& a, const Vector<T>& b) noexcept {
     return a ^ b;
 }
 } // namespace CliffordCore::PGA
