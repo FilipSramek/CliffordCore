@@ -32,7 +32,7 @@ template<typename T>
  * @param s The scalar for which to compute the norm.
  * @return The euclidian norm (magnitude) of the scalar s.
  */
-constexpr Scalar<T> norm(const Scalar<T>& s) {
+[[nodiscard]] constexpr Scalar<T> norm(const Scalar<T>& s) noexcept {
     return Scalar<T>(std::abs(s.value));
 }
 
@@ -42,7 +42,7 @@ template<typename T>
  * @param v The vector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the vector v.
  */
-constexpr Scalar<T> norm(const Vector<T>& v) {
+[[nodiscard]] constexpr Scalar<T> norm(const Vector<T>& v) noexcept {
     return Scalar<T>(std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z));
 }
 
@@ -52,7 +52,7 @@ template<typename T>
  * @param b The bivector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the bivector b.
  */
-constexpr Scalar<T> norm(const Bivector<T>& b) {
+[[nodiscard]] constexpr Scalar<T> norm(const Bivector<T>& b) noexcept {
     return Scalar<T>(std::sqrt(b.xy * b.xy + b.xz * b.xz + b.yz * b.yz));  
 }
 
@@ -62,7 +62,7 @@ template<typename T>
  * @param s The scalar for which to compute the squared norm.
  * @return The squared magnitude of the scalar s.
  */
-constexpr Scalar<T> squared_norm(const Scalar<T>& s) {
+[[nodiscard]] constexpr Scalar<T> squared_norm(const Scalar<T>& s) noexcept {
     return Scalar<T>(s.value * s.value);
 }
 
@@ -72,7 +72,7 @@ template<typename T>
  * @param v The vector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the vector v.
  */
-constexpr Scalar<T> squared_norm(const Vector<T>& v) {
+[[nodiscard]] constexpr Scalar<T> squared_norm(const Vector<T>& v) noexcept {
     return Scalar<T>(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
@@ -82,7 +82,7 @@ template<typename T>
  * @param b The bivector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the bivector b.
  */
-constexpr Scalar<T> squared_norm(const Bivector<T>& b) {
+[[nodiscard]] constexpr Scalar<T> squared_norm(const Bivector<T>& b) noexcept {
     return Scalar<T>(b.xy * b.xy + b.xz * b.xz + b.yz * b.yz);
 }
 
@@ -92,7 +92,7 @@ template<typename T>
  * @param t The trivector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the trivector t.
  */
-constexpr Scalar<T> norm(const Trivector<T>& t) {
+[[nodiscard]] constexpr Scalar<T> norm(const Trivector<T>& t) noexcept {
     return Scalar<T>(std::abs(t.e123));
 }
 
@@ -102,7 +102,7 @@ template<typename T>
  * @param t The trivector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the trivector t.
  */
-constexpr Scalar<T> squared_norm(const Trivector<T>& t) {
+[[nodiscard]] constexpr Scalar<T> squared_norm(const Trivector<T>& t) noexcept {
     return Scalar<T>(t.e123 * t.e123);
 }
 
@@ -112,7 +112,7 @@ template<typename T>
  * @param m The multivector for which to compute the norm.
  * @return The euclidian norm (magnitude) of the multivector m.
  */
-constexpr Scalar<T> norm(const Multivector<T>& m) {
+[[nodiscard]] constexpr Scalar<T> norm(const Multivector<T>& m) noexcept {
     return Scalar<T>(std::sqrt(squared_norm(m).value));
 }
 
@@ -122,7 +122,7 @@ template<typename T>
  * @param m The multivector for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the multivector m.
  */
-constexpr Scalar<T> squared_norm(const Multivector<T>& m) {
+[[nodiscard]] constexpr Scalar<T> squared_norm(const Multivector<T>& m) noexcept {
     return Scalar<T>((m.scalar.value * m.scalar.value)
         + (m.vector.x * m.vector.x) + (m.vector.y * m.vector.y) + (m.vector.z * m.vector.z)
         + (m.bivector.xy * m.bivector.xy) + (m.bivector.xz * m.bivector.xz) + (m.bivector.yz * m.bivector.yz)
@@ -135,7 +135,7 @@ template<typename T>
  * @param r The rotor for which to compute the norm.
  * @return The euclidian norm (magnitude) of the rotor r.
  */ 
-constexpr Scalar<T> norm(const Rotor<T>& r) {
+[[nodiscard]] constexpr Scalar<T> norm(const Rotor<T>& r) noexcept {
     return Scalar<T>(std::sqrt(squared_norm(r).value));
 }
 
@@ -145,7 +145,7 @@ template<typename T>
  * @param r The rotor for which to compute the squared norm.
  * @return The squared euclidian norm (magnitude) of the rotor r.
  */ 
-constexpr Scalar<T> squared_norm(const Rotor<T>& r) {
+[[nodiscard]] constexpr Scalar<T> squared_norm(const Rotor<T>& r) noexcept {
     return Scalar<T>((r.scalar.value * r.scalar.value)
         + (r.bivector.xy * r.bivector.xy) + (r.bivector.xz * r.bivector.xz) + (r.bivector.yz * r.bivector.yz));
 }

@@ -43,7 +43,7 @@ namespace CliffordCore::Cl3
      * @brief The rotor that represents no rotation.
      * @return The identity rotor, scalar 1 with a zero bivector.
      */
-    constexpr Rotor<T> identity_rotor() {
+    [[nodiscard]] constexpr Rotor<T> identity_rotor() noexcept {
         return Rotor<T>(Scalar<T>(1), Bivector<T>(0, 0, 0));
     }
 
@@ -56,7 +56,7 @@ namespace CliffordCore::Cl3
      * @return The rotor performing that rotation, or the identity if the axis
      *         has zero length.
      */
-    constexpr Rotor<T> rotor_from_axis_angle(const Vector<T>& axis, T angle) {
+    [[nodiscard]] constexpr Rotor<T> rotor_from_axis_angle(const Vector<T>& axis, T angle) noexcept {
         if (norm(axis).value == T(0)) {
             return identity_rotor<T>();
         }
@@ -79,7 +79,7 @@ namespace CliffordCore::Cl3
      * plane is ambiguous, so a perpendicular plane containing `from` is chosen
      * and the result is a half turn.
      */
-    constexpr Rotor<T> rotor_between(const Vector<T>& from, const Vector<T>& to) {
+    [[nodiscard]] constexpr Rotor<T> rotor_between(const Vector<T>& from, const Vector<T>& to) noexcept {
         if (norm(from).value == T(0) || norm(to).value == T(0)) {
             return identity_rotor<T>();
         }
@@ -127,7 +127,7 @@ namespace CliffordCore::Cl3
      * point away from each other the second is negated first and the result
      * takes the short way round.
      */
-    constexpr Rotor<T> slerp(const Rotor<T>& from, const Rotor<T>& to, T t) {
+    [[nodiscard]] constexpr Rotor<T> slerp(const Rotor<T>& from, const Rotor<T>& to, T t) noexcept {
         const Rotor<T> a = normalize(from);
         Rotor<T> b = normalize(to);
 

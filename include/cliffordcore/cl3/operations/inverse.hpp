@@ -36,7 +36,7 @@ namespace CliffordCore::Cl3
      * @param s The scalar for which to compute the inverse.
      * @return The inverse scalar to the input scalar.
      */
-    constexpr Scalar<T> inverse(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> inverse(const Scalar<T>& s) noexcept {
         return Scalar<T>(T(1) / s.value);
     }
 
@@ -46,7 +46,7 @@ namespace CliffordCore::Cl3
      * @param v The vector for which to compute the inverse.
      * @return The inverse vector to the input vector.
      */
-    constexpr Vector<T> inverse(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> inverse(const Vector<T>& v) noexcept {
         return v/squared_norm(v);
     }
 
@@ -56,7 +56,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector for which to compute the inverse.
      * @return The inverse bivector to the input bivector.
      */
-    constexpr Bivector<T> inverse(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> inverse(const Bivector<T>& b) noexcept {
         return -b/squared_norm(b);
     }
 
@@ -67,7 +67,7 @@ namespace CliffordCore::Cl3
      * @return The inverse trivector to the input trivector. The pseudoscalar
      *         squares to -1, so the inverse carries a minus sign: t^-1 = -t/|t|^2.
      */
-    constexpr Trivector<T> inverse(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Trivector<T> inverse(const Trivector<T>& t) noexcept {
         return -t/squared_norm(t);
     }
 
@@ -86,7 +86,7 @@ namespace CliffordCore::Cl3
      * The multivector is not invertible when a^2 + b^2 is zero; this returns a
      * zero multivector in that case rather than dividing by zero.
      */
-    constexpr Multivector<T> inverse(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> inverse(const Multivector<T>& m) noexcept {
         const Multivector<T> conj = conjugate(m);
         const Multivector<T> collapsed = m * conj;
 
@@ -116,7 +116,7 @@ namespace CliffordCore::Cl3
      *         since r * reverse(r) = |r|^2. For a unit rotor this is just the
      *         reverse, which is why rotations undo by reversing.
      */
-    constexpr Rotor<T> inverse(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> inverse(const Rotor<T>& r) noexcept {
         return reverse(r)/squared_norm(r);
     }
 } // namespace CliffordCore::Cl3

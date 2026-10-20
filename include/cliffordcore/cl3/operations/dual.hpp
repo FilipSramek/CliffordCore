@@ -41,7 +41,7 @@ template<typename T>
  * @param s The scalar to compute the dual of.
  * @return The resulting trivector s * e123.
  */
-constexpr Trivector<T> dual(const Scalar<T>& s) {
+[[nodiscard]] constexpr Trivector<T> dual(const Scalar<T>& s) noexcept {
     return Trivector<T>(s.value);
 }
 
@@ -51,7 +51,7 @@ template<typename T>
  * @param v The vector to compute the dual of.
  * @return The resulting bivector v * e123, mapping x to yz, y to -xz and z to xy.
  */
-constexpr Bivector<T> dual(const Vector<T>& v) {
+[[nodiscard]] constexpr Bivector<T> dual(const Vector<T>& v) noexcept {
     return Bivector<T>(v.z, -v.y, v.x);
 }
 
@@ -61,7 +61,7 @@ template<typename T>
  * @param b The bivector to compute the dual of.
  * @return The resulting vector b * e123.
  */
-constexpr Vector<T> dual(const Bivector<T>& b) {
+[[nodiscard]] constexpr Vector<T> dual(const Bivector<T>& b) noexcept {
     return Vector<T>(-b.yz, b.xz, -b.xy);
 }
 
@@ -71,7 +71,7 @@ template<typename T>
  * @param t The trivector to compute the dual of.
  * @return The resulting scalar. The pseudoscalar squares to -1, hence the sign.
  */
-constexpr Scalar<T> dual(const Trivector<T>& t) {
+[[nodiscard]] constexpr Scalar<T> dual(const Trivector<T>& t) noexcept {
     return Scalar<T>(-t.e123);
 }
 } // namespace CliffordCore::Cl3

@@ -28,7 +28,7 @@ namespace CliffordCore::Cl3
      * @param r The rotor for which to compute the logarithm.
      * @return The resulting bivector from the logarithm of the rotor r.
      */
-    constexpr Bivector<T> log(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Bivector<T> log(const Rotor<T>& r) noexcept {
         const T magnitude = r.bivector.magnitude().value;
 
         if (magnitude == T(0)) { // Handle the case when the bivector is zero

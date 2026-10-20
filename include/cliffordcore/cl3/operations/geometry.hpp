@@ -53,7 +53,7 @@ namespace CliffordCore::Cl3
      * product so it composes: two reflections make a rotation, which is what a
      * rotor is.
      */
-    constexpr Vector<T> reflect(const Vector<T>& v, const Vector<T>& n) {
+    [[nodiscard]] constexpr Vector<T> reflect(const Vector<T>& v, const Vector<T>& n) noexcept {
         return grade1(-(n * v * inverse(n)));
     }
 
@@ -68,7 +68,7 @@ namespace CliffordCore::Cl3
      * the formulation that carries over to algebras where a plane has no single
      * normal vector.
      */
-    constexpr Vector<T> reflect(const Vector<T>& v, const Bivector<T>& plane) {
+    [[nodiscard]] constexpr Vector<T> reflect(const Vector<T>& v, const Bivector<T>& plane) noexcept {
         return reflect(v, dual(plane));
     }
 
@@ -83,7 +83,7 @@ namespace CliffordCore::Cl3
      * @param u The direction to project onto. Need not be unit length.
      * @return The component of v parallel to u.
      */
-    constexpr Vector<T> project(const Vector<T>& v, const Vector<T>& u) {
+    [[nodiscard]] constexpr Vector<T> project(const Vector<T>& v, const Vector<T>& u) noexcept {
         return (v | u) * inverse(u);
     }
 
@@ -96,7 +96,7 @@ namespace CliffordCore::Cl3
      *
      * This is the one that needs the left contraction: (v _| B) * inverse(B).
      */
-    constexpr Vector<T> project(const Vector<T>& v, const Bivector<T>& plane) {
+    [[nodiscard]] constexpr Vector<T> project(const Vector<T>& v, const Bivector<T>& plane) noexcept {
         return grade1((v | plane) * inverse(plane));
     }
 
@@ -107,7 +107,7 @@ namespace CliffordCore::Cl3
      * @param u The direction to reject from. Need not be unit length.
      * @return The component of v perpendicular to u.
      */
-    constexpr Vector<T> reject(const Vector<T>& v, const Vector<T>& u) {
+    [[nodiscard]] constexpr Vector<T> reject(const Vector<T>& v, const Vector<T>& u) noexcept {
         return grade1((v ^ u) * inverse(u));
     }
 
@@ -118,7 +118,7 @@ namespace CliffordCore::Cl3
      * @param plane The plane to reject from. Need not be unit length.
      * @return The component of v perpendicular to the plane.
      */
-    constexpr Vector<T> reject(const Vector<T>& v, const Bivector<T>& plane) {
+    [[nodiscard]] constexpr Vector<T> reject(const Vector<T>& v, const Bivector<T>& plane) noexcept {
         return grade1((v ^ plane) * inverse(plane));
     }
 } // namespace CliffordCore::Cl3

@@ -30,7 +30,7 @@ namespace CliffordCore::Cl3
      * @param s The scalar for which to compute the reverse.
      * @return The scalar unchanged. Grade 0 keeps its sign under reverse.
      */
-    constexpr Scalar<T> reverse(const Scalar<T>& s) {
+    [[nodiscard]] constexpr Scalar<T> reverse(const Scalar<T>& s) noexcept {
         return s;
     }
 
@@ -40,7 +40,7 @@ namespace CliffordCore::Cl3
      * @param v The vector for which to compute the reverse.
      * @return The reverse of the vector v. (reverse(v) = v)
      */
-    constexpr Vector<T> reverse(const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> reverse(const Vector<T>& v) noexcept {
         return Vector<T>(v.x, v.y, v.z);
     }
 
@@ -50,7 +50,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector for which to compute the reverse.
      * @return The reverse of the bivector b. (reverse(b) = -b)
      */
-    constexpr Bivector<T> reverse(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Bivector<T> reverse(const Bivector<T>& b) noexcept {
         return Bivector<T>(-b.xy, -b.xz, -b.yz);
     }
 
@@ -60,7 +60,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector for which to compute the reverse.
      * @return The reverse of the trivector t. (reverse(t) = -t)
      */
-    constexpr Trivector<T> reverse(const Trivector<T>& t) {
+    [[nodiscard]] constexpr Trivector<T> reverse(const Trivector<T>& t) noexcept {
         return Trivector<T>(-t.e123);
     }
 
@@ -70,7 +70,7 @@ namespace CliffordCore::Cl3
      * @param m The multivector for which to compute the reverse.
      * @return The reverse of the multivector m. (reverse(m) = scalar(m) + vector(m) - bivector(m) - trivector(m))
      */
-    constexpr Multivector<T> reverse(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> reverse(const Multivector<T>& m) noexcept {
         return Multivector<T>(
             m.scalar,
             m.vector,
@@ -85,7 +85,7 @@ namespace CliffordCore::Cl3
      * @param r The rotor for which to compute the reverse.
      * @return The reverse of the rotor r. (reverse(r) = scalar(r) - bivector(r))
      */
-    constexpr Rotor<T> reverse(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Rotor<T> reverse(const Rotor<T>& r) noexcept {
         return Rotor<T>(r.scalar, Bivector<T>(-r.bivector.xy, -r.bivector.xz, -r.bivector.yz));
     }
 

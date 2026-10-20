@@ -45,7 +45,7 @@ namespace CliffordCore::Cl3
          * @param r The rotor to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Rotor<T>& r) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Rotor<T>& r) noexcept {
             return Multivector<T>(r.scalar, Vector<T>(), r.bivector, Trivector<T>());
         }
     } // namespace detail
@@ -57,7 +57,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector, carrying vector and trivector parts.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(v), detail::promote(b));
     }
 
@@ -68,7 +68,7 @@ namespace CliffordCore::Cl3
      * @param v The vector operand.
      * @return The resulting multivector, carrying vector and trivector parts.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return geometric_product(detail::promote(b), detail::promote(v));
     }
 
@@ -79,7 +79,7 @@ namespace CliffordCore::Cl3
      * @param b The right bivector.
      * @return The resulting multivector, carrying scalar and bivector parts.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(a), detail::promote(b));
     }
 
@@ -90,7 +90,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector operand.
      * @return The resulting multivector, carrying a bivector part.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& v, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& v, const Trivector<T>& t) noexcept {
         return geometric_product(detail::promote(v), detail::promote(t));
     }
 
@@ -101,7 +101,7 @@ namespace CliffordCore::Cl3
      * @param v The vector operand.
      * @return The resulting multivector, carrying a bivector part.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& t, const Vector<T>& v) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& t, const Vector<T>& v) noexcept {
         return geometric_product(detail::promote(t), detail::promote(v));
     }
 
@@ -112,7 +112,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector operand.
      * @return The resulting multivector, carrying a vector part.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& b, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& b, const Trivector<T>& t) noexcept {
         return geometric_product(detail::promote(b), detail::promote(t));
     }
 
@@ -123,7 +123,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector, carrying a vector part.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& t, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& t, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(t), detail::promote(b));
     }
 
@@ -135,7 +135,7 @@ namespace CliffordCore::Cl3
      * @return The resulting multivector. This is the piece needed to spell a
      *         rotation as r * v * reverse(r).
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& r, const Vector<T>& v) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& r, const Vector<T>& v) noexcept {
         return geometric_product(detail::promote(r), detail::promote(v));
     }
 
@@ -146,7 +146,7 @@ namespace CliffordCore::Cl3
      * @param r The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& v, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& v, const Rotor<T>& r) noexcept {
         return geometric_product(detail::promote(v), detail::promote(r));
     }
 
@@ -157,7 +157,7 @@ namespace CliffordCore::Cl3
      * @param v The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& m, const Vector<T>& v) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& m, const Vector<T>& v) noexcept {
         return geometric_product(m, detail::promote(v));
     }
 
@@ -168,7 +168,7 @@ namespace CliffordCore::Cl3
      * @param m The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Vector<T>& v, const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Vector<T>& v, const Multivector<T>& m) noexcept {
         return geometric_product(detail::promote(v), m);
     }
 
@@ -179,7 +179,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& m, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& m, const Bivector<T>& b) noexcept {
         return geometric_product(m, detail::promote(b));
     }
 
@@ -190,7 +190,7 @@ namespace CliffordCore::Cl3
      * @param m The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& b, const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& b, const Multivector<T>& m) noexcept {
         return geometric_product(detail::promote(b), m);
     }
 
@@ -201,7 +201,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& m, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& m, const Trivector<T>& t) noexcept {
         return geometric_product(m, detail::promote(t));
     }
 
@@ -212,7 +212,7 @@ namespace CliffordCore::Cl3
      * @param m The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& t, const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& t, const Multivector<T>& m) noexcept {
         return geometric_product(detail::promote(t), m);
     }
 
@@ -223,7 +223,7 @@ namespace CliffordCore::Cl3
      * @param r The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Multivector<T>& m, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Multivector<T>& m, const Rotor<T>& r) noexcept {
         return geometric_product(m, detail::promote(r));
     }
 
@@ -234,7 +234,7 @@ namespace CliffordCore::Cl3
      * @param m The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& r, const Multivector<T>& m) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& r, const Multivector<T>& m) noexcept {
         return geometric_product(detail::promote(r), m);
     }
 
@@ -245,7 +245,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector. Needed to sandwich a bivector.
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& r, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& r, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(r), detail::promote(b));
     }
 
@@ -256,7 +256,7 @@ namespace CliffordCore::Cl3
      * @param r The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Bivector<T>& b, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Bivector<T>& b, const Rotor<T>& r) noexcept {
         return geometric_product(detail::promote(b), detail::promote(r));
     }
 
@@ -267,7 +267,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Rotor<T>& r, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Rotor<T>& r, const Trivector<T>& t) noexcept {
         return geometric_product(detail::promote(r), detail::promote(t));
     }
 
@@ -278,7 +278,7 @@ namespace CliffordCore::Cl3
      * @param r The rotor operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator*(const Trivector<T>& t, const Rotor<T>& r) {
+    [[nodiscard]] constexpr Multivector<T> operator*(const Trivector<T>& t, const Rotor<T>& r) noexcept {
         return geometric_product(detail::promote(t), detail::promote(r));
     }
 
@@ -294,7 +294,7 @@ namespace CliffordCore::Cl3
      * @return The resulting trivector, the grade 3 part of their product. This
      *         is the only geometric route to a trivector in this library.
      */
-    constexpr Trivector<T> operator^(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Trivector<T> operator^(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return geometric_product(detail::promote(v), detail::promote(b)).trivector;
     }
 
@@ -306,7 +306,7 @@ namespace CliffordCore::Cl3
      * @return The resulting trivector. The wedge is graded-commutative here, so
      *         this equals v ^ b.
      */
-    constexpr Trivector<T> operator^(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Trivector<T> operator^(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return geometric_product(detail::promote(b), detail::promote(v)).trivector;
     }
 
@@ -317,7 +317,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting trivector.
      */
-    constexpr Trivector<T> wedge_product(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Trivector<T> wedge_product(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return v ^ b;
     }
 
@@ -328,7 +328,7 @@ namespace CliffordCore::Cl3
      * @param v The vector operand.
      * @return The resulting trivector.
      */
-    constexpr Trivector<T> wedge_product(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Trivector<T> wedge_product(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return b ^ v;
     }
 } // namespace CliffordCore::Cl3

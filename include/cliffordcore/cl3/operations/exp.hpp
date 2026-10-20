@@ -30,7 +30,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector for which to compute the exponential.
      * @return The resulting rotor from the exponential of the bivector b.
      */
-    constexpr Rotor<T> exp(const Bivector<T>& b) {
+    [[nodiscard]] constexpr Rotor<T> exp(const Bivector<T>& b) noexcept {
         Scalar<T> norm_bivector = norm(b);
 
         if (norm_bivector.value == 0) { // Handle the case when the bivector is zero

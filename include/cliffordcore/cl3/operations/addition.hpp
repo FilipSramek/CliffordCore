@@ -48,7 +48,7 @@ namespace CliffordCore::Cl3
          * @param s The scalar to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Scalar<T>& s) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Scalar<T>& s) noexcept {
             return Multivector<T>(s, Vector<T>(), Bivector<T>(), Trivector<T>());
         }
 
@@ -58,7 +58,7 @@ namespace CliffordCore::Cl3
          * @param v The vector to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Vector<T>& v) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Vector<T>& v) noexcept {
             return Multivector<T>(Scalar<T>(), v, Bivector<T>(), Trivector<T>());
         }
 
@@ -68,7 +68,7 @@ namespace CliffordCore::Cl3
          * @param b The bivector to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Bivector<T>& b) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Bivector<T>& b) noexcept {
             return Multivector<T>(Scalar<T>(), Vector<T>(), b, Trivector<T>());
         }
 
@@ -78,7 +78,7 @@ namespace CliffordCore::Cl3
          * @param t The trivector to widen.
          * @return The equivalent multivector.
          */
-        constexpr Multivector<T> promote(const Trivector<T>& t) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Trivector<T>& t) noexcept {
             return Multivector<T>(Scalar<T>(), Vector<T>(), Bivector<T>(), t);
         }
 
@@ -88,7 +88,7 @@ namespace CliffordCore::Cl3
          * @param m The multivector.
          * @return The same multivector.
          */
-        constexpr Multivector<T> promote(const Multivector<T>& m) {
+        [[nodiscard]] constexpr Multivector<T> promote(const Multivector<T>& m) noexcept {
             return m;
         }
     } // namespace detail
@@ -104,7 +104,7 @@ namespace CliffordCore::Cl3
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -115,7 +115,7 @@ namespace CliffordCore::Cl3
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -126,7 +126,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -137,7 +137,7 @@ namespace CliffordCore::Cl3
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -148,7 +148,7 @@ namespace CliffordCore::Cl3
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -159,7 +159,7 @@ namespace CliffordCore::Cl3
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -174,7 +174,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -185,7 +185,7 @@ namespace CliffordCore::Cl3
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -196,7 +196,7 @@ namespace CliffordCore::Cl3
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -207,7 +207,7 @@ namespace CliffordCore::Cl3
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -222,7 +222,7 @@ namespace CliffordCore::Cl3
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -233,7 +233,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -248,7 +248,7 @@ namespace CliffordCore::Cl3
      * @param b The scalar operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -259,7 +259,7 @@ namespace CliffordCore::Cl3
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator+(const Scalar<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Scalar<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -270,7 +270,7 @@ namespace CliffordCore::Cl3
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -281,7 +281,7 @@ namespace CliffordCore::Cl3
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator+(const Vector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Vector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -292,7 +292,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -303,7 +303,7 @@ namespace CliffordCore::Cl3
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator+(const Bivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Bivector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -314,7 +314,7 @@ namespace CliffordCore::Cl3
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator+(const Multivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Multivector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -325,7 +325,7 @@ namespace CliffordCore::Cl3
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator+(const Trivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator+(const Trivector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) + detail::promote(b);
     }
 
@@ -340,7 +340,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector part.
      * @return The resulting rotor. Same components as s + b, packed as a rotor.
      */
-    constexpr Rotor<T> rotor_sum(const Scalar<T>& s, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Rotor<T> rotor_sum(const Scalar<T>& s, const Bivector<T>& b) noexcept {
         return Rotor<T>(s, b);
     }
 
@@ -351,7 +351,7 @@ namespace CliffordCore::Cl3
      * @return A rotor built from the scalar and bivector parts of m. The vector
      *         and trivector parts are discarded, since a rotor cannot hold them.
      */
-    constexpr Rotor<T> to_rotor(const Multivector<T>& m) {
+    [[nodiscard]] constexpr Rotor<T> to_rotor(const Multivector<T>& m) noexcept {
         return Rotor<T>(m.scalar, m.bivector);
     }
 
@@ -362,7 +362,7 @@ namespace CliffordCore::Cl3
      * @return A multivector with the rotor's scalar and bivector parts, and zero
      *         vector and trivector parts.
      */
-    constexpr Multivector<T> to_multivector(const Rotor<T>& r) {
+    [[nodiscard]] constexpr Multivector<T> to_multivector(const Rotor<T>& r) noexcept {
         return Multivector<T>(r.scalar, Vector<T>(), r.bivector, Trivector<T>());
     }
 } // namespace CliffordCore::Cl3

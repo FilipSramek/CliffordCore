@@ -41,7 +41,7 @@ namespace CliffordCore::Cl3
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Scalar<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Scalar<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -52,7 +52,7 @@ namespace CliffordCore::Cl3
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Vector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Vector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -63,7 +63,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Scalar<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Scalar<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -74,7 +74,7 @@ namespace CliffordCore::Cl3
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Bivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Bivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -85,7 +85,7 @@ namespace CliffordCore::Cl3
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Scalar<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Scalar<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -96,7 +96,7 @@ namespace CliffordCore::Cl3
      * @param b The scalar operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Trivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Trivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -111,7 +111,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Vector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Vector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -122,7 +122,7 @@ namespace CliffordCore::Cl3
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Bivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Bivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -133,7 +133,7 @@ namespace CliffordCore::Cl3
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Vector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Vector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -144,7 +144,7 @@ namespace CliffordCore::Cl3
      * @param b The vector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Trivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Trivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -159,7 +159,7 @@ namespace CliffordCore::Cl3
      * @param b The trivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Bivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Bivector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -170,7 +170,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector carrying both grades.
      */
-    constexpr Multivector<T> operator-(const Trivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Trivector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -185,7 +185,7 @@ namespace CliffordCore::Cl3
      * @param b The scalar operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator-(const Multivector<T>& a, const Scalar<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Multivector<T>& a, const Scalar<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -196,7 +196,7 @@ namespace CliffordCore::Cl3
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator-(const Scalar<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Scalar<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -207,7 +207,7 @@ namespace CliffordCore::Cl3
      * @param b The vector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator-(const Multivector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Multivector<T>& a, const Vector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -218,7 +218,7 @@ namespace CliffordCore::Cl3
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator-(const Vector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Vector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -229,7 +229,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator-(const Multivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Multivector<T>& a, const Bivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -240,7 +240,7 @@ namespace CliffordCore::Cl3
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator-(const Bivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Bivector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -251,7 +251,7 @@ namespace CliffordCore::Cl3
      * @param b The trivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator-(const Multivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Multivector<T>& a, const Trivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 
@@ -262,7 +262,7 @@ namespace CliffordCore::Cl3
      * @param b The multivector operand.
      * @return The resulting multivector.
      */
-    constexpr Multivector<T> operator-(const Trivector<T>& a, const Multivector<T>& b) {
+    [[nodiscard]] constexpr Multivector<T> operator-(const Trivector<T>& a, const Multivector<T>& b) noexcept {
         return detail::promote(a) - detail::promote(b);
     }
 } // namespace CliffordCore::Cl3

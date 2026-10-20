@@ -64,7 +64,7 @@ namespace CliffordCore::Cl3
      * @param b The right operand.
      * @return The grade 0 part of a*b, the one piece every product shares.
      */
-    constexpr auto scalar_product(const A& a, const B& b) -> decltype(grade0(a * b)) {
+    [[nodiscard]] constexpr auto scalar_product(const A& a, const B& b) noexcept -> decltype(grade0(a * b)) {
         return grade0(a * b);
     }
 
@@ -79,7 +79,7 @@ namespace CliffordCore::Cl3
      * @param b The right vector.
      * @return The resulting scalar. For equal grades this is the dot product.
      */
-    constexpr Scalar<T> left_contraction(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Vector<T>& a, const Vector<T>& b) noexcept {
         return a | b;
     }
 
@@ -91,7 +91,7 @@ namespace CliffordCore::Cl3
      * @return The resulting vector: the part of b perpendicular to v, within b.
      *         This is the product the projection onto a plane is written with.
      */
-    constexpr Vector<T> left_contraction(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> left_contraction(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return grade1(v * b);
     }
 
@@ -102,7 +102,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector operand.
      * @return The resulting bivector.
      */
-    constexpr Bivector<T> left_contraction(const Vector<T>& v, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Bivector<T> left_contraction(const Vector<T>& v, const Trivector<T>& t) noexcept {
         return grade2(v * t);
     }
 
@@ -113,7 +113,7 @@ namespace CliffordCore::Cl3
      * @param b The right bivector.
      * @return The resulting scalar.
      */
-    constexpr Scalar<T> left_contraction(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return grade0(a * b);
     }
 
@@ -124,7 +124,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector operand.
      * @return The resulting vector.
      */
-    constexpr Vector<T> left_contraction(const Bivector<T>& b, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> left_contraction(const Bivector<T>& b, const Trivector<T>& t) noexcept {
         return grade1(b * t);
     }
 
@@ -135,7 +135,7 @@ namespace CliffordCore::Cl3
      * @param b The right trivector.
      * @return The resulting scalar.
      */
-    constexpr Scalar<T> left_contraction(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> left_contraction(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return a * b;
     }
 
@@ -151,7 +151,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting vector.
      */
-    constexpr Vector<T> operator|(const Vector<T>& v, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> operator|(const Vector<T>& v, const Bivector<T>& b) noexcept {
         return left_contraction(v, b);
     }
 
@@ -162,7 +162,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector operand.
      * @return The resulting bivector.
      */
-    constexpr Bivector<T> operator|(const Vector<T>& v, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Bivector<T> operator|(const Vector<T>& v, const Trivector<T>& t) noexcept {
         return left_contraction(v, t);
     }
 
@@ -173,7 +173,7 @@ namespace CliffordCore::Cl3
      * @param b The right bivector.
      * @return The resulting scalar.
      */
-    constexpr Scalar<T> operator|(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> operator|(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return left_contraction(a, b);
     }
 
@@ -184,7 +184,7 @@ namespace CliffordCore::Cl3
      * @param t The trivector operand.
      * @return The resulting vector.
      */
-    constexpr Vector<T> operator|(const Bivector<T>& b, const Trivector<T>& t) {
+    [[nodiscard]] constexpr Vector<T> operator|(const Bivector<T>& b, const Trivector<T>& t) noexcept {
         return left_contraction(b, t);
     }
 
@@ -199,7 +199,7 @@ namespace CliffordCore::Cl3
      * @param b The right vector.
      * @return The resulting scalar, equal to the left contraction here.
      */
-    constexpr Scalar<T> right_contraction(const Vector<T>& a, const Vector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Vector<T>& a, const Vector<T>& b) noexcept {
         return a | b;
     }
 
@@ -210,7 +210,7 @@ namespace CliffordCore::Cl3
      * @param v The vector operand.
      * @return The resulting vector.
      */
-    constexpr Vector<T> right_contraction(const Bivector<T>& b, const Vector<T>& v) {
+    [[nodiscard]] constexpr Vector<T> right_contraction(const Bivector<T>& b, const Vector<T>& v) noexcept {
         return grade1(b * v);
     }
 
@@ -221,7 +221,7 @@ namespace CliffordCore::Cl3
      * @param v The vector operand.
      * @return The resulting bivector.
      */
-    constexpr Bivector<T> right_contraction(const Trivector<T>& t, const Vector<T>& v) {
+    [[nodiscard]] constexpr Bivector<T> right_contraction(const Trivector<T>& t, const Vector<T>& v) noexcept {
         return grade2(t * v);
     }
 
@@ -232,7 +232,7 @@ namespace CliffordCore::Cl3
      * @param b The right bivector.
      * @return The resulting scalar.
      */
-    constexpr Scalar<T> right_contraction(const Bivector<T>& a, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Bivector<T>& a, const Bivector<T>& b) noexcept {
         return grade0(a * b);
     }
 
@@ -243,7 +243,7 @@ namespace CliffordCore::Cl3
      * @param b The bivector operand.
      * @return The resulting vector.
      */
-    constexpr Vector<T> right_contraction(const Trivector<T>& t, const Bivector<T>& b) {
+    [[nodiscard]] constexpr Vector<T> right_contraction(const Trivector<T>& t, const Bivector<T>& b) noexcept {
         return grade1(t * b);
     }
 
@@ -254,7 +254,7 @@ namespace CliffordCore::Cl3
      * @param b The right trivector.
      * @return The resulting scalar.
      */
-    constexpr Scalar<T> right_contraction(const Trivector<T>& a, const Trivector<T>& b) {
+    [[nodiscard]] constexpr Scalar<T> right_contraction(const Trivector<T>& a, const Trivector<T>& b) noexcept {
         return a * b;
     }
 } // namespace CliffordCore::Cl3
