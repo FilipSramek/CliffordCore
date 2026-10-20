@@ -40,7 +40,7 @@ template<typename T>
  * max_digits10 is the shortest precision that round-trips a floating-point
  * value. It is 0 for integral types, where stream precision is ignored anyway.
  */
-inline std::string format_component(T value)
+[[nodiscard]] inline std::string format_component(T value)
 {
     std::ostringstream stream;
     stream.precision(std::numeric_limits<T>::max_digits10);

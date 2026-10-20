@@ -31,7 +31,7 @@ template<typename T>
  * @return One hundred epsilons, which absorbs ordinary rounding without
  *         hiding a real discrepancy.
  */
-constexpr T default_tolerance() {
+[[nodiscard]] constexpr T default_tolerance() noexcept {
     return std::numeric_limits<T>::epsilon() * T(100);
 }
 
@@ -43,7 +43,7 @@ template<typename T>
  * @param tolerance The largest difference still considered equal.
  * @return True if they differ by no more than the tolerance.
  */
-inline bool close(T a, T b, T tolerance) {
+[[nodiscard]] inline bool close(T a, T b, T tolerance) noexcept {
     return std::fabs(a - b) <= tolerance;
 }
 
