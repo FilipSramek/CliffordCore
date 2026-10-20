@@ -126,14 +126,18 @@ namespace CliffordCore::PGA
      * @brief Projects a line onto a plane.
      * @param x The line to project.
      * @param onto The plane to project onto. Need not be normalized.
-     * @return The line in the plane closest to x. An ideal plane gives zero.
+     * @return The line in the plane closest to x, with the same orientation
+     *         as x. An ideal plane gives zero.
      */
     constexpr Bivector<T> project(const Bivector<T>& x, const Vector<T>& onto) {
         const T n = squared_norm(onto).value;
         if (n == T(0)) {
             return Bivector<T>();
         }
-        return grade2(left_contraction(onto, x) * onto) / Scalar<T>(n);
+        // (x |_ onto) * onto, the right contraction. The left contraction
+        // onto _| x is its negation for a plane and a line, and once returned
+        // the line reversed.
+        return grade2(right_contraction(x, onto) * onto) / Scalar<T>(n);
     }
 
     // -----------------------------------------------------------------------

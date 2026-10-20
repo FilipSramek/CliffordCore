@@ -107,7 +107,15 @@ void test_geometry()
     const Bivector<double> projected = ga::project(xLine, z1);
     check_close(ga::distance(ga::point(0.0, -2.0, 1.0), projected), 0.0, "projecting a line onto z = 1 lands it in the plane");
     const std::array<double, 3> projDir = ga::direction(ga::normalize(projected));
-    check_close(std::abs(projDir[0]), 1.0, "... keeping its direction");
+    check_close(projDir[0], 1.0, "... keeping its direction, not reversing it");
+    // A tilted line must match the line through its two projected points.
+    const Trivector<double> diagA = ga::point(0.0, 0.0, 0.0);
+    const Trivector<double> diagB = ga::point(1.0, 1.0, 1.0);
+    const Vector<double> y3 = ga::plane(0.0, 1.0, 0.0, -3.0);
+    check(ga::approx_equal(ga::normalize(ga::project(ga::line_through_points(diagA, diagB), y3)),
+                           ga::normalize(ga::line_through_points(ga::project(diagA, y3), ga::project(diagB, y3))),
+                           1e-12),
+          "projecting a line agrees with joining its projected points, orientation included");
     check_trivector(ga::project(ga::point(1.0, 2.0, 3.0), ga::ideal_plane<double>()), 0, 0, 0, 0,
                     "projecting onto the ideal plane gives zero, not NaN");
 
