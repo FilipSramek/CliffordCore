@@ -39,10 +39,12 @@ namespace CliffordCore::PGA
     template<typename T>
     /**
      * @brief Computes the logarithm of a motor, resulting in a bivector.
-     * @param m The motor for which to compute the logarithm. Expected to be a
-     *        unit motor; normalize() it first if it has drifted.
+     * @param m The motor for which to compute the logarithm.
      * @return The bivector (screw) with exp of it equal to m. For a pure
      *         translator this is the ideal bivector b with m = 1 + b.
+     * @pre m is a unit motor, m * reverse(m) = 1. The rotation survives drift,
+     *      since atan2 needs only the ratio of the parts, but the translation
+     *      does not: 1% drift moves the ideal part by ~1%. normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> log(const Motor<T>& m) noexcept {
         const Bivector<T>& b = m.bivector;

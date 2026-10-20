@@ -34,6 +34,8 @@ namespace CliffordCore::Cl3
      * @param v The vector to be transformed.
      * @param r The rotor to perform the transformation with.
      * @return The resulting vector after the sandwich product.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Vector<T> sandwich(const Vector<T>& v, const Rotor<T>& r) noexcept {
         const T s  = r.scalar.value;
@@ -64,6 +66,8 @@ namespace CliffordCore::Cl3
      * @param v The vector to be rotated.
      * @param r The rotor to perform the rotation with.
      * @return The resulting vector after rotation.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     template<typename T>
     [[nodiscard]] constexpr Vector<T> rotate(const Vector<T>& v, const Rotor<T>& r) noexcept {
@@ -79,6 +83,8 @@ namespace CliffordCore::Cl3
      *
      * Rotating a plane rather than a direction. Needed whenever the thing being
      * turned is an orientation, an angular velocity, or a surface element.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> sandwich(const Bivector<T>& b, const Rotor<T>& r) noexcept {
         return grade2(r * b * reverse(r));
@@ -92,6 +98,8 @@ namespace CliffordCore::Cl3
      * @return The trivector, scaled by the rotor's squared norm. The
      *         pseudoscalar commutes with everything in 3D, so a unit rotor
      *         leaves it exactly unchanged -- volume has no orientation to turn.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Trivector<T> sandwich(const Trivector<T>& t, const Rotor<T>& r) noexcept {
         return grade3(r * t * reverse(r));
@@ -104,6 +112,8 @@ namespace CliffordCore::Cl3
      * @param r The rotor to rotate with.
      * @return The rotated multivector. Every grade is carried along, so no
      *         projection is needed here.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Multivector<T> sandwich(const Multivector<T>& m, const Rotor<T>& r) noexcept {
         return r * m * reverse(r);
@@ -115,6 +125,8 @@ namespace CliffordCore::Cl3
      * @param b The bivector to rotate.
      * @param r The rotor to rotate with.
      * @return The rotated bivector.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> rotate(const Bivector<T>& b, const Rotor<T>& r) noexcept {
         return sandwich(b, r);
@@ -126,6 +138,8 @@ namespace CliffordCore::Cl3
      * @param t The trivector to rotate.
      * @param r The rotor to rotate with.
      * @return The rotated trivector.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Trivector<T> rotate(const Trivector<T>& t, const Rotor<T>& r) noexcept {
         return sandwich(t, r);
@@ -137,6 +151,8 @@ namespace CliffordCore::Cl3
      * @param m The multivector to rotate.
      * @param r The rotor to rotate with.
      * @return The rotated multivector.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Multivector<T> rotate(const Multivector<T>& m, const Rotor<T>& r) noexcept {
         return sandwich(m, r);

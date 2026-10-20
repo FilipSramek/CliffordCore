@@ -40,6 +40,8 @@ namespace CliffordCore::PGA
      * @param x The multivector to transform.
      * @param m The motor to transform it with.
      * @return The transformed multivector.
+     * @pre m is a unit motor, m * reverse(m) = 1. A motor that has drifted
+     *      off it gives a scaled or distorted result; normalize() it first.
      */
     [[nodiscard]] constexpr Multivector<T> sandwich(const Multivector<T>& x, const Motor<T>& m) noexcept {
         return detail::promote(m) * x * detail::promote(reverse(m));
@@ -51,6 +53,8 @@ namespace CliffordCore::PGA
      * @param x The vector (plane) to transform.
      * @param m The motor to transform it with.
      * @return The transformed plane. A motor is even, so the grade is preserved.
+     * @pre m is a unit motor, m * reverse(m) = 1. A motor that has drifted
+     *      off it gives a scaled or distorted result; normalize() it first.
      */
     [[nodiscard]] constexpr Vector<T> sandwich(const Vector<T>& x, const Motor<T>& m) noexcept {
         return grade1(sandwich(detail::promote(x), m));
@@ -62,6 +66,8 @@ namespace CliffordCore::PGA
      * @param x The bivector (line) to transform.
      * @param m The motor to transform it with.
      * @return The transformed line.
+     * @pre m is a unit motor, m * reverse(m) = 1. A motor that has drifted
+     *      off it gives a scaled or distorted result; normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> sandwich(const Bivector<T>& x, const Motor<T>& m) noexcept {
         return grade2(sandwich(detail::promote(x), m));
@@ -73,6 +79,8 @@ namespace CliffordCore::PGA
      * @param x The trivector (point) to transform.
      * @param m The motor to transform it with.
      * @return The transformed point, with its weight preserved.
+     * @pre m is a unit motor, m * reverse(m) = 1. A motor that has drifted
+     *      off it gives a scaled or distorted result; normalize() it first.
      */
     [[nodiscard]] constexpr Trivector<T> sandwich(const Trivector<T>& x, const Motor<T>& m) noexcept {
         return grade3(sandwich(detail::promote(x), m));
@@ -86,6 +94,8 @@ namespace CliffordCore::PGA
      * @param x The vector (plane) to transform.
      * @param r The rotor to transform it with.
      * @return The transformed plane.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Vector<T> sandwich(const Vector<T>& x, const Rotor<T>& r) noexcept {
         return sandwich(x, Motor<T>(r));
@@ -97,6 +107,8 @@ namespace CliffordCore::PGA
      * @param x The bivector (line) to transform.
      * @param r The rotor to transform it with.
      * @return The transformed line.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> sandwich(const Bivector<T>& x, const Rotor<T>& r) noexcept {
         return sandwich(x, Motor<T>(r));
@@ -108,6 +120,8 @@ namespace CliffordCore::PGA
      * @param x The trivector (point) to transform.
      * @param r The rotor to transform it with.
      * @return The transformed point.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Trivector<T> sandwich(const Trivector<T>& x, const Rotor<T>& r) noexcept {
         return sandwich(x, Motor<T>(r));
@@ -119,6 +133,8 @@ namespace CliffordCore::PGA
      * @param x The multivector to transform.
      * @param r The rotor to transform it with.
      * @return The transformed multivector.
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Multivector<T> sandwich(const Multivector<T>& x, const Rotor<T>& r) noexcept {
         return sandwich(x, Motor<T>(r));
@@ -130,6 +146,8 @@ namespace CliffordCore::PGA
      * @param x The vector (plane) to transform.
      * @param t The translator to transform it with.
      * @return The translated plane: its normal is unchanged, its offset moves.
+     * @pre t is normalized, with scalar part 1. Any other scalar s scales
+     *      the result by s^2; normalize() it first.
      */
     [[nodiscard]] constexpr Vector<T> sandwich(const Vector<T>& x, const Translator<T>& t) noexcept {
         return sandwich(x, Motor<T>(t));
@@ -141,6 +159,8 @@ namespace CliffordCore::PGA
      * @param x The bivector (line) to transform.
      * @param t The translator to transform it with.
      * @return The translated line: its direction is unchanged, its moment moves.
+     * @pre t is normalized, with scalar part 1. Any other scalar s scales
+     *      the result by s^2; normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> sandwich(const Bivector<T>& x, const Translator<T>& t) noexcept {
         return sandwich(x, Motor<T>(t));
@@ -152,6 +172,8 @@ namespace CliffordCore::PGA
      * @param x The trivector (point) to transform.
      * @param t The translator to transform it with.
      * @return The translated point.
+     * @pre t is normalized, with scalar part 1. Any other scalar s scales
+     *      the result by s^2; normalize() it first.
      */
     [[nodiscard]] constexpr Trivector<T> sandwich(const Trivector<T>& x, const Translator<T>& t) noexcept {
         return sandwich(x, Motor<T>(t));
@@ -163,6 +185,8 @@ namespace CliffordCore::PGA
      * @param x The multivector to transform.
      * @param t The translator to transform it with.
      * @return The translated multivector.
+     * @pre t is normalized, with scalar part 1. Any other scalar s scales
+     *      the result by s^2; normalize() it first.
      */
     [[nodiscard]] constexpr Multivector<T> sandwich(const Multivector<T>& x, const Translator<T>& t) noexcept {
         return sandwich(x, Motor<T>(t));
@@ -178,6 +202,8 @@ namespace CliffordCore::PGA
      * @param x The vector (plane) to rotate.
      * @param r The rotor.
      * @return sandwich(x, r).
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Vector<T> rotate(const Vector<T>& x, const Rotor<T>& r) noexcept {
         return sandwich(x, r);
@@ -189,6 +215,8 @@ namespace CliffordCore::PGA
      * @param x The bivector (line) to rotate.
      * @param r The rotor.
      * @return sandwich(x, r).
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> rotate(const Bivector<T>& x, const Rotor<T>& r) noexcept {
         return sandwich(x, r);
@@ -200,6 +228,8 @@ namespace CliffordCore::PGA
      * @param x The trivector (point) to rotate.
      * @param r The rotor.
      * @return sandwich(x, r).
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Trivector<T> rotate(const Trivector<T>& x, const Rotor<T>& r) noexcept {
         return sandwich(x, r);
@@ -211,6 +241,8 @@ namespace CliffordCore::PGA
      * @param x The multivector to rotate.
      * @param r The rotor.
      * @return sandwich(x, r).
+     * @pre r is a unit rotor, r * reverse(r) = 1. A rotor that has drifted
+     *      off unit length scales the result by |r|^2; normalize() it first.
      */
     [[nodiscard]] constexpr Multivector<T> rotate(const Multivector<T>& x, const Rotor<T>& r) noexcept {
         return sandwich(x, r);
@@ -222,6 +254,8 @@ namespace CliffordCore::PGA
      * @param x The vector (plane) to translate.
      * @param t The translator.
      * @return sandwich(x, t).
+     * @pre t is normalized, with scalar part 1. Any other scalar s scales
+     *      the result by s^2; normalize() it first.
      */
     [[nodiscard]] constexpr Vector<T> translate(const Vector<T>& x, const Translator<T>& t) noexcept {
         return sandwich(x, t);
@@ -233,6 +267,8 @@ namespace CliffordCore::PGA
      * @param x The bivector (line) to translate.
      * @param t The translator.
      * @return sandwich(x, t).
+     * @pre t is normalized, with scalar part 1. Any other scalar s scales
+     *      the result by s^2; normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> translate(const Bivector<T>& x, const Translator<T>& t) noexcept {
         return sandwich(x, t);
@@ -244,6 +280,8 @@ namespace CliffordCore::PGA
      * @param x The trivector (point) to translate.
      * @param t The translator.
      * @return sandwich(x, t).
+     * @pre t is normalized, with scalar part 1. Any other scalar s scales
+     *      the result by s^2; normalize() it first.
      */
     [[nodiscard]] constexpr Trivector<T> translate(const Trivector<T>& x, const Translator<T>& t) noexcept {
         return sandwich(x, t);
@@ -255,6 +293,8 @@ namespace CliffordCore::PGA
      * @param x The multivector to translate.
      * @param t The translator.
      * @return sandwich(x, t).
+     * @pre t is normalized, with scalar part 1. Any other scalar s scales
+     *      the result by s^2; normalize() it first.
      */
     [[nodiscard]] constexpr Multivector<T> translate(const Multivector<T>& x, const Translator<T>& t) noexcept {
         return sandwich(x, t);
@@ -266,6 +306,8 @@ namespace CliffordCore::PGA
      * @param x The vector (plane) to transform.
      * @param m The motor.
      * @return sandwich(x, m).
+     * @pre m is a unit motor, m * reverse(m) = 1. A motor that has drifted
+     *      off it gives a scaled or distorted result; normalize() it first.
      */
     [[nodiscard]] constexpr Vector<T> transform(const Vector<T>& x, const Motor<T>& m) noexcept {
         return sandwich(x, m);
@@ -277,6 +319,8 @@ namespace CliffordCore::PGA
      * @param x The bivector (line) to transform.
      * @param m The motor.
      * @return sandwich(x, m).
+     * @pre m is a unit motor, m * reverse(m) = 1. A motor that has drifted
+     *      off it gives a scaled or distorted result; normalize() it first.
      */
     [[nodiscard]] constexpr Bivector<T> transform(const Bivector<T>& x, const Motor<T>& m) noexcept {
         return sandwich(x, m);
@@ -288,6 +332,8 @@ namespace CliffordCore::PGA
      * @param x The trivector (point) to transform.
      * @param m The motor.
      * @return sandwich(x, m).
+     * @pre m is a unit motor, m * reverse(m) = 1. A motor that has drifted
+     *      off it gives a scaled or distorted result; normalize() it first.
      */
     [[nodiscard]] constexpr Trivector<T> transform(const Trivector<T>& x, const Motor<T>& m) noexcept {
         return sandwich(x, m);
@@ -299,6 +345,8 @@ namespace CliffordCore::PGA
      * @param x The multivector to transform.
      * @param m The motor.
      * @return sandwich(x, m).
+     * @pre m is a unit motor, m * reverse(m) = 1. A motor that has drifted
+     *      off it gives a scaled or distorted result; normalize() it first.
      */
     [[nodiscard]] constexpr Multivector<T> transform(const Multivector<T>& x, const Motor<T>& m) noexcept {
         return sandwich(x, m);
