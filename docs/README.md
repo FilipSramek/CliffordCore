@@ -29,6 +29,7 @@ a *plane* in Cl(3,0,1) — so PGA has its own conventions page.
 | [rotations.md](rotations.md) | Rotors in practice: building, applying, composing, drift, interpolation |
 | [cheatsheet.md](cheatsheet.md) | Return-type matrices and a task-to-call index, on one screen |
 | [api-reference.md](api-reference.md) | Every header, every signature |
+| [safety-audit.md](safety-audit.md) | Readiness for safety-critical and hard real-time use: findings, the input domain, assumptions of use, roadmap |
 
 **If a sign looks wrong, go to [conventions.md](conventions.md) first** — or to
 [pga.md](pga.md) if you are in PGA. Almost every surprise in this library traces
@@ -72,6 +73,7 @@ build task compiles whichever example file is open.
 ```bash
 ./build.sh                     # POSIX / Git Bash
 ./build.sh pga                 # only the suites whose name contains "pga"
+./build.sh --variants          # then again under -O2, -O2 -DNDEBUG, and FMA contraction
 .\build.ps1                    # PowerShell; runs the suites only
 ```
 
@@ -82,12 +84,19 @@ Every file is its own translation unit, and each folder links into one binary,
 binary. The assertion harness they share, `tests/common/harness.hpp`, includes
 no algebra.
 
-A green run prints `4148 checks, 0 failed.` for Cl(2,0), `2729 checks, 0 failed.`
-for Cl(3,0) and `3983 checks, 0 failed.` for Cl(3,0,1), then
+A green run prints `4519 checks, 0 failed.` for Cl(2,0), `3357 checks, 0 failed.`
+for Cl(3,0) and `4930 checks, 0 failed.` for Cl(3,0,1), then
 `3 test suites, 0 failed.` Before the suites, `build.sh` runs `check_headers.sh`,
 which compiles all 91 headers alone in their own translation units, and
 `check_compile_fail.sh`, which confirms that non-floating-point component types
-are rejected with the right message.
+are rejected with the right message and that a discarded `[[nodiscard]]` result
+is diagnosed.
+
+The default build is unoptimised with asserts on, which is not what a real-time
+target ships. `--variants` reruns every suite under `-O2`, under `-O2 -DNDEBUG`
+(the only build that reaches `normalize`'s release branch, and the reason those
+runs report a few more checks), and with FMA contraction, which changes results
+in the last bits. See [safety-audit.md](safety-audit.md).
 
 ## Generated API reference
 
