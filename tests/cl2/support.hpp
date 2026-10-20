@@ -199,6 +199,7 @@ void run_geometry();
 void run_complex_isomorphism();
 void run_comparison_and_printing();
 void run_properties();
+void run_special_values();
 void run_instantiation_sweep();
 
 } // namespace cctest

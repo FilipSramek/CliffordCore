@@ -32,6 +32,7 @@ int main()
     run_complex_isomorphism();
     run_comparison_and_printing();
     run_properties();
+    run_special_values();
     run_instantiation_sweep();
 
     std::cout << g_checks << " checks, " << g_failures << " failed.\n";
