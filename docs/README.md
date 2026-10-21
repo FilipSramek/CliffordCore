@@ -30,6 +30,7 @@ a *plane* in Cl(3,0,1) — so PGA has its own conventions page.
 | [cheatsheet.md](cheatsheet.md) | Return-type matrices and a task-to-call index, on one screen |
 | [api-reference.md](api-reference.md) | Every header, every signature |
 | [safety-audit.md](safety-audit.md) | Readiness for safety-critical and hard real-time use: findings, the input domain, assumptions of use, roadmap |
+| [certification-audit.md](certification-audit.md) | What DO-178C and MISRA C++:2023 would require: Polyspace results, measured coverage, run-time error proof, and the order of work |
 | [coding-guidelines.md](coding-guidelines.md) | The rules for contributing code, and why: real-time limits, `[[nodiscard]]`/`noexcept`, headers, numerics, tests, commits |
 
 **If a sign looks wrong, go to [conventions.md](conventions.md) first** — or to
